@@ -45,7 +45,7 @@ public class Member {
     /**
      * 파라미터 생성자.
      */
-    public Member(String memberId, String password, String name, String email, LocalDate birthday, int point) {
+    private Member(String memberId, String password, String name, String email, LocalDate birthday, int point) {
         this.memberId = memberId;
         this.password = password;
         this.name = name;
@@ -59,7 +59,6 @@ public class Member {
      */
     public static Member of(String memberId, String password, String name, String email, LocalDate birthday, int point) {
         return new Member(memberId, password, name, email, birthday, point);
-
     }
 
 }
