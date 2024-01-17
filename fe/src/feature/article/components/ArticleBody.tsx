@@ -16,6 +16,7 @@ import {
 import { ChevronIcon } from "./ChevronIcon";
 import { useState } from "react";
 import { cn } from "@nextui-org/react";
+// import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
 
 function ArticleBody() {
   const itemLists = ["내용", "제목", "작성자"];
@@ -69,7 +70,7 @@ function ArticleBody() {
         className={cn(
           className,
           isActive &&
-            "text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold"
+            "text-white bg-gradient-to-br from-lime-400 to-lime-300 font-bold"
         )}
         onClick={() => setPage(value)}
       >
@@ -91,6 +92,7 @@ function ArticleBody() {
             className="absolute left-3 top-1/2 -mt-2.5 text-slate-400 pointer-events-none group-focus-within:text-blue-500"
             aria-hidden="true"
           >
+            {" "}
             <path
               fill-rule="evenodd"
               clip-rule="evenodd"
