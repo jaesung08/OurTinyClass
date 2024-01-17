@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.global.model.response;
+package com.otc.tinyclassroom.global.common.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
