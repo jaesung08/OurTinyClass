@@ -5,6 +5,8 @@ import lombok.Getter;
 
 /**
  * 서버 요청에 대한 기본 응답 정의.
+ *
+ * @author JangJaeSung
  */
 @Getter
 @AllArgsConstructor
