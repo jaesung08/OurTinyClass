@@ -1,6 +1,7 @@
 import SideBar from "@/components/Layout/SideBar";
 import Header from "./components/Header";
 import ArticleBody from "./components/ArticleBody";
+import { useState } from "react";
 
 function ArticlePage() {
   return (
