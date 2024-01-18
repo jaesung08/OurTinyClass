@@ -13,12 +13,12 @@ import {
   PaginationItemType,
   PaginationItemRenderProps,
 } from "@nextui-org/react";
-import { ChevronIcon } from "./ChevronIcon";
+import { ChevronIcon } from "@/assets/ChevronIcon";
 import { useState } from "react";
 import { cn } from "@nextui-org/react";
 // import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
 
-function ArticleBody() {
+function FreeBoardBody() {
   const itemLists = ["내용", "제목", "작성자"];
   const renderItem = ({
     ref,
@@ -271,4 +271,4 @@ function ArticleBody() {
   );
 }
 
-export default ArticleBody;
+export default FreeBoardBody;

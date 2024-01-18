@@ -1,7 +1,7 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useState, useMemo } from "react";
 
-function Header() {
+function FreeBoardHeader() {
   interface Articles {
     id: number;
     title: string;
@@ -92,4 +92,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default FreeBoardHeader;
