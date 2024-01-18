@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -24,7 +25,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; // db에 기록되는 번호 (auto increment)
+    private Long id; // db에 기록되는 번호 (auto increment)
 
     @Column(nullable = false, unique = true)
     private String memberId; // 유저 id
@@ -61,5 +62,20 @@ public class Member {
         return new Member(memberId, password, name, email, birthday, point);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Member member)) {
+            return false;
+        }
+        return memberId != null && memberId.equals(member.getMemberId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memberId);
+    }
 }
 
