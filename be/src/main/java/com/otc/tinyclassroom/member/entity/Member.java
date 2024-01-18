@@ -9,17 +9,20 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.CurrentTimestamp;
 
 /**
  * 회원 엔티티 정의 (memberId, password, name, email, point, birthday).
  *
  * @author ParkJaeseon
  */
-@Getter
-@ToString
-@Table(name = "member", indexes = {@Index(columnList = "memberId"), @Index(columnList = "email")})
+@Data
+@Table(name = "member")
 @Entity
 public class Member {
 
@@ -39,6 +42,8 @@ public class Member {
     private LocalDate birthday; // 생일
     @Column
     private int point; // 포인트
+    @Column
+    private Role role;
 
     protected Member() {
     }
@@ -53,6 +58,7 @@ public class Member {
         this.email = email;
         this.birthday = birthday;
         this.point = point;
+        this.role = Role.ROLE_ADMIN;
     }
 
     /**

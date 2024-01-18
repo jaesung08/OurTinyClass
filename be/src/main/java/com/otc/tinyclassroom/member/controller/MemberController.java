@@ -5,6 +5,7 @@ import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,9 @@ public class MemberController {
      */
     @PostMapping("/join")
     public BaseResponse<Void> join(@RequestBody MemberJoinRequestDto request) {
+
         memberService.join(request);
+
         return BaseResponse.success(HttpStatus.OK.value(), "회원가입에 성공하였습니다!", null);
     }
 
