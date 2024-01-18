@@ -53,7 +53,7 @@ public class Board {
     @Column(name = "hit_count")
     private int hitCount;
 
-    protected Board() {
+    public Board() {
 
     }
 
