@@ -14,7 +14,8 @@ public enum MemberErrorCode {
     INVALID_FIELD_VALUE(HttpStatus.BAD_REQUEST, "빈 필드값이 있습니다."),
     DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "중복된 아이디입니다."),
     INVALID_EMAIL(HttpStatus.BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
-    PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "비밀번호는 8~20자리이며 특수문자, 영어 대소문자, 숫자를 포함해야 합니다.");
+    PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "비밀번호는 8~20자리이며 특수문자, 영어 대소문자, 숫자를 포함해야 합니다."),
+    INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "아이디는 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

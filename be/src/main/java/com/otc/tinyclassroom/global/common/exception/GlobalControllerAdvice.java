@@ -21,7 +21,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<?> applicationHandler(MemberException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getErrorCode().name()));
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
 }
