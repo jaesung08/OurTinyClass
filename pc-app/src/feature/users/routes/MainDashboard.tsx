@@ -1,14 +1,6 @@
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  CardFooter,
-  CardHeader,
-  Progress,
-} from "@nextui-org/react";
+import { Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
 import * as dayjs from "dayjs";
 import { useState } from "react";
 function MainDashBoard() {
