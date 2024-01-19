@@ -76,7 +76,6 @@ public class AttendanceService {
     }
 
     // 회원 하교를 처리하는 메서드
-// 하교를 처리하는 메서드
     public void checkOut(String memberId, LocalDateTime now) {
         // 리포지토리에서 회원 정보를 가져옴
         Member member = memberRepository.findByMemberId(memberId)
@@ -99,6 +98,7 @@ public class AttendanceService {
         ).orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NOT_CHECKED_IN));
 
         // 체크아웃 시간을 설정하고 업데이트된 출결 기록을 저장
+        // ToDo: of메서드 구현해서 다시 하기 ( dirty checking 구현 )
         attendance.setCheckOut(Timestamp.valueOf(now));
         attendanceRepository.save(attendance);
     }
