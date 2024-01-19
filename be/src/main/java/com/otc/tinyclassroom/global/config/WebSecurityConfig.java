@@ -2,6 +2,8 @@ package com.otc.tinyclassroom.global.config;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
+import com.otc.tinyclassroom.global.security.jwt.JwtLogoutFilter;
+import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -56,19 +58,21 @@ public class WebSecurityConfig {
                 .httpBasic((httpBasic) -> httpBasic
                         .disable()
                 )
+
                 // jwt 인증 필터 추가.
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 // jwt 인가 필터 추가.
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
+//                .addFilter(new JwtLogoutFilter())
                 .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
+                                .requestMatchers(("/api/members/join")).permitAll()
+                                .requestMatchers("/api/members/login").permitAll()
+                                .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
 //                        .requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
 //                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .anyRequest().permitAll()
+                                .anyRequest().permitAll()
                 );
 
         return http.build();
     }
-
-
-
 }

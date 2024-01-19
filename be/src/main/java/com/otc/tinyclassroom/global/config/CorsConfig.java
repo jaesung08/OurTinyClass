@@ -14,13 +14,23 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+
+        /*
+         * TODO : addAllowedOriginPattern 을 client 주소로만 접근 가능하게 변경
+         * */
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
 
-        source.registerCorsConfiguration("/api/**", config);
-        source.registerCorsConfiguration("/login_proc", config);
+//        CorsConfiguration apiConfig = new CorsConfiguration();
+//        apiConfig.setAllowCredentials(true);
+//        config.addAllowedOriginPattern("*");
+//        apiConfig.addAllowedHeader("*");
+//        apiConfig.addAllowedMethod("*");
+//        source.registerCorsConfiguration("/api/**", apiConfig);
+
         return new CorsFilter(source);
     }
-
 }
+

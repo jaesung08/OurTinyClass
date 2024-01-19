@@ -21,13 +21,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private MemberRepository memberRepository;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
+                                  MemberRepository memberRepository) {
         super(authenticationManager);
         this.memberRepository = memberRepository;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain)
             throws IOException, ServletException {
 
         String header = request.getHeader(JwtProperties.HEADER_STRING);
@@ -45,7 +48,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (username != null) {
 
             /*
-            * TODO : isPresent문 추가하여 refactor
+            * TODO : isPresent 문 추가하여 refactor
             * */
             Member member = memberRepository.findByMemberId(username).get();
 

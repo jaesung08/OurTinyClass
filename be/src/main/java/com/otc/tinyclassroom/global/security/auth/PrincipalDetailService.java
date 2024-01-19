@@ -23,11 +23,6 @@ public class PrincipalDetailService implements UserDetailsService {
 
         log.info("loginId : {}", username);
 
-//        Member member = (Member) memberRepository.findByMemberId(username);
-//        if (member != null){
-//            return new PrincipalDetails(member);
-//        }
-
         Optional<Member> member = memberRepository.findByMemberId(username);
 
         if (member.isPresent()) {
