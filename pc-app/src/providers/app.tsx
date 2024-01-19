@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { HashRouter as Router } from "react-router-dom";
-
+import { NextUIProvider } from "@nextui-org/react";
 import { Spinner } from "@/components/Elements";
 
 type AppProviderProps = {
@@ -17,7 +17,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         </div>
       }
     >
-      <Router>{children}</Router>
+      <NextUIProvider>
+        <Router>{children}</Router>
+      </NextUIProvider>
     </React.Suspense>
   );
 };
