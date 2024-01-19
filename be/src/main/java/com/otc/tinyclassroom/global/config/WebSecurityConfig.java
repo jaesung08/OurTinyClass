@@ -1,11 +1,10 @@
 package com.otc.tinyclassroom.global.config;
 
+import com.otc.tinyclassroom.global.security.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
-import com.otc.tinyclassroom.global.security.jwt.JwtLogoutFilter;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +27,8 @@ public class WebSecurityConfig {
     private final CorsConfig corsConfig;
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -60,7 +61,7 @@ public class WebSecurityConfig {
                 )
 
                 // jwt 인증 필터 추가.
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository))
                 // jwt 인가 필터 추가.
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
 //                .addFilter(new JwtLogoutFilter())

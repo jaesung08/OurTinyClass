@@ -1,18 +1,16 @@
 package com.otc.tinyclassroom.global.security.jwt;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.refresh.RefreshToken;
+import com.otc.tinyclassroom.global.security.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.dto.request.MemberLoginRequestDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,9 +25,11 @@ import java.util.Date;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RefreshTokenRepository refreshTokenRepository) {
         this.authenticationManager = authenticationManager;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.setFilterProcessesUrl("/api/members/login");
     }
 
@@ -68,14 +68,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 
-        String jwtToken = com.auth0.jwt.JWT.create()
+        String accessToken = com.auth0.jwt.JWT.create()
                 .withSubject(principalDetails.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("id", principalDetails.getMember().getId())
-                .withClaim("username", principalDetails.getMember().getMemberId())
+                .withClaim("memberId", principalDetails.getMember().getMemberId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+        String refreshToken = com.auth0.jwt.JWT.create()
+            .withClaim("memberId", principalDetails.getMember().getMemberId())
+            .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        RefreshToken refreshToken1 = new RefreshToken(principalDetails.getMember().getMemberId(), refreshToken);
+        refreshTokenRepository.save(refreshToken1);
+
+
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+accessToken);
 
         BaseResponse<String> responseDto = new BaseResponse<>(200, "로그인 성공", principalDetails.getMember().getMemberId());
 
