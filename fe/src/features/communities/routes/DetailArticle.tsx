@@ -1,17 +1,17 @@
 import SideBar from "@/components/Layout/SideBar";
 import FreeBoardHeader from "../components/FreeBoardHeader";
-import FreeBoardBody from "../components/FreeBoardBody";
+import DetailArticleBody from "../components/DetailArticleBody";
 
-function FreeBoardPage() {
+function DetailArticle() {
   return (
     <section className="w-screen min-h-screen flex">
       <SideBar />
-      <article className="w-11/12 min-h-screen flex">
+      <article className="w-11/12 min-h-screen flex overflow-x-hidden">
         <FreeBoardHeader />
-        <FreeBoardBody />
+        <DetailArticleBody />
       </article>
     </section>
   );
 }
 
-export default FreeBoardPage;
+export default DetailArticle;

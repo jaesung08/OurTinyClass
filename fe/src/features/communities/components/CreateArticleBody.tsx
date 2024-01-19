@@ -45,7 +45,7 @@ function CreateArticleBody() {
     },
   };
   return (
-    <section className="w-10/12 h-full bg-red-400 border-l-3">
+    <section className="w-10/12 h-full border-l-3">
       <div
         className="w-full bg-lime-500 flex items-center justify-center"
         style={{ height: "10%" }}

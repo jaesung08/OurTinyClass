@@ -59,14 +59,14 @@ function FreeBoardHeader() {
   }, [articleState]);
 
   return (
-    <section className="w-2/12 bg-red-500 h-full">
-      <div
-        className="w-full bg-lime-500 flex justify-center items-center"
-        style={{ height: "10%" }}
-      >
+    <section className="w-2/12 h-full bg-lime-100">
+      <div className="w-full bg-lime-500 flex justify-center items-center h-20">
         <p className="text-2xl text-white font-bold">TeenEduConnect</p>
       </div>
-      <div className="w-full bg-lime-100" style={{ height: "90%" }}>
+      <div
+        className="w-full"
+        style={{ minHeight: "calc(100vh - 5rem)", height: "auto" }}
+      >
         <p className="font-bold text-2xl pl-5 py-4">Your Profile</p>
         <Accordion selectionMode="multiple">
           <AccordionItem
