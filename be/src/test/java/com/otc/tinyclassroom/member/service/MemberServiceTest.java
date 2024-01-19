@@ -31,7 +31,7 @@ class MemberServiceTest {
     void givenInfo_whenRequestJoin_thenReturnVoid() {
         // Given
         // TODO: fixture로 변경
-        Member member = Member.of("test123", "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
+        Member member = Member.of("test123", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
         MemberJoinRequestDto request = MemberJoinRequestDto.from(member);
         given(memberRepository.findByMemberId("test123")).willReturn(Optional.empty());
         given(memberRepository.save(member)).willReturn(member);
@@ -63,7 +63,7 @@ class MemberServiceTest {
     @Test
     void givenDuplicatedMemberId_whenRequestJoin_thenThrowDuplicatedException() {
         // Given
-        Member exist = Member.of("test1", "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
+        Member exist = Member.of("test1", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
         MemberJoinRequestDto request = MemberJoinRequestDto.from(exist);
         given(memberRepository.findByMemberId(request.memberId())).willReturn(Optional.of(exist));
 

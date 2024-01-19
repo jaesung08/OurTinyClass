@@ -27,7 +27,6 @@ public class MemberService {
      */
     @Transactional
     public void join(MemberJoinRequestDto dto) {
-        System.out.println(dto);
         // 빈 필드 확인
         if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);
@@ -50,7 +49,7 @@ public class MemberService {
         if (!isValidEmail(dto.email())) {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
-        Member member = Member.of(dto.memberId(), dto.password(), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+        Member member = Member.of(dto.memberId(), null, dto.password(), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
         memberRepository.save(member);
     }
 
