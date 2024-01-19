@@ -1,30 +1,26 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/idSQHuphTh3
- */
-
 import { Link } from "@nextui-org/react";
 import LoginForm from "../components/LoginForm";
 import { login } from "../api/login";
 import { useMutation } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 
 export default function Login() {
-  const mutation = useMutation(
-    (loginData: { id: string; password: string }) =>
-      login(loginData.id, loginData.password),
-    {
-      onSuccess: (data) => {
-        // 로그인 성공 처리
-        console.log("로그인 성공:", data);
-        // 여기에 로그인 성공 후의 로직을 추가할 수 있습니다.
-      },
-      onError: (error) => {
-        // 로그인 실패 처리
-        console.error("로그인 실패:", error);
-        console.error("로그인에 실패했습니다.");
-      },
-    }
-  );
+  const mutation = useMutation({
+    mutationFn: (loginData: { id: string; password: string }) => {
+      return login(loginData.id, loginData.password);
+    },
+    onSuccess: (res) => {
+      // 로그인 성공 처리
+      console.log("로그인 성공:", res);
+      // 여기에 로그인 성공 후의 로직을 추가할 수 있습니다.
+      Swal.fire(res.message);
+    },
+    onError: (error) => {
+      // 로그인 실패 처리
+      console.error("로그인 실패:", error);
+      Swal.fire("로그인에 실패하였습니다");
+    },
+  });
 
   const onSubmit = (id: string, password: string) => {
     mutation.mutate({ id, password });
@@ -60,7 +56,7 @@ export default function Login() {
             <div className="mt-6 grid grid-cols-1 gap-3">
               <Link
                 className="w-full text-center bg-green-500 hover:bg-green-700 text-white py-2 rounded"
-                href="#"
+                href="#/auth/join"
               >
                 Create new account
               </Link>

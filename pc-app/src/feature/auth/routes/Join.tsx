@@ -5,42 +5,42 @@
 
 import { Link } from "@nextui-org/react";
 import JoinForm from "../components/JoinForm";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { join } from "../api/join";
 import { Image } from "@nextui-org/react";
 import DeskImage from "@/assets/img/DeskImage.png";
+import Swal from "sweetalert2";
+import { AxiosResponse } from "axios";
 
 export default function Join() {
-  const mutation = useMutation(
-    (loginData: {
+  const mutation = useMutation({
+    mutationFn: (loginData: {
       memberId: string;
       password: string;
       name: string;
       email: string;
       birthday: string;
-    }) =>
-      join(
+    }) => {
+      return join(
         loginData.memberId,
         loginData.password,
         loginData.name,
         loginData.email,
         loginData.birthday
-      ),
-    {
-      onSuccess: (data) => {
-        // 회원가입 성공 처리
-        console.log("회원가입 성공:", data);
-        // 여기에 회원가입 성공 후의 로직을 추가할 수 있습니다.
-        alert("회원가입 성공");
-      },
-      onError: (error) => {
-        // 회원가입 실패 처리
-        console.error("회원가입 실패:", error);
-        console.error("회원가입에 실패했습니다.");
-        alert("회원가입 실패");
-      },
-    }
-  );
+      );
+    },
+
+    onSuccess: (res) => {
+      // 회원가입 성공 처리
+      Swal.fire(res.message);
+    },
+    onError: (error: AxiosResponse) => {
+      // 회원가입 실패 처리
+      console.error("회원가입 실패:", error);
+      console.error("회원가입에 실패했습니다.");
+      alert("회원가입 실패");
+    },
+  });
 
   const onSubmit = (
     memberId: string,
@@ -73,8 +73,8 @@ export default function Join() {
       <div className="flex w-1/2 items-center justify-center p-12 bg-white">
         <div className="w-full max-w-md">
           <JoinForm onSubmit={onSubmit} />
-          <Link className="text-m text-blue-500 text-left" href="#">
-            비밀번호를 잊으셨다면?
+          <Link className="text-m text-blue-500 text-left" href="#/auth/login">
+            이미 계정이 있으시다면?
           </Link>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { axios } from "@/lib/axios";
+import { BaseResponse } from "@/types/BaseResponse";
 
 export const join = (
   memberId: string,
@@ -6,13 +7,12 @@ export const join = (
   name: string,
   email: string,
   birthday: string
-) => {
-  const res = axios.post("/members/join", {
+): Promise<BaseResponse> => {
+  return axios.post("/members/join", {
     memberId,
     password,
     name,
     email,
     birthday,
   });
-  return res;
 };

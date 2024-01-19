@@ -3,7 +3,7 @@ import * as React from "react";
 import { HashRouter as Router } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { Spinner } from "@/components/Elements";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 type AppProviderProps = {

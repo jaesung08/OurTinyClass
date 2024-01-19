@@ -1,4 +1,4 @@
-import { baseResponse } from "@/types/apiResponse";
+import { BaseResponse } from "@/types/BaseResponse";
 
 export interface JoinFormProps {
   onSubmit: (
@@ -10,7 +10,7 @@ export interface JoinFormProps {
   ) => void;
 }
 
-export interface JoinResponse extends baseResponse {
+export interface JoinResponse extends BaseResponse {
   data:
     | {
         memberId: string;
@@ -24,7 +24,7 @@ export interface LoginFormProps {
   onSubmit: (id: string, password: string) => void;
 }
 
-export interface LoginResponse extends baseResponse {
+export interface LoginResponse extends BaseResponse {
   data: {
     accessToken: string;
     nickname: string;
