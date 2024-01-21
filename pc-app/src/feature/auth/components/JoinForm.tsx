@@ -72,7 +72,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           value={inputId}
           onChange={onChangeInputId}
           data-testid="JoinFormInputId"
-          variant="bordered"
           size="sm"
         />
 
@@ -85,7 +84,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           value={inputPassword}
           onChange={onChangeInputPassword}
           data-testid="JoinFormInputPassword"
-          variant="bordered"
           size="sm"
         />
 
@@ -98,8 +96,8 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           value={inputPasswordConfirm}
           onChange={onChangeInputPasswordConfirm}
           data-testid="JoinFormInputPasswordConfirm"
-          variant="bordered"
           size="sm"
+          className="mt-1 block w-full"
         />
 
         <Input
@@ -110,7 +108,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           value={inputName}
           onChange={onChangeInputName}
           data-testid="JoinFormInputName"
-          variant="bordered"
           size="sm"
         />
 
@@ -123,7 +120,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           value={inputEmail}
           onChange={onChangeInputEmail}
           data-testid="JoinFormInputEmail"
-          variant="bordered"
           size="sm"
         />
         {/* 날짜 선택기로 바꾸기 */}
@@ -131,7 +127,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           id="birthday"
           placeholder="Enter your birthday"
           type="date"
-          variant="bordered"
           size="sm"
           className="p-0"
           label="생년월일"
@@ -141,7 +136,11 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
           data-testid="JoinFormInputBirthday"
         />
       </div>
-      <Button type="submit" className="w-full bg-black text-white">
+
+      <Button
+        type="submit"
+        className="w-full bg-green-500 hover:bg-green-700 text-white"
+      >
         확인
       </Button>
     </form>

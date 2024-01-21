@@ -1,4 +1,4 @@
-import { Button, Link } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import LoginForm from "../components/LoginForm";
 import { login } from "../api/login";
 import { useMutation } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { userState } from "@/atoms/user";
 import Cookies from "js-cookie";
+import { useCallback } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function Login() {
         setUserState(res.data);
 
         Swal.fire(res.message, "success").then(() => {
-          navigate("#/");
+          navigate("/");
         });
       } else {
         Swal.fire(
@@ -43,6 +44,10 @@ export default function Login() {
     Cookies.set("token", dummyCookie); // TODO 로그인 쿠키 테스트를 위한 임시 Cookie. 로그인 연동시 삭제해야함.
     mutation.mutate({ id, password });
   };
+
+  const goJoin = useCallback(() => {
+    navigate("/auth/join");
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-yellow-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -74,6 +79,7 @@ export default function Login() {
             <Button
               className="w-full bg-green-500 hover:bg-green-700 text-white mt-7"
               type="submit"
+              onClick={goJoin}
             >
               회원가입
             </Button>

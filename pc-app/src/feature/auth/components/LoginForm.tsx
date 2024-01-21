@@ -32,13 +32,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
     [inputId, inputPassword, onSubmit]
   );
   return (
-    <form
-      action="#"
-      className="space-y-6"
-      method="POST"
-      data-testid="LoginForm"
-      onSubmit={onSubmitForm}
-    >
+    <form className="space-y-6" data-testid="LoginForm" onSubmit={onSubmitForm}>
       <div>
         <label htmlFor="input-id">아이디</label>
         <Input

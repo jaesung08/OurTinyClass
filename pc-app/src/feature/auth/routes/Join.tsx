@@ -3,16 +3,18 @@
  * @see https://v0.dev/t/9nKwojc9Maz
  */
 
-import { Link } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import JoinForm from "../components/JoinForm";
 import { useMutation } from "@tanstack/react-query";
 import { join } from "../api/join";
-import { Image } from "@nextui-org/react";
-import DeskImage from "@/assets/img/DeskImage.png";
 import Swal from "sweetalert2";
 import { AxiosResponse } from "axios";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 export default function Join() {
+  const navigate = useNavigate();
+
   const mutation = useMutation({
     mutationFn: (loginData: {
       memberId: string;
@@ -42,42 +44,58 @@ export default function Join() {
     },
   });
 
-  const onSubmit = (
-    memberId: string,
-    password: string,
-    name: string,
-    email: string,
-    birthday: string
-  ) => {
-    mutation.mutate({ memberId, password, name, email, birthday });
-  };
+  const onSubmit = useCallback(
+    (
+      memberId: string,
+      password: string,
+      name: string,
+      email: string,
+      birthday: string
+    ) => {
+      mutation.mutate({ memberId, password, name, email, birthday });
+    },
+    [mutation]
+  );
+
+  const goLogin = useCallback(() => {
+    navigate("/auth/login");
+  }, [navigate]);
 
   return (
-    <div key="1" className="flex h-screen bg-[#f4f7fc]">
-      <div className="flex w-1/2 items-center justify-center bg-[#a7b5f1] p-12 text-white">
-        <div className="max-w-sm">
-          <Image
-            width={400}
-            alt="Workspace with laptop"
-            src={DeskImage}
-            className="mb-10"
-          />
-          <h2 className="text-3xl font-semibold">
-            나작사에서 일상을 지켜나가세요.
-          </h2>
-          <p className="mt-4 text-sm">
-            가상 교실, 학습 자료에 접근하고 선생님들과 채팅하세요.
-          </p>
-        </div>
+    <div className="min-h-screen bg-yellow-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full">
+        {/* <img
+          alt="School Logo"
+          className="mx-auto h-12 w-auto"
+          src="/placeholder.svg"
+        /> */}
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          나만의 작은 교실에 오신 것을 환영합니다.
+        </h2>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          계정에 접근하기 위해 로그인을 해주세요.
+        </p>
       </div>
-      <div className="flex w-1/2 items-center justify-center p-12 bg-white">
-        <div className="w-full max-w-md">
-          <h2 className="mb-8 text-3xl font-bold">회원가입</h2>
-
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <JoinForm onSubmit={onSubmit} />
-          <Link className="text-m text-blue-500 text-left" href="#/auth/login">
-            이미 계정이 있으시다면?
-          </Link>
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">또는</span>
+              </div>
+            </div>
+            <Button
+              className="w-full bg-green-500 hover:bg-green-700 text-white mt-7"
+              type="submit"
+              onClick={goLogin}
+            >
+              로그인
+            </Button>
+          </div>
         </div>
       </div>
     </div>
