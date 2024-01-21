@@ -1,8 +1,9 @@
 package com.otc.tinyclassroom.global.config;
 
-import com.otc.tinyclassroom.global.security.refresh.RefreshTokenRepository;
+import com.otc.tinyclassroom.global.common.exception.CustomAuthenticationFailureHandler;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
+import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,9 +30,9 @@ public class WebSecurityConfig {
 
     private final CorsConfig corsConfig;
 
-    private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
 
+    private final MemberRepository memberRepository;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -39,6 +43,11 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
+//    @Bean
+//    public AuthenticationFailureHandler failureHandler() {
+//        return new CustomAuthenticationFailureHandler();
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,11 +69,11 @@ public class WebSecurityConfig {
                         .disable()
                 )
 
+                // 로그인 이전에 access token을 처리할 jwt 인가 필터 추가.
+                .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)
+
                 // jwt 인증 필터 추가.
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository))
-                // jwt 인가 필터 추가.
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
-//                .addFilter(new JwtLogoutFilter())
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider))
                 .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
                                 .requestMatchers(("/api/members/join")).permitAll()
                                 .requestMatchers("/api/members/login").permitAll()

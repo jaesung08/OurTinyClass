@@ -38,21 +38,26 @@ public class PrincipalDetails implements UserDetails {
         return member.getMemberId();
     }
 
+    // 계정이 만료되지 않았는지
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    // 계정이 잠기지 않았는지
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    // 비밀번호가 만료되지 않았는지
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+
+    // 계정이 활성화 상태인지
     @Override
     public boolean isEnabled() {
         return true;

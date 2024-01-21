@@ -1,21 +1,30 @@
 package com.otc.tinyclassroom.global.security.jwt;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.otc.tinyclassroom.global.common.exception.CustomAuthenticationFailureHandler;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.global.security.refresh.RefreshToken;
-import com.otc.tinyclassroom.global.security.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.dto.request.MemberLoginRequestDto;
+import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Date;
@@ -25,11 +34,11 @@ import java.util.Date;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtProvider jwtProvider;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RefreshTokenRepository refreshTokenRepository) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.jwtProvider = jwtProvider;
         this.setFilterProcessesUrl("/api/members/login");
     }
 
@@ -45,19 +54,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             loginRequestDto = objectMapper.readValue(request.getInputStream(), MemberLoginRequestDto.class);
             log.info("try loginDto : {}", loginRequestDto);
-        } catch (Exception e) {
-            log.info("Exception : {}", e.toString());
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(loginRequestDto.getLoginId(), loginRequestDto.getPassword());
+
+            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            log.info("Authentication : {}", principalDetails.getMember().getMemberId());
+
+            return authentication;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginRequestDto.getName(), loginRequestDto.getPassword());
-
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-        log.info("Authentication : {}", principalDetails.getMember().getMemberId());
-
-        return authentication;
+        catch (Exception e) {
+            log.info("Exception : {}", e.toString());
+            throw new RuntimeException("존재하지 않는 아이디입니다.");
+        }
     }
 
     // jwt 토큰 생성 및 response로 반환
@@ -68,32 +80,41 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 
-        String accessToken = com.auth0.jwt.JWT.create()
-                .withSubject(principalDetails.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withClaim("id", principalDetails.getMember().getId())
-                .withClaim("memberId", principalDetails.getMember().getMemberId())
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        Member loginMember = principalDetails.getMember();
+        String accessToken = jwtProvider.createAccessToken(loginMember.getMemberId(), loginMember.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(loginMember.getMemberId(), loginMember.getRole());
 
-        String refreshToken = com.auth0.jwt.JWT.create()
-            .withClaim("memberId", principalDetails.getMember().getMemberId())
-            .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-        RefreshToken refreshToken1 = new RefreshToken(principalDetails.getMember().getMemberId(), refreshToken);
-        refreshTokenRepository.save(refreshToken1);
+        jwtProvider.setHeaderAccessToken(response, accessToken);
+        jwtProvider.setHeaderRefreshToken(response, refreshToken);
+
+        /*
+
+        * refresh 저장 로직
+
+        * */
 
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+accessToken);
+//        String jwtToken = com.auth0.jwt.JWT.create()
+//                .withSubject(principalDetails.getUsername())
+//                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
+//                .withClaim("id", principalDetails.getMember().getId())
+//                .withClaim("memberId", principalDetails.getMember().getMemberId())
+//                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+//
+//        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
+//        response.addHeader("refresh", jwtToken);
 
-        BaseResponse<String> responseDto = new BaseResponse<>(200, "로그인 성공", principalDetails.getMember().getMemberId());
+        BaseResponse<Void> responseDto = new BaseResponse<>(200, "로그인 성공", null);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
     }
 
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
-    }
+//    @Override
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+//
+//        failureHandler.onAuthenticationFailure(request, response, failed);
+//    }
 }
 

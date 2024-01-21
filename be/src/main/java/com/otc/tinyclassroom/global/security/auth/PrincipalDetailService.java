@@ -1,6 +1,8 @@
 package com.otc.tinyclassroom.global.security.auth;
 
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.exception.MemberErrorCode;
+import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +25,10 @@ public class PrincipalDetailService implements UserDetailsService {
 
         log.info("loginId : {}", username);
 
-        Optional<Member> member = memberRepository.findByMemberId(username);
+        Member member = memberRepository.findByMemberId(username)
+                .orElseThrow(() ->
+                    new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
 
-        if (member.isPresent()) {
-            return new PrincipalDetails(member.get());
-        }
-
-        return null;
+        return new PrincipalDetails(member);
     }
 }
