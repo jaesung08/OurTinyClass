@@ -32,15 +32,20 @@ export default function Join() {
       );
     },
 
-    onSuccess: (res) => {
+    onSuccess: () => {
       // 회원가입 성공 처리
-      Swal.fire(res.message);
+      Swal.fire("성공!", "회원가입에 성공하였습니다.", "success").then(() => {
+        navigate("/auth/login");
+      });
     },
     onError: (error: AxiosResponse) => {
       // 회원가입 실패 처리
-      console.error("회원가입 실패:", error);
-      console.error("회원가입에 실패했습니다.");
-      alert("회원가입 실패");
+
+      Swal.fire(
+        "에러 발생",
+        error.data?.message ?? "회원가입에 실패하였습니다.",
+        "error"
+      );
     },
   });
 
@@ -73,7 +78,7 @@ export default function Join() {
           나만의 작은 교실에 오신 것을 환영합니다.
         </h2>
         <p className="mt-4 text-center text-sm text-gray-600">
-          계정에 접근하기 위해 로그인을 해주세요.
+          서비스를 이용하기 위해 회원가입을 진행하여주세요.
         </p>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
