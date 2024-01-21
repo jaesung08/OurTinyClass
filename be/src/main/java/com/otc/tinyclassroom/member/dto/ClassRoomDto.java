@@ -18,6 +18,9 @@ public record ClassRoomDto(Long id, int year, int grade, int number) implements 
      * class room 엔티티로 부터 변환하는 메소드.
      */
     public static ClassRoomDto from(ClassRoom classRoom) {
+        if (classRoom == null) {
+            return null;
+        }
         return new ClassRoomDto(
             classRoom.getId(),
             classRoom.getYear(),

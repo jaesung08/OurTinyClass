@@ -2,8 +2,6 @@ package com.otc.tinyclassroom.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
@@ -25,14 +23,11 @@ import lombok.ToString;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // db에 기록되는 번호 (auto increment)
+    private String memberId; // 유저 id
 
     @ManyToOne(optional = true)
     private ClassRoom classRoom;
 
-    @Column(nullable = false, unique = true)
-    private String memberId; // 유저 id
     @Column(nullable = false)
     private String password; // 비밀번호
     @Column(nullable = false)

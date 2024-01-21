@@ -23,10 +23,14 @@ public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, Stri
      * article Entity로부터 ArticleDto로 변환하는 메소드.
      */
     public static ArticleDto from(Article entity) {
+        ClassRoomDto classRoom = null;
+        if (entity.getClassRoom() != null) {
+            classRoom = ClassRoomDto.from(entity.getClassRoom());
+        }
         return new ArticleDto(
             entity.getId(),
             MemberDto.from(entity.getMember()),
-            ClassRoomDto.from(entity.getClassRoom()),
+            classRoom,
             entity.getTitle(),
             entity.getContent(),
             entity.getArticleType(),

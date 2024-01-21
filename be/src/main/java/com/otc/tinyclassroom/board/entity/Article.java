@@ -6,6 +6,8 @@ import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,18 +33,19 @@ public class Article extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
     private Member member;
     // 몇 반 게시판에 들어가는 지 여부
     // 자유 게시판인 경우 null 값
     @ManyToOne(optional = true)
     private ClassRoom classRoom;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String content;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ArticleType articleType;
 
     @OrderBy("createdAt DESC")
