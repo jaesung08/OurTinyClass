@@ -1,4 +1,4 @@
-import { Link } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 import LoginForm from "../components/LoginForm";
 import { login } from "../api/login";
 import { useMutation } from "@tanstack/react-query";
@@ -46,17 +46,17 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-yellow-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="sm:mx-auto sm:w-full">
         {/* <img
           alt="School Logo"
           className="mx-auto h-12 w-auto"
           src="/placeholder.svg"
         /> */}
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Welcome to our School Portal
+          나만의 작은 교실에 오신 것을 환영합니다.
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Please sign in to access your account
+        <p className="mt-4 text-center text-sm text-gray-600">
+          계정에 접근하기 위해 로그인을 해주세요.
         </p>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -68,17 +68,15 @@ export default function Login() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or</span>
+                <span className="px-2 bg-white text-gray-500">또는</span>
               </div>
             </div>
-            <div className="mt-6 grid grid-cols-1 gap-3">
-              <Link
-                className="w-full text-center bg-green-500 hover:bg-green-700 text-white py-2 rounded"
-                href="#/auth/join"
-              >
-                Create new account
-              </Link>
-            </div>
+            <Button
+              className="w-full bg-green-500 hover:bg-green-700 text-white mt-7"
+              type="submit"
+            >
+              회원가입
+            </Button>
           </div>
         </div>
       </div>

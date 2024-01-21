@@ -40,26 +40,28 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
       onSubmit={onSubmitForm}
     >
       <div>
-        <label htmlFor="input-id">id</label>
+        <label htmlFor="input-id">아이디</label>
         <Input
           data-testid="LoginFormInputId"
           autoComplete="input-id"
           className="mt-1 block w-full"
           id="input-id"
           name="input-id"
+          placeholder="아이디를 입력해주세요."
           required
           value={inputId}
           onChange={onChangeInputId}
         />
       </div>
       <div>
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">비밀번호</label>
         <Input
           value={inputPassword}
           onChange={onChangeInputPassword}
           data-testid="LoginFormInputPassword"
           autoComplete="current-password"
           className="mt-1 block w-full"
+          placeholder="비밀번호를 입력해주세요."
           id="password"
           name="password"
           required
@@ -72,7 +74,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
             className="font-medium text-green-600 hover:text-green-500"
             href="#"
           >
-            Forgot your password?
+            비밀번호를 잊으셨나요?
           </Link>
         </div>
       </div>
@@ -81,7 +83,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
           className="w-full bg-green-500 hover:bg-green-700 text-white"
           type="submit"
         >
-          Sign in
+          로그인
         </Button>
       </div>
     </form>

@@ -72,6 +72,8 @@ export default function Join() {
       </div>
       <div className="flex w-1/2 items-center justify-center p-12 bg-white">
         <div className="w-full max-w-md">
+          <h2 className="mb-8 text-3xl font-bold">회원가입</h2>
+
           <JoinForm onSubmit={onSubmit} />
           <Link className="text-m text-blue-500 text-left" href="#/auth/login">
             이미 계정이 있으시다면?

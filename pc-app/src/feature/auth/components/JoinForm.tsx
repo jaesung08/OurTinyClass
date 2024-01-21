@@ -63,7 +63,6 @@ export default function JoinForm({ onSubmit }: JoinFormProps) {
   );
   return (
     <form className="mb-6" onSubmit={onSubmitForm} data-testid="JoinForm">
-      <h2 className="mb-8 text-3xl font-bold">회원가입</h2>
       <div className="mb-8 flex flex-col items-center justify-center gap-4">
         <Input
           id="id"
