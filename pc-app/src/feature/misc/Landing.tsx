@@ -2,6 +2,7 @@ import { Button } from "@nextui-org/react";
 import Cookies from "js-cookie";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../auth/api/logout";
 
 function Landing() {
   const isLogined = Cookies.get("token") ? true : false;
@@ -9,6 +10,7 @@ function Landing() {
   const goLogin = useCallback(() => navigate("/auth/login"), [navigate]);
 
   const onClickLogoutBtn = useCallback(() => {
+    logout();
     Cookies.remove("token");
     localStorage.clear();
     goLogin();

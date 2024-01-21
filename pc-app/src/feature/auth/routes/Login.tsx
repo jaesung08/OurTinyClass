@@ -12,7 +12,6 @@ import { useCallback } from "react";
 export default function Login() {
   const navigate = useNavigate();
   const setUserState = useSetRecoilState(userState);
-  const dummyCookie = "dummy-cookie"; // TODO 로그인 쿠키 테스트를 위한 임시 Cookie. 로그인 연동시 삭제해야함.
   const mutation = useMutation({
     mutationFn: (loginData: { id: string; password: string }) => {
       return login(loginData.id, loginData.password);
@@ -22,8 +21,8 @@ export default function Login() {
       if (res.data) {
         // 정상 로그인
         setUserState(res.data);
-
-        Swal.fire(res.message, "success").then(() => {
+        Cookies.set("token", res.data.accessToken);
+        Swal.fire("성공!", "로그인에 성공하였습니다.", "success").then(() => {
           navigate("/");
         });
       } else {
@@ -33,15 +32,24 @@ export default function Login() {
         );
       }
     },
-    onError: (error) => {
+    onError: (error: {
+      response: {
+        data: {
+          message: string;
+        };
+      };
+    }) => {
       // 로그인 실패 처리
       console.error("로그인 실패:", error);
-      Swal.fire("error", "로그인에 실패하였습니다", "error");
+      Swal.fire(
+        "error",
+        error?.response?.data.message ?? "로그인에 실패하였습니다.",
+        "error"
+      );
     },
   });
 
   const onSubmit = (id: string, password: string) => {
-    Cookies.set("token", dummyCookie); // TODO 로그인 쿠키 테스트를 위한 임시 Cookie. 로그인 연동시 삭제해야함.
     mutation.mutate({ id, password });
   };
 
