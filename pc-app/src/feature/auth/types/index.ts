@@ -15,7 +15,6 @@ export interface JoinResponse extends BaseResponse {
     | {
         memberId: string;
         name: string;
-        email: string;
       }
     | undefined; // data 는 성공했을 때에만 있으며 실패했을 경우에는 undefined
 }

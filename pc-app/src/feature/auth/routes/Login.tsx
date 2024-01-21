@@ -3,26 +3,44 @@ import LoginForm from "../components/LoginForm";
 import { login } from "../api/login";
 import { useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { userState } from "@/atoms/user";
+import Cookies from "js-cookie";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const setUserState = useSetRecoilState(userState);
+  const dummyCookie = "dummy-cookie"; // TODO 로그인 쿠키 테스트를 위한 임시 Cookie. 로그인 연동시 삭제해야함.
   const mutation = useMutation({
     mutationFn: (loginData: { id: string; password: string }) => {
       return login(loginData.id, loginData.password);
     },
     onSuccess: (res) => {
       // 로그인 성공 처리
-      console.log("로그인 성공:", res);
-      // 여기에 로그인 성공 후의 로직을 추가할 수 있습니다.
-      Swal.fire(res.message);
+      if (res.data) {
+        // 정상 로그인
+        setUserState(res.data);
+
+        Swal.fire(res.message, "success").then(() => {
+          navigate("#/");
+        });
+      } else {
+        Swal.fire(
+          "정상적인 로그인에 실패하였습니다. 다시 시도해주세요.",
+          "error"
+        );
+      }
     },
     onError: (error) => {
       // 로그인 실패 처리
       console.error("로그인 실패:", error);
-      Swal.fire("로그인에 실패하였습니다");
+      Swal.fire("error", "로그인에 실패하였습니다", "error");
     },
   });
 
   const onSubmit = (id: string, password: string) => {
+    Cookies.set("token", dummyCookie); // TODO 로그인 쿠키 테스트를 위한 임시 Cookie. 로그인 연동시 삭제해야함.
     mutation.mutate({ id, password });
   };
 
