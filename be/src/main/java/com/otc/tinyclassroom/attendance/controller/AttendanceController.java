@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,4 +47,19 @@ public class AttendanceController {
         attendanceService.checkOut(memberId, now);
         return BaseResponse.success(HttpStatus.OK.value(), "하교에 성공하였습니다!", null);
     }
+
+    @GetMapping("/monthly-total/{memberId}")
+    public BaseResponse<String> getMonthlyTotalAttendanceTime(@PathVariable Long memberId) {
+        String result = attendanceService.getAttendanceTimeOnMonth(memberId);
+        return BaseResponse.success(HttpStatus.OK.value(), "이번달 출석 조회에 성공하였습니다.", result);
+    }
+
+
+    @GetMapping("/today_attendance/{memberId}")
+    public BaseResponse<String> getTodayAttendanceTime(@PathVariable Long memberId) {
+        LocalDateTime today = LocalDateTime.now();
+        String result = attendanceService.getAttendanceTimeOnDate(memberId, today);
+        return BaseResponse.success(HttpStatus.OK.value(), "오늘 출석 조회에 성공하였습니다.", result);
+    }
+
 }
