@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Login from "../views/Login";
+import Login from "../routes/Login";
 
 describe("<Login />", () => {
   const setup = () => {

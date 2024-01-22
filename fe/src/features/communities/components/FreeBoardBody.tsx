@@ -13,12 +13,18 @@ import {
   PaginationItemType,
   PaginationItemRenderProps,
 } from "@nextui-org/react";
-import { ChevronIcon } from "./ChevronIcon";
-import { useState } from "react";
+import { ChevronIcon } from "@/assets/ChevronIcon";
+import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
+import { axios } from "@/lib/axios";
+import { API_URL } from "@/config";
+import { freeBoard } from "../api/freeBoard";
+import dayjs from "dayjs";
 
-function ArticleBody() {
-  const itemLists = ["내용", "제목", "작성자"];
+// import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
+
+function FreeBoardBody() {
+  const categories = ["내용", "제목", "작성자"];
   const renderItem = ({
     ref,
     key,
@@ -69,7 +75,7 @@ function ArticleBody() {
         className={cn(
           className,
           isActive &&
-            "text-white bg-gradient-to-br from-indigo-500 to-pink-500 font-bold"
+            "text-white bg-gradient-to-br from-lime-400 to-lime-300 font-bold"
         )}
         onClick={() => setPage(value)}
       >
@@ -77,8 +83,51 @@ function ArticleBody() {
       </button>
     );
   };
+  const [renderBoard, setRenderBoard] = useState();
+  const [boardList, setBoardList] = useState<object[]>([]);
+
+  useEffect(() => {
+    const searchArticle = async () => {
+      try {
+        const articles = await freeBoard();
+        setBoardList(articles.data.content);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    searchArticle();
+  }, []);
+
+  useEffect(() => {
+    if (boardList) {
+      const boards = boardList.map((board, index) => {
+        const date = dayjs(board.createdAt);
+        return (
+          <TableRow key={index}>
+            <TableCell>{index + 1}</TableCell>
+            <TableCell
+              style={{
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                maxWidth: "25rem",
+              }}
+            >
+              {board.title}
+            </TableCell>
+            <TableCell>{board.name}</TableCell>
+            <TableCell>{date.format("YY-MM-DD")}</TableCell>
+            <TableCell>111</TableCell>
+            <TableCell>222</TableCell>
+          </TableRow>
+        );
+      });
+      setRenderBoard(boards);
+    }
+  }, [boardList]);
+
   return (
-    <section className="w-10/12 h-full bg-red-400 border-l-3">
+    <section className="w-10/12 h-full border-l-3">
       <div
         className="w-full bg-lime-500 flex items-center justify-center"
         style={{ height: "10%" }}
@@ -91,6 +140,7 @@ function ArticleBody() {
             className="absolute left-3 top-1/2 -mt-2.5 text-slate-400 pointer-events-none group-focus-within:text-blue-500"
             aria-hidden="true"
           >
+            {" "}
             <path
               fill-rule="evenodd"
               clip-rule="evenodd"
@@ -125,7 +175,7 @@ function ArticleBody() {
                   label="카테고리"
                   className="ml-5 w-2/12 shadow-xl rounded-xl"
                 >
-                  {itemLists.map((item: string, index: number) => (
+                  {categories.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>
@@ -146,6 +196,7 @@ function ArticleBody() {
                 </Button>
               </form>
             </div>
+            {/* {boardList ? boardList : null} */}
 
             <Table
               aria-label="Example static collection table"
@@ -160,94 +211,7 @@ function ArticleBody() {
                 <TableColumn>추천수</TableColumn>
               </TableHeader>
               <TableBody>
-                <TableRow key="1">
-                  <TableCell>Tony Reichert</TableCell>
-                  <TableCell>CEO</TableCell>
-                  <TableCell>Active</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="2">
-                  <TableCell>Zoey Lang</TableCell>
-                  <TableCell>Technical Lead</TableCell>
-                  <TableCell>Paused</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="3">
-                  <TableCell>Jane Fisher</TableCell>
-                  <TableCell>Senior Developer</TableCell>
-                  <TableCell>Active</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="4">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="5">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="6">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
+                {renderBoard ? renderBoard : "게시글이 없습니다."}
               </TableBody>
             </Table>
             <div className="flex items-center" style={{ height: "10%" }}>
@@ -269,4 +233,4 @@ function ArticleBody() {
   );
 }
 
-export default ArticleBody;
+export default FreeBoardBody;
