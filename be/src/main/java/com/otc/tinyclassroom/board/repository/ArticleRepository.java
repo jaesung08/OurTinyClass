@@ -33,6 +33,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
     Page<Article> findByClassRoomIsNullAndArticleType(ArticleType articleType, Pageable pageable);
 
     // 반 별 게시판
+
+    /**
+     * 대소문자 구분 없는 검색을 위한 QueryDSL 설정.
+     */
     @Override
     default void customize(QuerydslBindings bindings, QArticle root) {
         // 특정 property에 대한 검색 열기
