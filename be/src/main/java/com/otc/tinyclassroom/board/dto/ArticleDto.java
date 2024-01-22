@@ -11,12 +11,11 @@ import java.time.LocalDateTime;
  * 게시글 DTO. DTO for {@link com.otc.tinyclassroom.board.entity.Article}
  */
 public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,
-                         LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {
+                         LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy, int hit) implements Serializable {
 
     public static ArticleDto of(MemberDto member, ClassRoomDto classRoom, Long id, String title, String content, ArticleType articleType, LocalDateTime createdAt, String createdBy,
-        LocalDateTime modifiedAt,
-        String modifiedBy) {
-        return new ArticleDto(id, member, classRoom, title, content, articleType, createdAt, createdBy, modifiedAt, modifiedBy);
+        LocalDateTime modifiedAt, String modifiedBy, int hit) {
+        return new ArticleDto(id, member, classRoom, title, content, articleType, createdAt, createdBy, modifiedAt, modifiedBy, hit);
     }
 
     /**
@@ -37,7 +36,8 @@ public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, Stri
             entity.getCreatedAt(),
             entity.getCreatedBy(),
             entity.getModifiedAt(),
-            entity.getModifiedBy()
+            entity.getModifiedBy(),
+            entity.getHit()
         );
     }
 
