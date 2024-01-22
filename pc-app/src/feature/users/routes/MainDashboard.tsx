@@ -185,7 +185,7 @@ const planList: Plan[] = [
   },
   {
     id: 4,
-    date: "2022-01-22",
+    date: "2024-01-22",
     scheduleList: [
       {
         isMentoring: false,
@@ -317,23 +317,31 @@ function CalenderHeader({
 }
 
 interface CalenderProps {
+  todayDate: dayjs.Dayjs;
   planList: Plan[];
 }
 
-function Calender({ planList }: CalenderProps) {
+function Calender({ planList, todayDate }: CalenderProps) {
   return (
     <div className="flex w-full h-full">
       <ul className="flex flex-col">
         <li className=" border h-8 w-10"></li>
         {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className="border w-10 text-center  h-1/6">
+          <li key={i} className="border w-10 text-center h-1/6">
             {i + 1}
           </li>
         ))}
       </ul>
       <div className="flex w-full">
         {planList.map((plan) => (
-          <ul className="flex flex-col w-1/5 h-full" key={plan.id}>
+          <ul
+            className={`flex flex-col w-1/5 h-full ${
+              todayDate.diff(dayjs(plan.date), "D") == 0
+                ? "bg-green-50 font-bold"
+                : ""
+            }`}
+            key={plan.id}
+          >
             <li className="border w-full text-center h-8">
               {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
                 getCurrentDayName(dayjs(plan.date).day())?.shortKr
@@ -367,7 +375,7 @@ interface AttendanceCardProps {
 function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
   return (
     <div className="bg-green-400 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
-      <h2 className="text-lg ">출석체크 현황</h2>
+      <h2 className="text-lg font-bold">출석체크 현황</h2>
       <div className="flex items-center space-x-2 justify-between w-full ">
         <div className="flex flex-col gap">
           <div className="w-3 bg-blue-500 h-1 rounded" />
@@ -468,7 +476,7 @@ function CurrentLectureCard() {
   );
 }
 function MainDashBoard() {
-  const todayDate = dayjs();
+  const todayDate = dayjs().startOf("day");
   const userInfo = {
     name: "누네띠네",
   };
@@ -481,7 +489,6 @@ function MainDashBoard() {
       setPlanStartDate(planStartDate.add(7, "day")); // 일주일 더하기
     }
   };
-
   const attendance = {
     status: 0,
     checkIn: "2024-01-22",
@@ -515,7 +522,7 @@ function MainDashBoard() {
               planStartDate={planStartDate}
               onClickChangePlanDate={onClickChangePlanDate}
             />
-            <Calender planList={planList} />
+            <Calender planList={planList} todayDate={todayDate} />
           </div>
         </div>
       </div>
