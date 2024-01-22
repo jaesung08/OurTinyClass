@@ -9,5 +9,7 @@ import java.time.LocalDateTime;
  */
 public record AttendanceCheckDayDto(AttendanceCheckDayDto.AttendanceDayInfo attendanceOnDate) implements Serializable {
 
-    public record AttendanceDayInfo(LocalDate date, LocalDateTime checkIn, LocalDateTime checkOut, int status) {}
+    public record AttendanceDayInfo(LocalDate date, LocalDateTime checkIn, LocalDateTime checkOut, int status) {
+
+    }
 }

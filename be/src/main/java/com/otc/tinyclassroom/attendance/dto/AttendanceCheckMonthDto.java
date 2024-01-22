@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * 지정된 연도, 달의 출석기록을 조회하기 위한 DTO
+ *
  * @param attendanceByDate
  */
 public record AttendanceCheckMonthDto(List<AttendanceCheckMonthDto.AttendanceMonthInfo> attendanceByDate) implements Serializable {

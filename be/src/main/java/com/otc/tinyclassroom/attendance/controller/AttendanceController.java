@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 출석 컨트롤러 정의. 멤버 등교, 하교 출석시간 확인
+ * 출석 컨트롤러 정의. 멤버 등교, 하교 멤버 출석시간 확인
  */
 @RestController
 @AllArgsConstructor

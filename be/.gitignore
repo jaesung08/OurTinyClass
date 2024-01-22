@@ -16,6 +16,9 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+# codeStyles
+.idea/codeStyles
+
 # AWS User-specific
 .idea/**/aws.xml
 

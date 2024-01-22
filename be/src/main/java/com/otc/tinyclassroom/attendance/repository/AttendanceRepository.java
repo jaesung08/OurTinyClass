@@ -26,6 +26,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
         Timestamp endTime
     );
 
+    // 쿼리 어노테이션을 통해 파라미터로 받은 값들을 Attendance 엔티티 조회를 통해 비교한다.
     @Query("SELECT a FROM Attendance a WHERE a.member.memberId = :memberId AND a.checkIn BETWEEN :startOfMonth AND :endOfMonth")
     List<Attendance> findByMemberIdAndCheckInBetweenMonth(
         @Param("memberId") String memberId,

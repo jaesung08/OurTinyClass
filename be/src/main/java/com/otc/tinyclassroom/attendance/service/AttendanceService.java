@@ -12,16 +12,15 @@ import com.otc.tinyclassroom.attendance.repository.AttendanceRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.member.service.MemberService;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -38,8 +37,6 @@ public class AttendanceService {
 
     /**
      * 회원 등교를 처리하는 메서드
-     *
-     * @return
      */
     @Transactional
     public AttendanceCheckInResultDto checkIn(String memberId, LocalDateTime now) {
@@ -65,7 +62,7 @@ public class AttendanceService {
         System.out.println("attendance = " + attendance);
         attendanceRepository.save(attendance);
 
-        return AttendanceCheckInResultDto.from(Timestamp.valueOf(now), status);
+        return AttendanceCheckInResultDto.from(Timestamp.valueOf(now), status.ordinal());
     }
 
     /**
@@ -107,8 +104,6 @@ public class AttendanceService {
 
     /**
      * 회원 하교를 처리하는 메서드
-     *
-     * @return
      */
     @Transactional
     public AttendanceCheckOutResultDto checkOut(String memberId, LocalDateTime now) {
@@ -137,7 +132,7 @@ public class AttendanceService {
         attendance.setStatus(status);
         attendanceRepository.save(attendance);
 
-        return AttendanceCheckOutResultDto.from(Timestamp.valueOf(now), status);
+        return AttendanceCheckOutResultDto.from(Timestamp.valueOf(now), status.ordinal());
     }
 
 
@@ -194,9 +189,6 @@ public class AttendanceService {
 
     /**
      * 한달간의 출석내역을 확인하는 메서드
-     *
-     * @param memberId
-     * @return
      */
     @Transactional
     public AttendanceCheckMonthDto getAttendanceTimeOnMonth(String memberId, int year, int month) {
