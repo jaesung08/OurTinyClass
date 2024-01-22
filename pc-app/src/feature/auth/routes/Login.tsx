@@ -21,7 +21,7 @@ export default function Login() {
       if (res.data) {
         // 정상 로그인
         setUserState(res.data);
-        Cookies.set("token", res.data.accessToken);
+        Cookies.set("token", "Bearer " + res.data.accessToken);
         Swal.fire("성공!", "로그인에 성공하였습니다.", "success").then(() => {
           navigate("/");
         });

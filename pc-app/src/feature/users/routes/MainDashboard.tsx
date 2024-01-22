@@ -2,7 +2,11 @@ import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import { Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
 import * as dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { checkIn } from "../../attendance/api/checkIn";
+import { Attendance } from "@/feature/attendance";
+import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
+import Swal from "sweetalert2";
 
 const dummyNotices = [
   {
@@ -321,8 +325,8 @@ interface CalenderProps {
 
 function Calender({ planList }: CalenderProps) {
   return (
-    <div className="flex w-full">
-      <ul className="flex flex-col">
+    <div className="flex w-full h-full">
+      <ul className="flex flex-col h-1/6">
         <li className=" border h-8 w-10"></li>
         {Array.from({ length: 6 }, (_, i) => (
           <li key={i} className="border h-8 w-10 text-center">
@@ -354,11 +358,17 @@ interface AttendanceCardProps {
   todayDate: dayjs.Dayjs;
   checkIn?: string;
   checkOut?: string;
-  status: number;
+  status?: number;
+  doCheckIn: () => void;
 }
 
 //입실, 퇴실 정보를 조회하고 입, 퇴실을 할 수 있는 기능을 가진 카드
-function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
+function AttendanceCard({
+  todayDate,
+  checkIn,
+  checkOut,
+  doCheckIn,
+}: AttendanceCardProps) {
   return (
     <div className="bg-green-400 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
       <h2 className="text-lg ">출석체크 현황</h2>
@@ -381,7 +391,10 @@ function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
               <span className="text-white text-xs">정상 출석</span>
             </div>
           ) : (
-            <Button className="text-blue-500 bg-white h-full rounded-none w-8 font-bold hover:bg-blue-600 hover:text-white ">
+            <Button
+              onClick={doCheckIn}
+              className="text-blue-500 bg-white h-full rounded-none w-8 font-bold hover:bg-blue-600 hover:text-white "
+            >
               입실하기
             </Button>
           )}
@@ -468,6 +481,13 @@ function MainDashBoard() {
   };
 
   const [planStartDate, setPlanStartDate] = useState(todayDate);
+  const [attendanceState, setAttendanceState] = useState<
+    Attendance | undefined
+  >();
+
+  useEffect(() => {
+    getAttendanceState();
+  }, []);
   const onClickChangePlanDate = (isBefore: boolean) => {
     if (isBefore) {
       setPlanStartDate(planStartDate.subtract(7, "day")); // 일주일 빼기
@@ -476,12 +496,24 @@ function MainDashBoard() {
     }
   };
 
-  const attendance = {
-    status: 0,
-    checkIn: "2024-01-22",
-    checkOut: "2024-01-23",
+  const doCheckIn = async () => {
+    const res = await checkIn();
+    console.log(res);
   };
 
+  const getAttendanceState = async () => {
+    try {
+      const res = await getTodayAttendance();
+      Swal.fire("출석 성공", res.message, "success");
+    } catch (e) {
+      console.log(e);
+      Swal.fire(
+        "출석 실패",
+        "시스템에 문제가 생겨 입실에 실패하였습니다.",
+        "error"
+      );
+    }
+  };
   return (
     <div className="flex w-full">
       <div className="bg-white min-h-screen w-5/6 ">
@@ -496,15 +528,16 @@ function MainDashBoard() {
           <section className="flex gap-6 h-38">
             <AttendanceCard
               todayDate={todayDate}
-              checkIn={attendance.checkIn}
-              checkOut={attendance.checkOut}
-              status={attendance.status}
+              checkIn=""
+              checkOut={attendanceState?.checkOut}
+              status={attendanceState?.status}
+              doCheckIn={doCheckIn}
             />
             <NoticeListCard />
           </section>
         </main>
-        <div className="px-24">
-          <div className="flex justify-between flex-col gap-5">
+        <div className="px-24 h-1/2">
+          <div className="flex flex-col gap-5 h-full">
             <CalenderHeader
               planStartDate={planStartDate}
               onClickChangePlanDate={onClickChangePlanDate}

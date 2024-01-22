@@ -1,4 +1,4 @@
-export interface Attendence {
+export interface Attendance {
   date: string;
   status: number;
   checkIn?: string;

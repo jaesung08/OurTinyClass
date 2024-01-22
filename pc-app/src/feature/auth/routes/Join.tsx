@@ -38,12 +38,12 @@ export default function Join() {
         navigate("/auth/login");
       });
     },
-    onError: (error: AxiosResponse) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       // 회원가입 실패 처리
-
       Swal.fire(
         "에러 발생",
-        error.data?.message ?? "회원가입에 실패하였습니다.",
+        error?.response.data?.message ?? "회원가입에 실패하였습니다.",
         "error"
       );
     },
