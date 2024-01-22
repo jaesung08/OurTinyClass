@@ -43,7 +43,6 @@ function DetailArticleBody() {
     setIsArticleEdit(!isArticleEdit);
   };
   const checkValue = (e) => {
-    console.log(e);
     const check = e.split("<p>");
     const textValue = check[1].split("</p>");
     console.log(textValue);

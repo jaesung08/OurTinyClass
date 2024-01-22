@@ -14,12 +14,17 @@ import {
   PaginationItemRenderProps,
 } from "@nextui-org/react";
 import { ChevronIcon } from "@/assets/ChevronIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
+import { axios } from "@/lib/axios";
+import { API_URL } from "@/config";
+import { freeBoard } from "../api/freeBoard";
+import dayjs from "dayjs";
+
 // import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
 
 function FreeBoardBody() {
-  const itemLists = ["내용", "제목", "작성자"];
+  const categories = ["내용", "제목", "작성자"];
   const renderItem = ({
     ref,
     key,
@@ -78,6 +83,49 @@ function FreeBoardBody() {
       </button>
     );
   };
+  const [renderBoard, setRenderBoard] = useState();
+  const [boardList, setBoardList] = useState<object[]>([]);
+
+  useEffect(() => {
+    const searchArticle = async () => {
+      try {
+        const articles = await freeBoard();
+        setBoardList(articles.data.content);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    searchArticle();
+  }, []);
+
+  useEffect(() => {
+    if (boardList) {
+      const boards = boardList.map((board, index) => {
+        const date = dayjs(board.createdAt);
+        return (
+          <TableRow key={index}>
+            <TableCell>{index + 1}</TableCell>
+            <TableCell
+              style={{
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                maxWidth: "25rem",
+              }}
+            >
+              {board.title}
+            </TableCell>
+            <TableCell>{board.name}</TableCell>
+            <TableCell>{date.format("YY-MM-DD")}</TableCell>
+            <TableCell>111</TableCell>
+            <TableCell>222</TableCell>
+          </TableRow>
+        );
+      });
+      setRenderBoard(boards);
+    }
+  }, [boardList]);
+
   return (
     <section className="w-10/12 h-full border-l-3">
       <div
@@ -127,7 +175,7 @@ function FreeBoardBody() {
                   label="카테고리"
                   className="ml-5 w-2/12 shadow-xl rounded-xl"
                 >
-                  {itemLists.map((item: string, index: number) => (
+                  {categories.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>
@@ -148,6 +196,7 @@ function FreeBoardBody() {
                 </Button>
               </form>
             </div>
+            {/* {boardList ? boardList : null} */}
 
             <Table
               aria-label="Example static collection table"
@@ -162,94 +211,7 @@ function FreeBoardBody() {
                 <TableColumn>추천수</TableColumn>
               </TableHeader>
               <TableBody>
-                <TableRow key="1">
-                  <TableCell>Tony Reichert</TableCell>
-                  <TableCell>CEO</TableCell>
-                  <TableCell>Active</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="2">
-                  <TableCell>Zoey Lang</TableCell>
-                  <TableCell>Technical Lead</TableCell>
-                  <TableCell>Paused</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="3">
-                  <TableCell>Jane Fisher</TableCell>
-                  <TableCell>Senior Developer</TableCell>
-                  <TableCell>Active</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="4">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="5">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="6">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
-                <TableRow key="7">
-                  <TableCell>William Howard</TableCell>
-                  <TableCell>Community Manager</TableCell>
-                  <TableCell>Vacation</TableCell>
-                  <TableCell>today</TableCell>
-                  <TableCell>111</TableCell>
-                  <TableCell>222</TableCell>
-                </TableRow>
+                {renderBoard ? renderBoard : "게시글이 없습니다."}
               </TableBody>
             </Table>
             <div className="flex items-center" style={{ height: "10%" }}>
