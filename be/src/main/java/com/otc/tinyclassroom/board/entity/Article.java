@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Table(indexes = {
@@ -40,14 +41,17 @@ public class Article extends AuditingFields {
     @ManyToOne(optional = true)
     private ClassRoom classRoom;
 
+    @Setter
     @Column(nullable = false, length = 1000)
     private String title;
+    @Setter
     @Column(nullable = false, length = 10000)
     private String content;
+    @Column
+    private int hit;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ArticleType articleType;
-
     @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
@@ -84,5 +88,9 @@ public class Article extends AuditingFields {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void increaseHit() {
+        this.hit += 1;
     }
 }
