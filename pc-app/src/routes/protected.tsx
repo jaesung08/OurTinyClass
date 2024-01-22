@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-
 import { Spinner } from "@/components/Elements";
 import MainDashboard from "@/feature/users/routes/MainDashboard";
 import JoinRoom from "@/feature/classroom/pages/JoinRoom";
 import Video from "@/feature/classroom/pages/meeting";
+import { CommunitiesRoutes } from "@/feature/communities/routes";
 
 const App = () => {
   return (
@@ -27,6 +27,7 @@ export const protectedRoutes = [
       { path: "/main-dashboard", element: <MainDashboard /> },
       { path: "/join-classroom", element: <JoinRoom /> },
       { path: "/video", element: <Video /> },
+      // { path: "/communities", element: <CommunitiesRoutes /> },
       { path: "*", element: <Navigate to="." /> },
     ],
   },
