@@ -1,3 +1,4 @@
+import { Tag } from "@/components/Elements/Tag/Tag";
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import { Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
@@ -45,12 +46,12 @@ const planList: Plan[] = [
       {
         isMentoring: false,
         addUserId: 232,
-        isRegular: false,
+        isRegular: true,
         title: "노래연습",
         lectureId: 1,
       },
       {
-        isMentoring: false,
+        isMentoring: true,
         addUserId: 232,
         isRegular: false,
         title: "노래연습",
@@ -184,7 +185,7 @@ const planList: Plan[] = [
   },
   {
     id: 4,
-    date: "2022-01-04",
+    date: "2022-01-22",
     scheduleList: [
       {
         isMentoring: false,
@@ -321,25 +322,30 @@ interface CalenderProps {
 
 function Calender({ planList }: CalenderProps) {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full h-full">
       <ul className="flex flex-col">
         <li className=" border h-8 w-10"></li>
         {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className="border h-8 w-10 text-center">
+          <li key={i} className="border w-10 text-center  h-1/6">
             {i + 1}
           </li>
         ))}
       </ul>
       <div className="flex w-full">
         {planList.map((plan) => (
-          <ul className="flex flex-col w-1/5" key={plan.id}>
-            <li className="border h-8 w-full text-center">
+          <ul className="flex flex-col w-1/5 h-full" key={plan.id}>
+            <li className="border w-full text-center h-8">
               {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
                 getCurrentDayName(dayjs(plan.date).day())?.shortKr
               })`}
             </li>
             {plan.scheduleList.map((schedule, index) => (
-              <li key={index} className="border h-8 w-full text-center">
+              <li
+                key={index}
+                className="border h-1/6 w-full text-center flex items-center justify-center"
+              >
+                {schedule.isMentoring ? <Tag color="red">멘토링</Tag> : null}
+                {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
                 {schedule.title}
               </li>
             ))}
@@ -493,7 +499,7 @@ function MainDashBoard() {
           <p className="text-2xl py-5">
             안녕하세요, <span className="font-semibold">{userInfo.name}</span>님
           </p>
-          <section className="flex gap-6 h-38">
+          <section className="flex gap-6">
             <AttendanceCard
               todayDate={todayDate}
               checkIn={attendance.checkIn}
@@ -503,8 +509,8 @@ function MainDashBoard() {
             <NoticeListCard />
           </section>
         </main>
-        <div className="px-24">
-          <div className="flex justify-between flex-col gap-5">
+        <div className="px-24 h-1/2">
+          <div className="flex flex-col gap-5 h-full">
             <CalenderHeader
               planStartDate={planStartDate}
               onClickChangePlanDate={onClickChangePlanDate}
