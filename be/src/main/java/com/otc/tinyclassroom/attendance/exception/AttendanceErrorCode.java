@@ -3,7 +3,9 @@ package com.otc.tinyclassroom.attendance.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
+/**
+ * 출석 에러 코드.
+ */
 @Getter
 @AllArgsConstructor
 public enum AttendanceErrorCode {
