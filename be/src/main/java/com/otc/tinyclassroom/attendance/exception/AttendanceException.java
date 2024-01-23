@@ -18,11 +18,6 @@ public class AttendanceException extends RuntimeException {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
     }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
 }
 
 
