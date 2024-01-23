@@ -1,7 +1,13 @@
 import { Tag } from "@/components/Elements/Tag/Tag";
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
-import { Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardFooter,
+  CardHeader,
+  Divider,
+} from "@nextui-org/react";
 import * as dayjs from "dayjs";
 import { useState } from "react";
 
@@ -324,40 +330,67 @@ interface CalenderProps {
 function Calender({ planList, todayDate }: CalenderProps) {
   return (
     <div className="flex w-full h-full">
+      <Divider orientation="vertical" />
+
       <ul className="flex flex-col">
-        <li className=" border h-8 w-10"></li>
+        {/*가장 앞 목차 번호 */}
+        <Divider />
+        <li className=" h-10 w-10">{/* 왼쪽 맨 위 빈칸 */}</li>
         {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className="border w-10 text-center h-1/6">
-            {i + 1}
-          </li>
-        ))}
-      </ul>
-      <div className="flex w-full">
-        {planList.map((plan) => (
-          <ul
-            className={`flex flex-col w-1/5 h-full ${
-              todayDate.diff(dayjs(plan.date), "D") == 0
-                ? "bg-green-50 font-bold"
-                : ""
-            }`}
-            key={plan.id}
-          >
-            <li className="border w-full text-center h-8">
-              {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
-                getCurrentDayName(dayjs(plan.date).day())?.shortKr
-              })`}
+          <>
+            <Divider />
+            <li
+              key={i}
+              className=" w-10 text-center h-1/6 flex justify-center items-center"
+            >
+              {i + 1}
             </li>
-            {plan.scheduleList.map((schedule, index) => (
-              <li
-                key={index}
-                className="border h-1/6 w-full text-center flex items-center justify-center"
-              >
-                {schedule.isMentoring ? <Tag color="red">멘토링</Tag> : null}
-                {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
-                {schedule.title}
+          </>
+        ))}
+        <Divider />
+        {/*가장 앞 목차 번호 끝 */}
+      </ul>
+      <Divider orientation="vertical" />
+      <div className="flex w-full">
+        {/*시간표 부분 */}
+        {planList.map((plan) => (
+          <>
+            {/*하루치 시간표 세로로 한줄씩 렌더링 */}
+            <ul
+              className={`flex flex-col w-1/5 h-full ${
+                todayDate.diff(dayjs(plan.date), "D") == 0
+                  ? "bg-green-50 font-bold"
+                  : ""
+              }`}
+              key={plan.id}
+            >
+              <Divider />
+              {/* 시간표에서 날짜 보여주는 맨 윗칸 */}
+              <li className=" w-full text-center h-10 flex items-center justify-center">
+                {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
+                  getCurrentDayName(dayjs(plan.date).day())?.shortKr
+                })`}
               </li>
-            ))}
-          </ul>
+              <Divider />
+              {plan.scheduleList.map((schedule, index) => (
+                <>
+                  {" "}
+                  <li
+                    key={index}
+                    className=" h-1/6 w-full text-center flex items-center justify-center"
+                  >
+                    {schedule.isMentoring ? (
+                      <Tag color="red">멘토링</Tag>
+                    ) : null}
+                    {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
+                    {schedule.title}
+                  </li>
+                  <Divider />
+                </>
+              ))}
+            </ul>
+            <Divider orientation="vertical" />
+          </>
         ))}
       </div>
     </div>

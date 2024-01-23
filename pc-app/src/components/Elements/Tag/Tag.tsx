@@ -16,7 +16,7 @@ export const Tag = ({ color, children }: TagProps) => {
   };
 
   return (
-    <span className={`mr-1 border-1 ${colorVariations[color]} rounded-md px-1`}>
+    <span className={`mr-3 border-1 ${colorVariations[color]} rounded-md px-1`}>
       {children}
     </span>
   );
