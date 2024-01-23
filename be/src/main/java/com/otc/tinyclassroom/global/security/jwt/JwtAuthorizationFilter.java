@@ -1,7 +1,6 @@
 package com.otc.tinyclassroom.global.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
@@ -12,22 +11,20 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collection;
 
+/**
+ * Jwt 권한 관리 필터.
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
@@ -51,10 +48,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         BaseResponse<Void> responseDto = null;
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
-        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/redis/refresh") || servletPath.equals("/api/members/join")){
+        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/redis/refresh") || servletPath.equals("/api/members/join")) {
             chain.doFilter(request, response);
-        }
-        else if (header == null || !header.startsWith("Bearer ")) {
+        } else if (header == null || !header.startsWith("Bearer ")) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
             log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
 
@@ -63,14 +59,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
-        }
-        else {
+        } else {
             try {
 
                 String token = jwtProvider.resolveAccessToken(request);
-                //TODO : isExpired 로 확인해서 처리 바로 가능.
-                System.out.println("token : " + token);
-
                 /*
                  * Expired 되었을 경우
                  * RefreshToken 과 대조해야한다.

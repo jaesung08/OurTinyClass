@@ -2,62 +2,67 @@ package com.otc.tinyclassroom.global.redis.refresh;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.Role;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * Refresh Token 과 관련된 비즈니스 로직을 처리하는 서비스 클래스.
+ */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RedisTemplate<String, String> redisTemplate;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
-    public void save(String memberId, String refreshToken_String) {
-        RefreshToken refreshToken = new RefreshToken(refreshToken_String, memberId);
+
+    /**
+     * 회원 식별자와 Refresh Token 을 받아서 저장.
+     */
+    public void save(String memberId, String refreshTokenString) {
+        RefreshToken refreshToken = new RefreshToken(refreshTokenString, memberId);
         refreshTokenRepository.save(refreshToken);
     }
 
-    public Optional<String> findByMemberId(final String memberId) {
-        if(refreshTokenRepository.findByMemberId(memberId).isEmpty()){
-            return Optional.empty();
-        }
-        return Optional.of(String.valueOf(refreshTokenRepository.findByMemberId(memberId)));
+    /**
+     *  회원 식별자에 해당하는 Refresh Token 을 조회.
+     */
+    public String findByMemberId(final String memberId) {
+        Optional<String> byMemberId = refreshTokenRepository.findByMemberId(memberId);
+
+        // 값이 있으면 해당 값을 반환, 값이 없으면 기본값(또는 원하는 동작)을 반환
+        return byMemberId.orElse(null); // 또는 다른 기본값 또는 동작을 지정할 수 있음
     }
 
-    public Long getTTLByMemberId(String key) {
+    public Long getTtlByMemberId(String key) {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
-    public ReIssueResponseDto reIssue(String accessToken, String refreshToken) {
-        // TODO : 여기서 문제 터짐
-        System.out.println("accessToken = " + accessToken);
-        System.out.println("refreshToken = " + refreshToken);
+    /**
+     * Access Token과 Refresh Token을 사용하여 새로운 Access Token을 발급합니다.
+     */
+    public Optional<ReIssueResponseDto> reIssue(String accessToken, String refreshToken) {
         Long memberId = jwtProvider.getMemberIdByAccessToken(accessToken);
-        System.out.println("memberId = " + memberId);
-        Optional<String> refreshToken_inRedis = this.findByMemberId(String.valueOf(memberId));
-        System.out.println("refreshToken_inRedis = " + refreshToken_inRedis);
-        if (String.valueOf(refreshToken_inRedis).equals(refreshToken)) {
+
+        String refreshTokenInRedis = this.findByMemberId(String.valueOf(memberId));
+
+        if (String.valueOf(refreshTokenInRedis).equals(refreshToken)) {
             Role role = Role.valueOf(jwtProvider.getRoleByAccessToken(accessToken));
-            System.out.println("role = " + role);
             refreshToken = UUID.randomUUID().toString();
-            System.out.println("refreshToken = " + refreshToken);
             RefreshToken toRedis = new RefreshToken(refreshToken, memberId.toString());
-            System.out.println("toRedis = " + toRedis);
             refreshTokenRepository.save(toRedis);
 
             String newAccessToken = jwtProvider.createAccessToken(memberId, role);
-            System.out.println("newAccessToken = " + newAccessToken);
-            return ReIssueResponseDto.of(toRedis.getRefreshToken(), newAccessToken);
+            return Optional.of(ReIssueResponseDto.of(toRedis.getRefreshToken(), newAccessToken));
         } else {
-            return null;
+            return Optional.empty();
         }
+    }
+
+    public void deleteRefreshToken(Long memberId) {
+        redisTemplate.delete(String.valueOf(memberId));
     }
 }
