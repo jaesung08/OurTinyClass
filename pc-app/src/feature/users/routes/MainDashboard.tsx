@@ -47,7 +47,7 @@ const dummyNotices = [
 const planList: Plan[] = [
   {
     id: 1,
-    date: "2022-01-01",
+    date: "2024-01-23",
     scheduleList: [
       {
         isMentoring: false,
@@ -287,116 +287,6 @@ const planList: Plan[] = [
   },
 ];
 
-interface CalenderHeaderProps {
-  planStartDate: dayjs.Dayjs;
-  onClickChangePlanDate: (isBefore: boolean) => void;
-}
-
-function CalenderHeader({
-  planStartDate,
-  onClickChangePlanDate,
-}: CalenderHeaderProps) {
-  return (
-    <div className="flex justify-between">
-      <h3 className="text-2xl">나의 계획</h3>
-      <div className="flex gap-3">
-        <span>
-          {`${planStartDate.format("MM월 DD일")} - ${planStartDate
-            .add(5, "D")
-            .format("MM월 DD일")}`}
-        </span>
-        <span
-          onClick={() => onClickChangePlanDate(true)}
-          className=" cursor-pointer"
-        >
-          ^
-        </span>
-        <span
-          onClick={() => onClickChangePlanDate(false)}
-          className=" cursor-pointer"
-        >
-          V
-        </span>
-      </div>
-    </div>
-  );
-}
-
-interface CalenderProps {
-  todayDate: dayjs.Dayjs;
-  planList: Plan[];
-}
-
-function Calender({ planList, todayDate }: CalenderProps) {
-  return (
-    <div className="flex w-full h-full">
-      <Divider orientation="vertical" />
-
-      <ul className="flex flex-col">
-        {/*가장 앞 목차 번호 */}
-        <Divider />
-        <li className=" h-10 w-10">{/* 왼쪽 맨 위 빈칸 */}</li>
-        {Array.from({ length: 6 }, (_, i) => (
-          <>
-            <Divider />
-            <li
-              key={i}
-              className=" w-10 text-center h-1/6 flex justify-center items-center"
-            >
-              {i + 1}
-            </li>
-          </>
-        ))}
-        <Divider />
-        {/*가장 앞 목차 번호 끝 */}
-      </ul>
-      <Divider orientation="vertical" />
-      <div className="flex w-full">
-        {/*시간표 부분 */}
-        {planList.map((plan) => (
-          <>
-            {/*하루치 시간표 세로로 한줄씩 렌더링 */}
-            <ul
-              className={`flex flex-col w-1/5 h-full ${
-                todayDate.diff(dayjs(plan.date), "D") == 0
-                  ? "bg-green-50 font-bold"
-                  : ""
-              }`}
-              key={plan.id}
-            >
-              <Divider />
-              {/* 시간표에서 날짜 보여주는 맨 윗칸 */}
-              <li className=" w-full text-center h-10 flex items-center justify-center">
-                {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
-                  getCurrentDayName(dayjs(plan.date).day())?.shortKr
-                })`}
-              </li>
-              <Divider />
-              {plan.scheduleList.map((schedule, index) => (
-                <>
-                  {" "}
-                  <li
-                    key={index}
-                    className=" h-1/6 w-full text-center flex items-center justify-center"
-                  >
-                    {schedule.isMentoring ? (
-                      <Tag color="red">멘토링</Tag>
-                    ) : null}
-                    {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
-                    {schedule.title}
-                  </li>
-                  <Divider />
-                </>
-              ))}
-            </ul>
-            <Divider orientation="vertical" />
-          </>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 interface AttendanceCardProps {
   todayDate: dayjs.Dayjs;
   checkIn?: string;
@@ -479,6 +369,109 @@ function NoticeListCard() {
   );
 }
 
+interface CalenderHeaderProps {
+  planStartDate: dayjs.Dayjs;
+  onClickChangePlanDate: (isBefore: boolean) => void;
+}
+
+function CalenderHeader({
+  planStartDate,
+  onClickChangePlanDate,
+}: CalenderHeaderProps) {
+  return (
+    <div className="flex justify-between">
+      <h3 className="text-2xl">나의 계획</h3>
+      <div className="flex gap-3">
+        <span>
+          {`${planStartDate.format("MM월 DD일")} - ${planStartDate
+            .add(5, "D")
+            .format("MM월 DD일")}`}
+        </span>
+        <span
+          onClick={() => onClickChangePlanDate(true)}
+          className=" cursor-pointer"
+        >
+          ^
+        </span>
+        <span
+          onClick={() => onClickChangePlanDate(false)}
+          className=" cursor-pointer"
+        >
+          V
+        </span>
+      </div>
+    </div>
+  );
+}
+
+interface CalenderProps {
+  todayDate: dayjs.Dayjs;
+  planList: Plan[];
+}
+
+function Calender({ planList, todayDate }: CalenderProps) {
+  return (
+    <div className="flex w-full h-full">
+      <Divider orientation="vertical" />
+
+      <ul className="flex flex-col">
+        {/*가장 앞 목차 번호 */}
+        <Divider />
+        <li className=" h-10 w-10">{/* 왼쪽 맨 위 빈칸 */}</li>
+        {Array.from({ length: 6 }, (_, i) => (
+          <li key={i} className=" w-10 h-1/6 ">
+            <Divider />
+            <p className=" text-center flex justify-center items-center h-full">
+              {i + 1}
+            </p>
+          </li>
+        ))}
+        <Divider />
+        {/*가장 앞 목차 번호 끝 */}
+      </ul>
+      <Divider orientation="vertical" />
+      <div className="flex w-full">
+        {/*시간표 부분 */}
+        {planList.map((plan) => (
+          <div key={plan.id} className="flex w-1/5 h-full">
+            <Divider orientation="vertical" />
+            {/*하루치 시간표 세로로 한줄씩 렌더링 */}
+            <ul
+              className={`flex flex-col h-full w-full ${
+                todayDate.diff(dayjs(plan.date), "D") == 0
+                  ? "bg-green-50 font-bold"
+                  : ""
+              }`}
+            >
+              <Divider />
+              {/* 시간표에서 날짜 보여주는 맨 윗칸 */}
+              <li className=" w-full text-center h-10 flex items-center justify-center">
+                {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
+                  getCurrentDayName(dayjs(plan.date).day())?.shortKr
+                })`}
+              </li>
+              <Divider />
+              {plan.scheduleList.map((schedule, index) => (
+                <li key={index} className="h-1/6 w-full ">
+                  <p className=" h-full w-full text-center flex items-center justify-center">
+                    {schedule.isMentoring ? (
+                      <Tag color="red">멘토링</Tag>
+                    ) : null}
+                    {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
+                    {schedule.title}
+                  </p>
+                  <Divider />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <Divider orientation="vertical" />
+      </div>
+    </div>
+  );
+}
+
 function CurrentLectureCard() {
   return (
     <div>
@@ -492,7 +485,7 @@ function CurrentLectureCard() {
         {/* TODO : 여기에 진행중인 수업의 썸네일 넣어야 한다. */}
         <CardFooter className="mt-4 flex flex-col gap-2">
           <div className="flex justify-between items-center w-full">
-            <p>온라인 학생 수 : </p>
+            <p>참석자 수 : </p>
             <p>● 34/40</p>{" "}
             {/* TODO 여기에 ●은 아이콘으로 바꾸고, 34와 40은 현재 스케줄의 수업 관련 데이터로 바꿔야 한다.*/}
           </div>
@@ -559,7 +552,7 @@ function MainDashBoard() {
           </div>
         </div>
       </div>
-      <div className="bg-green-50 w-1/4 p-10">
+      <div className="bg-lime-100 w-1/4 p-10">
         <CurrentLectureCard />
       </div>
     </div>
