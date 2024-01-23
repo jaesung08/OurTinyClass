@@ -14,6 +14,7 @@ function DetailArticleBody() {
   const navigator = useNavigate();
   const { state } = useLocation();
 
+  //  게시글 상세 조회
   useEffect(() => {
     const renderDetail = async () => {
       try {
@@ -26,6 +27,12 @@ function DetailArticleBody() {
     };
     renderDetail();
   }, []);
+
+  useEffect(() => {
+    console.log("머쓱");
+  });
+
+  // quill 옵션 설정기부분
   const modules = {
     toolbar: [
       ["link", "image", "video"],
@@ -41,17 +48,24 @@ function DetailArticleBody() {
       matchVisual: false,
     },
   };
-
+  // 게시글 수정 기능 활성화
   const editArticle = () => {
     setIsArticleEdit(!isArticleEdit);
   };
-  const checkValue = (e) => {
+
+  // 게시글 수정 기능
+  const changeValue = (e) => {
+    // 값이 <p></p> < 로 들어오기 때문에 처리해줘야함
+    // todo : 문자열 파싱
     const check = e.split("<p>");
     const textValue = check[1].split("</p>");
     console.log(textValue);
     setArticleContent(textValue[0]);
   };
+
+  // 게시글 수정 완료 버튼 클릭 동작
   const completeArticleEdit = () => {
+    // 게시글 데이터 수정 요청
     const editBoard = async () => {
       try {
         const article = await editDetail(articleTitle, articleContent, state);
@@ -62,6 +76,7 @@ function DetailArticleBody() {
     };
     editBoard();
   };
+
   return (
     <article className="w-10/12 h-full border-l-1">
       <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
@@ -115,7 +130,7 @@ function DetailArticleBody() {
               className="w-full py-20 pl-10"
               modules={modules}
               value={articleContent}
-              onChange={(e) => checkValue(e)}
+              onChange={(e) => changeValue(e)}
             />
           </div>
         ) : (

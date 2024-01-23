@@ -27,6 +27,23 @@ import { useNavigate } from "react-router-dom";
 function FreeBoardBody() {
   const navigator = useNavigate();
   const categories = ["내용", "제목", "작성자"];
+  const [renderBoard, setRenderBoard] = useState();
+  const [boardList, setBoardList] = useState<object[]>([]);
+
+  // 페이지 접속 시 전체 게시글 렌더링
+  useEffect(() => {
+    const showArticles = async () => {
+      try {
+        const articles = await freeBoard();
+        setBoardList(articles.data.content);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    showArticles();
+  }, []);
+
+  // 페이지 네이션 렌더링 부분
   const renderItem = ({
     ref,
     key,
@@ -85,21 +102,8 @@ function FreeBoardBody() {
       </button>
     );
   };
-  const [renderBoard, setRenderBoard] = useState();
-  const [boardList, setBoardList] = useState<object[]>([]);
 
-  useEffect(() => {
-    const searchArticle = async () => {
-      try {
-        const articles = await freeBoard();
-        setBoardList(articles.data.content);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    searchArticle();
-  }, []);
-
+  // 게시글 리스트 생성 부분
   useEffect(() => {
     if (boardList) {
       const boards = boardList.map((board, index) => {
@@ -222,6 +226,7 @@ function FreeBoardBody() {
                 {renderBoard ? renderBoard : "게시글이 없습니다."}
               </TableBody>
             </Table>
+            {/* 페이지 네이션 부분 */}
             <div className="flex items-center" style={{ height: "10%" }}>
               <Pagination
                 disableCursorAnimation
