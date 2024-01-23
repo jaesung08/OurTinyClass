@@ -1,40 +1,33 @@
 package com.otc.tinyclassroom.global.security.jwt;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.otc.tinyclassroom.global.common.exception.CustomAuthenticationFailureHandler;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.global.redis.refresh.RefreshToken;
 import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.dto.request.MemberLoginRequestDto;
 import com.otc.tinyclassroom.member.entity.Member;
-import jakarta.servlet.*;
+import com.otc.tinyclassroom.member.exception.MemberErrorCode;
+import com.otc.tinyclassroom.member.exception.MemberException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.Date;
 
 
+/**
+ * Spring Security 를 사용하기 위한 Authentication Filter.
+ */
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -42,6 +35,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
 
+    /**
+     *  AuthenticationFilter 생성자.
+     */
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, RefreshTokenRepository refreshTokenRepository, JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
         this.refreshTokenRepository = refreshTokenRepository;
@@ -72,11 +68,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.info("Authentication : {}", principalDetails.getMember().getMemberId());
 
             return authentication;
-        }
-
-        catch (Exception e) {
-            log.info("Exception : {}", e.toString());
-            throw new RuntimeException("존재하지 않는 아이디입니다.");
+        } catch (MemberException e) {
+            log.info("MemberException: {}", e.toString());
+            throw new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID);
+        } catch (Exception e) {
+            log.info("Exception: {}", e.toString());
+            throw new RuntimeException("서버에서 오류가 발생했습니다.", e);
         }
     }
 
@@ -104,7 +101,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setCharacterEncoding("UTF-8");
 
         Map<String, Object> result = new HashMap<>();
-        result.put("accessToken", accessToken);
+        // result.put("accessToken", accessToken);
         result.put("refreshToken", refreshToken);
 
         BaseResponse<Map<String, Object>> responseDto = new BaseResponse<>(200, "로그인 성공", result);

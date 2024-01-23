@@ -27,7 +27,6 @@ public class GlobalControllerAdvice {
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
-
     /*
     *
     * */
