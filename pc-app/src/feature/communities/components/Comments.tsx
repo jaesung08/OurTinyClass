@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/button";
 
 function Comments() {
   return (
-    <form className="w-10/12 border-1 h-20 flex justify-between items-center">
+    <form className="w-10/12 h-20 flex justify-between items-center">
       <input
         type="text"
         className="w-5/6 p-5 rounded-lg shadow-2xl border-2"

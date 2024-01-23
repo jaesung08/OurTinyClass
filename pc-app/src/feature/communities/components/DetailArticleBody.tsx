@@ -1,9 +1,8 @@
 import { Button, Avatar } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactQuill from "react-quill";
 import Comments from "./Comments";
 import CommentsList from "./CommentsList";
-import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import { editDetail, getDetail } from "../api/detailBoard";
 
@@ -26,25 +25,29 @@ function DetailArticleBody() {
     };
     renderDetail();
   }, []);
-  const modules = {
-    toolbar: [
-      ["link", "image", "video"],
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      ["blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ color: [] }, { background: [] }],
-      [{ align: [] }],
-    ],
-    clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
-    },
-  };
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        ["link", "image", "video"],
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        ["blockquote"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+      ],
+      clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+      },
+    }),
+    []
+  );
 
   const editArticle = () => {
     setIsArticleEdit(!isArticleEdit);
   };
+
   const checkValue = (e) => {
     const check = e.split("<p>");
     const textValue = check[1].split("</p>");

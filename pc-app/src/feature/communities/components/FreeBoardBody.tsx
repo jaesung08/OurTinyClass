@@ -36,7 +36,7 @@ function FreeBoardBody() {
     onPrevious,
     setPage,
     className,
-  }: PaginationItemRenderProps<HTMLButtonElement>) => {
+  }: PaginationItemRenderProps) => {
     if (value === PaginationItemType.NEXT) {
       return (
         <button
@@ -135,11 +135,15 @@ function FreeBoardBody() {
   return (
     <section className="w-10/12 h-full border-l-3 relative">
       <Button
-        color="success"
+        className="fixed bottom-5 right-5 text-white text-xl rounded-full"
+        style={{
+          backgroundColor: "#52c41a",
+          boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+        }}
+        size="lg"
         onClick={() => {
           navigator("/communities/create");
         }}
-        className="absolute bottom-10 right-10"
       >
         ✏
       </Button>
@@ -183,23 +187,26 @@ function FreeBoardBody() {
           >
             <div className="w-full" style={{ height: "15%" }}>
               <form className="flex justify-between items-center">
-                <Select className="ml-5 bg-white w-2/12 rounded-xl">
+                <Select className="ml-5 bg-white w-1/6 rounded-xl" size="sm">
                   {categories.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>
                   ))}
                 </Select>
-                <div className="flex w-8/12 flex-wrap md:flex-nowrap gap-4 rounded-xl">
-                  <Input
-                    className="bg-white"
-                    type="text"
-                    placeholder="검색어할 내용을 입력해주세요."
-                  />
-                </div>
+                <Input
+                  className="bg-white w-4/6"
+                  type="text"
+                  placeholder="검색어할 내용을 입력해주세요."
+                  size="sm"
+                />
                 <Button
-                  color="success"
-                  className="w-1/12 text-white text-xl py-7 mr-5 rounded-xl"
+                  className="w-1/12 text-white text-xl rounded-xl"
+                  style={{
+                    backgroundColor: "#52c41a",
+                    boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                  }}
+                  size="lg"
                 >
                   검색
                 </Button>
