@@ -14,6 +14,8 @@ import { checkIn } from "../../attendance/api/checkIn";
 import { Attendance } from "@/feature/attendance";
 import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
 import Swal from "sweetalert2";
+import { useMutation } from "@tanstack/react-query";
+import { checkOut } from "@/feature/attendance/api/checkOut";
 
 const dummyNotices = [
   {
@@ -297,6 +299,7 @@ interface AttendanceCardProps {
   checkOut?: string;
   status?: number;
   doCheckIn: () => void;
+  doCheckOut: () => void;
 }
 
 //입실, 퇴실 정보를 조회하고 입, 퇴실을 할 수 있는 기능을 가진 카드
@@ -305,6 +308,7 @@ function AttendanceCard({
   checkIn,
   checkOut,
   doCheckIn,
+  doCheckOut,
 }: AttendanceCardProps) {
   return (
     <div className="bg-green-400 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
@@ -339,7 +343,10 @@ function AttendanceCard({
           {
             checkIn ? ( // 아직 입실을 하지 않았다면 퇴실 버튼을 보일 필요가 없으므로 입실 여부 확인.
               checkOut ? ( // 퇴실을 한 상태라면, 다시 갱신할 수 있는 버튼
-                <Button className="p-2 flex flex-col items-center bg-zinc-500 justify-evenly rounded-none h-full hover:bg-blue-500 font-bold">
+                <Button
+                  onClick={doCheckOut}
+                  className="p-2 flex flex-col items-center bg-zinc-500 justify-evenly rounded-none h-full hover:bg-blue-500 font-bold"
+                >
                   <span className="text-white h-8">
                     {dayjs(checkOut).format("hh:mm")}
                   </span>
@@ -347,7 +354,10 @@ function AttendanceCard({
                 </Button>
               ) : (
                 // 입실을 했지만 아직 퇴실을 하지 않은 상태
-                <Button className="text-blue-500 bg-white h-full rounded-none w-8 font-bold">
+                <Button
+                  onClick={doCheckOut}
+                  className="text-blue-500 bg-white h-full rounded-none w-8 font-bold"
+                >
                   퇴실하기
                 </Button>
               )
@@ -536,15 +546,58 @@ function MainDashBoard() {
     }
   };
 
+  const checkInMutation = useMutation({
+    mutationFn: checkIn,
+    onSuccess: (res) => {
+      setAttendanceState({
+        date: attendanceState?.date,
+        checkOut: attendanceState?.checkOut,
+        checkIn: res.data.checkInTime,
+        status: res.data.status,
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (e: any) => {
+      Swal.fire(
+        "에러 발생!",
+        e?.response.data.message ?? "등교에 실패하였습니다. 다시 시도해주세요.",
+        "error"
+      );
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: checkOut,
+    onSuccess: (res) => {
+      setAttendanceState({
+        date: attendanceState?.date,
+        checkIn: attendanceState?.checkIn,
+        checkOut: res.data.checkOutTime,
+        status: res.data.status,
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (e: any) => {
+      Swal.fire(
+        "에러 발생!",
+        e?.response.data.message ?? "하교에 실패하였습니다. 다시 시도해주세요.",
+        "error"
+      );
+    },
+  });
+
   const doCheckIn = async () => {
-    const res = await checkIn();
-    console.log(res);
+    checkInMutation.mutate();
+  };
+
+  const doCheckOut = async () => {
+    checkOutMutation.mutate();
   };
 
   const getAttendanceState = async () => {
     try {
       const res = await getTodayAttendance();
-      Swal.fire("출석 성공", res.message, "success");
+      setAttendanceState(res.data.attendanceOnDate);
     } catch (e) {
       console.log(e);
       Swal.fire(
@@ -568,10 +621,11 @@ function MainDashBoard() {
           <section className="flex gap-6">
             <AttendanceCard
               todayDate={todayDate}
-              checkIn=""
+              checkIn={attendanceState?.checkIn}
               checkOut={attendanceState?.checkOut}
               status={attendanceState?.status}
               doCheckIn={doCheckIn}
+              doCheckOut={doCheckOut}
             />
             <NoticeListCard />
           </section>

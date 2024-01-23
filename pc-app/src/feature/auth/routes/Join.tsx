@@ -8,7 +8,6 @@ import JoinForm from "../components/JoinForm";
 import { useMutation } from "@tanstack/react-query";
 import { join } from "../api/join";
 import Swal from "sweetalert2";
-import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 

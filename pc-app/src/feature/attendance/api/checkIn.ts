@@ -1,6 +1,7 @@
 import { axios } from "@/lib/axios";
+import { CheckInResponse } from "..";
 
-const checkIn = () => {
+const checkIn = (): Promise<CheckInResponse> => {
   return axios.post("/attendances/check-in", {
     memberId: "ssafy123",
     password: "Jtjgml^^7",

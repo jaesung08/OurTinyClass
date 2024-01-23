@@ -1,8 +1,8 @@
 import { axios } from "@/lib/axios";
-import { BaseResponse } from "@/types/BaseResponse";
+import { getTodayAttendanceResponse } from "..";
 
-const getTodayAttendance = (): Promise<BaseResponse> => {
-  return axios.get("/attendances/today-attendance/4", {
+const getTodayAttendance = (): Promise<getTodayAttendanceResponse> => {
+  return axios.get("/attendances/today-attendance/ssafy123", {
     params: {
       memberId: "ssafy123",
       password: "Jtjgml^^7",
