@@ -29,7 +29,6 @@ public class MemberService {
      */
     @Transactional
     public void join(MemberJoinRequestDto dto) {
-        System.out.println(dto);
         // 빈 필드 확인
         if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);

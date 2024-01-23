@@ -1,14 +1,20 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenService;
+import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.service.MemberService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
 import java.security.Principal;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 멤버 컨트롤러 정의. 로그인, 회원가입,
@@ -19,6 +25,9 @@ import java.security.Principal;
 public class MemberController {
 
     private final MemberService memberService;
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 회원가입 메소드.
@@ -32,9 +41,23 @@ public class MemberController {
     }
 
     @GetMapping("/currentMember")
-    @ResponseBody
-    public String currentMember(Principal principal) {
-        return principal.getName();
+    public BaseResponse<String> currentMember(Principal principal) {
+        String memberId = principal.getName();
+        return BaseResponse.success(HttpStatus.OK.value(), "현재 로그인한 사용자의 `memberId`입니다.", memberId);
+    }
+
+    /**
+     *  로그아웃 메서드.
+     *  Refresh Token 을 무효화 함.
+     */
+    @PostMapping("/logout")
+    public BaseResponse<String> logoutMember(@RequestHeader("Authorization") String header) {
+        String accessToken = header.replace("Bearer ", "");
+        Long memberId = jwtProvider.getMemberIdByAccessToken(accessToken);
+
+        refreshTokenService.deleteRefreshToken(memberId);
+
+        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(memberId));
     }
 
 }

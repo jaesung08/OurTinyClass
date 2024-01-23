@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Refresh Token 과 Redis 관련 로직을 처리하기 위한 컨트롤러.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/members/redis")
@@ -26,47 +29,56 @@ public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;
 
-    @PostMapping("/save")
-    public ResponseEntity<String> refreshTokenRedis(String refreshToken, String memberId){
-        refreshTokenService.save(refreshToken, memberId);
-        return new ResponseEntity<String>(memberId, HttpStatus.OK);
-    }
+    /**
+     * memberId(Long)에 해당하는 Refresh Token 을 조회하는 엔드포인트.
+     */
     @GetMapping("/refreshToken/{memberId}")
     public ResponseEntity<String> findByMemberId(@PathVariable("memberId") Long memberId) {
-        Optional<String> refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
+        String refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
 
-        if (refreshToken.isPresent()) {
-            return new ResponseEntity<>(refreshToken.get(), HttpStatus.OK);
+        if (!refreshToken.isBlank()) {
+            return new ResponseEntity<>(refreshToken, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
+    /**
+     * memberId(Long)에 해당하는 Refresh Token 의 TTL(Time to Live)을 조회하는 엔드포인트.
+     */
     @GetMapping("/ttl/{memberId}")
-    public ResponseEntity<Long> findTTLByMemberId(@PathVariable("memberId") Long memberId) {
-        Long restTTL =  refreshTokenService.getTTLByMemberId(String.valueOf(memberId));
+    public ResponseEntity<Long> findTtlByMemberId(@PathVariable("memberId") Long memberId) {
+        Long restTtl =  refreshTokenService.getTtlByMemberId(String.valueOf(memberId));
 
-        if (restTTL > 0) {
-            return new ResponseEntity<>(restTTL, HttpStatus.OK);
+        if (restTtl > 0) {
+            return new ResponseEntity<>(restTtl, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
-    @ResponseBody
+
+    /**
+     * Access Token 및 Refresh Token을 사용하여 새로운 Access Token을 발급하는 엔드포인트.
+     */
     @PostMapping("/refresh")
-    public ResponseEntity<ReIssueResponseDto> refresh(String accessToken, @RequestBody String refreshToken) throws ClassNotFoundException {
-        ReIssueResponseDto dto = refreshTokenService.reIssue(accessToken, refreshToken);
-        System.out.println("1번. dto.accessToken() = " + dto.accessToken());
-        if (dto != null) {
-            // 새로 발급한 Access Token을 헤더에 넣어 클라이언트에게 전달
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + dto.accessToken());
-            System.out.println("2번. dto.accessToken() = " + dto.accessToken());
-            return new ResponseEntity<>(dto, headers, HttpStatus.OK);
+    public ResponseEntity<ReIssueResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
+
+        Optional<ReIssueResponseDto> dto = refreshTokenService.reIssue(requestDto.accessToken(), requestDto.refreshToken());
+        if (dto.isEmpty()) {
+            throw new ClassNotFoundException();
         } else {
-            // 새로 발급 실패 등의 상황에 대한 응답 처리
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            ReIssueResponseDto responseDto = dto.orElse(null);
+            if (dto.isPresent()) {
+                // 새로 발급한 Access Token을 헤더에 넣어 클라이언트에게 전달
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", "Bearer " + responseDto.accessToken());
+                return new ResponseEntity<>(responseDto, headers, HttpStatus.OK);
+            } else {
+                // 새로 발급 실패 등의 상황에 대한 응답 처리
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
         }
+
     }
 }
