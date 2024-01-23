@@ -8,7 +8,10 @@ function App() {
     <AppProvider>
       <AppRoutes />
     </AppProvider>
+<<<<<<< HEAD
 
+=======
+>>>>>>> frontend/feature/board-create
   );
 }
 
