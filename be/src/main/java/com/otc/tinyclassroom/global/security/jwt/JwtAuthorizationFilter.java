@@ -42,62 +42,59 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain)
-            throws IOException, ServletException {
+        HttpServletResponse response,
+        FilterChain chain)
+        throws IOException, ServletException {
 
         String servletPath = request.getServletPath();
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         BaseResponse<Void> responseDto = null;
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
-        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/refresh")) {
+        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/redis/refresh") || servletPath.equals("/api/members/join")){
             chain.doFilter(request, response);
-        } else if (header == null || !header.startsWith("Bearer ")) {
+        }
+        else if (header == null || !header.startsWith("Bearer ")) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
-            log.info("CustomAuthorizationFilter : JWT Token이 존재하지 않습니다.");
+            log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
 
-            responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "access token이 존재하지 않음.", null);
+            responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "access token 이 존재하지 않음.", null);
 
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
-        } else {
+        }
+        else {
             try {
-                // Access Token만 꺼내옴
-//                String accessToken = header.substring(TOKEN_HEADER_PREFIX.length());
 
                 String token = jwtProvider.resolveAccessToken(request);
-                String loginId = jwtProvider.getMemberIdByAccessToken(token);
+                //TODO : isExpired 로 확인해서 처리 바로 가능.
+                System.out.println("token : " + token);
 
-//                // === Access Token 검증 === //
-//                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_SECRET)).build();
-//                DecodedJWT decodedJWT = verifier.verify(accessToken);
-//
-//                // === Access Token 내 Claim에서 Authorities 꺼내 Authentication 객체 생성 & SecurityContext에 저장 === //
-//                List<String> strAuthorities = decodedJWT.getClaim("roles").asList(String.class);
-//                List<SimpleGrantedAuthority> authorities = strAuthorities.stream().map(SimpleGrantedAuthority::new).toList();
-//                String username = decodedJWT.getSubject();
-//                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
-//                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                /*
+                 * Expired 되었을 경우
+                 * RefreshToken 과 대조해야한다.
+                 */
+                Long memberId = jwtProvider.getMemberIdByAccessToken(token);
+                if (memberId != null) {
+                    Member member = memberRepository.findById(memberId).orElse(null);
 
-                if (loginId != null) {
-
-                    Member member = memberRepository.findByMemberId(loginId).get();
-
-
-                    PrincipalDetails principalDetails = new PrincipalDetails(member);
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            loginId,
-                            null, // 패스워드는 모르므로 null
+                    if (member != null) {
+                        // Access Token이 재발급되었으므로 사용자 정보를 업데이트
+                        PrincipalDetails principalDetails = new PrincipalDetails(member);
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                            memberId,
+                            null,
                             principalDetails.getAuthorities()
-                    );
+                        );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else {
+                        // 사용자 정보를 찾을 수 없는 경우에 대한 처리 (예: 로그아웃)
+                        SecurityContextHolder.clearContext();
+                    }
                     // 인증 처리 후 정상적으로 다음 Filter 수행
                     chain.doFilter(request, response);
-
                 }
             } catch (TokenExpiredException exception) {
                 responseDto = new BaseResponse<>(HttpStatus.UNAUTHORIZED.value(), "Access Token이 만료되었습니다.", null);
@@ -114,44 +111,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
             }
         }
-
-
-//        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-//        log.info("header : {}", header);
-//        if (header == null || !header.startsWith("Bearer ")) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
-//
-//        String token = jwtProvider.resolveAccessToken(request);
-//        String loginId = jwtProvider.getMemberIdByAccessToken(token);
-//
-//        log.info("token : {}, loginId : {}", token, loginId);
-//
-//        log.info("Authorization memberId : {}", loginId);
-//
-//        if (loginId != null) {
-//
-//            Member member = memberRepository.findByMemberId(loginId).get();
-//
-//
-//            PrincipalDetails principalDetails = new PrincipalDetails(member);
-//            Authentication authentication = new UsernamePasswordAuthenticationToken(
-//                    loginId,
-//                    null, // 패스워드는 모르므로 null
-//                    principalDetails.getAuthorities()
-//            );
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        }
-//
-//        chain.doFilter(request, response);
     }
-
-//    @Override
-//    protected void onUnsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(new ObjectMapper().writeValueAsString(new BaseResponse<>(HttpStatus.UNAUTHORIZED.value(), "not access",null)));
-//    }
 }

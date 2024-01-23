@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.otc.tinyclassroom.member.entity.Role;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -28,34 +31,32 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    private String secret = "qwerasdfzxcvqwerasdfz";
-    private long accessExpirationTime = 1000 * 10;  // 10 초
-    private long refreshExprationTime = 1000 * 3600 * 24; // 1일
+    @Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.token.access-expiration-time}")
+    private long accessExpirationTime;
+    @Value("${jwt.token.refresh-expiration-time}")
+    private long refreshExpirationTime; // 1일
 
     private String TOKEN_PREFIX = "Bearer ";
 
     // Access Token 생성.
-    public String createAccessToken(String memberId, Role role){
-        return this.createToken(memberId, role, accessExpirationTime);
-    }
-    // Refresh Token 생성.
-    public String createRefreshToken(String memberId, Role role) {
-        return this.createToken(memberId, role, refreshExprationTime);
+    public String createAccessToken(Long id, Role role){
+        return this.createToken(id, role, accessExpirationTime);
     }
 
     // Create token
-    private String createToken(String memberId, Role role, long tokenValid) {
+    private String createToken(Long memberId, Role role, long tokenValid) {
         return JWT.create()
-                .withSubject(memberId)
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenValid))
                 .withClaim("memberId", memberId)
                 .withClaim("role", role.name())
                 .sign(Algorithm.HMAC512(secret));
     }
 
-    public String getMemberIdByAccessToken(String token) {
+    public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-                .getClaim("memberId").asString();
+                .getClaim("memberId").asLong();
     }
 
     public String getRoleByAccessToken(String token) {
@@ -64,22 +65,25 @@ public class JwtProvider {
     }
 
     public boolean isExpired(String token) {
-//        Date expireDate =
+        // TODO : 만료 구현
         return false;
+    }
+    // 토큰의 유효성 + 만료일자 확인
+    public boolean validateToken(String jwtToken) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            log.info(e.getMessage());
+            return false;
+        }
     }
 
 
     public String resolveAccessToken(HttpServletRequest request) {
+        // TODO : Exception 터뜨리게
         if(request.getHeader("authorization") != null )
             return request.getHeader("authorization").replace(TOKEN_PREFIX, "");
-
-        return null;
-    }
-
-    // Request의 Header에서 RefreshToken 값을 가져옵니다. "authorization" : "token'
-    public String resolveRefreshToken(HttpServletRequest request) {
-        if(request.getHeader("refresh") != null )
-            return request.getHeader("refresh").replace(TOKEN_PREFIX, "");
 
         return null;
     }
@@ -89,13 +93,9 @@ public class JwtProvider {
         response.setHeader("authorization", "Bearer "+ accessToken);
     }
 
-    // 리프레시 토큰 헤더 설정
-    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
-        response.setHeader("refresh", "Refresh " + refreshToken);
-    }
-
     // RefreshToken 존재유무 확인
     public boolean existsRefreshToken(String refreshToken) {
+        // TODO : RefreshToken 존재 유무 확인
 //        return tokenRepository.existsByRefreshToken(refreshToken);
         return true;
     }

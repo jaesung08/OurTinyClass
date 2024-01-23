@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.global.config;
 
-import com.otc.tinyclassroom.global.common.exception.CustomAuthenticationFailureHandler;
+import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
@@ -17,9 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,6 +25,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class WebSecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     private final CorsConfig corsConfig;
 
@@ -73,7 +73,7 @@ public class WebSecurityConfig {
                 .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)
 
                 // jwt 인증 필터 추가.
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtProvider))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository, jwtProvider))
                 .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
                                 .requestMatchers(("/api/members/join")).permitAll()
                                 .requestMatchers("/api/members/login").permitAll()
