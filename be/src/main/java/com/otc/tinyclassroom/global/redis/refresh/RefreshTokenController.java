@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/members/redis")
+@RequestMapping("/api/members/token")
 public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;
@@ -32,7 +32,7 @@ public class RefreshTokenController {
     /**
      * memberId(Long)에 해당하는 Refresh Token 을 조회하는 엔드포인트.
      */
-    @GetMapping("/refreshToken/{memberId}")
+    @GetMapping("/{memberId}")
     public ResponseEntity<String> findByMemberId(@PathVariable("memberId") Long memberId) {
         String refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
 
@@ -59,10 +59,10 @@ public class RefreshTokenController {
 
 
     /**
-     * Access Token 및 Refresh Token을 사용하여 새로운 Access Token을 발급하는 엔드포인트.
+     * Access Token 및 Refresh Token 을 사용하여 새로운 Access Token 을 발급하는 엔드포인트.
      */
     @PostMapping("/refresh")
-    public ResponseEntity<ReIssueResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
+    public ResponseEntity<RefreshResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
 
         Optional<ReIssueResponseDto> dto = refreshTokenService.reIssue(requestDto.accessToken(), requestDto.refreshToken());
         if (dto.isEmpty()) {
@@ -73,7 +73,8 @@ public class RefreshTokenController {
                 // 새로 발급한 Access Token을 헤더에 넣어 클라이언트에게 전달
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", "Bearer " + responseDto.accessToken());
-                return new ResponseEntity<>(responseDto, headers, HttpStatus.OK);
+                RefreshResponseDto refreshResponseDto = new RefreshResponseDto(responseDto.refreshToken());
+                return new ResponseEntity<>(refreshResponseDto, headers, HttpStatus.OK);
             } else {
                 // 새로 발급 실패 등의 상황에 대한 응답 처리
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

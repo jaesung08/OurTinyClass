@@ -91,20 +91,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         RefreshToken toRedis = new RefreshToken(refreshToken, loginMember.getId().toString());
 
         refreshTokenRepository.save(toRedis);
-        setTokenResponse(response, accessToken, refreshToken);
+        LoginResponseDto loginResponseDto = new LoginResponseDto(loginMember.getName(), loginMember.getMemberId(), loginMember.getRole(), loginMember.getPoint());
+        setTokenResponse(response, loginResponseDto);
 
         jwtProvider.setHeaderAccessToken(response, accessToken);
     }
 
-    private void setTokenResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
+    private void setTokenResponse(HttpServletResponse response, LoginResponseDto loginResponseDto) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, Object> result = new HashMap<>();
-        // result.put("accessToken", accessToken);
-        result.put("refreshToken", refreshToken);
-
-        BaseResponse<Map<String, Object>> responseDto = new BaseResponse<>(200, "로그인 성공", result);
+        BaseResponse<LoginResponseDto> responseDto = new BaseResponse<>(200, "로그인 성공", loginResponseDto);
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
     }

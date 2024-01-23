@@ -48,7 +48,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         BaseResponse<Void> responseDto = null;
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
-        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/redis/refresh") || servletPath.equals("/api/members/join")) {
+        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join")) {
             chain.doFilter(request, response);
         } else if (header == null || !header.startsWith("Bearer ")) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
@@ -96,7 +96,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
 
             } catch (Exception e) {
-                responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다..", null);
+                responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다.", null);
 
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
