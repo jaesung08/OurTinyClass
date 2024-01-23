@@ -16,34 +16,22 @@ import {
 import { ChevronIcon } from "@/assets/ChevronIcon";
 import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
-import { axios } from "@/lib/axios";
-import { API_URL } from "@/config";
 import { freeBoard } from "../api/freeBoard";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
-// import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
+const CATEGORIES = ["내용", "제목", "작성자"];
+
+interface Board {
+  id: number;
+  title: string;
+  name: string;
+  createdAt: string;
+  hit: number;
+}
 
 function FreeBoardBody() {
   const navigator = useNavigate();
-  const categories = ["내용", "제목", "작성자"];
-  const [renderBoard, setRenderBoard] = useState();
-  const [boardList, setBoardList] = useState<object[]>([]);
-
-  // 페이지 접속 시 전체 게시글 렌더링
-  useEffect(() => {
-    const showArticles = async () => {
-      try {
-        const articles = await freeBoard();
-        setBoardList(articles.data.content);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    showArticles();
-  }, []);
-
-  // 페이지 네이션 렌더링 부분
   const renderItem = ({
     ref,
     key,
@@ -53,7 +41,7 @@ function FreeBoardBody() {
     onPrevious,
     setPage,
     className,
-  }: PaginationItemRenderProps<HTMLButtonElement>) => {
+  }: PaginationItemRenderProps) => {
     if (value === PaginationItemType.NEXT) {
       return (
         <button
@@ -102,36 +90,51 @@ function FreeBoardBody() {
       </button>
     );
   };
+  const [renderBoard, setRenderBoard] = useState<JSX.Element[] | string>();
+  const [boardList, setBoardList] = useState<Board[]>([]);
 
-  // 게시글 리스트 생성 부분
+  useEffect(() => {
+    const searchArticle = async () => {
+      try {
+        const articles = await freeBoard();
+        setBoardList(articles.data.content);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    searchArticle();
+  }, []);
+
   useEffect(() => {
     if (boardList) {
-      const boards = boardList.map((board, index) => {
-        const date = dayjs(board.createdAt);
-        return (
-          <TableRow key={index}>
-            <TableCell>{index + 1}</TableCell>
-            <TableCell
-              className="cursor-pointer hover:bg-gray-200"
-              style={{
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                maxWidth: "25rem",
-              }}
-              onClick={() =>
-                navigator("/communities/detail", { state: board.id })
-              }
-            >
-              {board.title}
-            </TableCell>
-            <TableCell>{board.name}</TableCell>
-            <TableCell>{date.format("YY-MM-DD")}</TableCell>
-            <TableCell>{board.hit}</TableCell>
-            <TableCell>222</TableCell>
-          </TableRow>
-        );
-      });
+      const boards: JSX.Element[] = boardList.map(
+        (board: Board, index: number): JSX.Element => {
+          const date = dayjs(board.createdAt);
+          return (
+            <TableRow key={index}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell
+                className="cursor-pointer hover:bg-gray-200"
+                style={{
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  maxWidth: "25rem",
+                }}
+                onClick={() =>
+                  navigator("/communities/detail", { state: board.id })
+                }
+              >
+                {board.title}
+              </TableCell>
+              <TableCell>{board.name}</TableCell>
+              <TableCell>{date.format("YY-MM-DD")}</TableCell>
+              <TableCell>{board.hit}</TableCell>
+              <TableCell>222</TableCell>
+            </TableRow>
+          );
+        }
+      );
       setRenderBoard(boards);
     }
   }, [boardList]);
@@ -139,11 +142,15 @@ function FreeBoardBody() {
   return (
     <section className="w-10/12 h-full border-l-3 relative">
       <Button
-        color="success"
+        className="fixed bottom-5 right-5 text-white text-xl rounded-full"
+        style={{
+          backgroundColor: "#52c41a",
+          boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+        }}
+        size="lg"
         onClick={() => {
           navigator("/communities/create");
         }}
-        className="absolute bottom-10 right-10"
       >
         ✏
       </Button>
@@ -187,23 +194,26 @@ function FreeBoardBody() {
           >
             <div className="w-full" style={{ height: "15%" }}>
               <form className="flex justify-between items-center">
-                <Select className="ml-5 bg-white w-2/12 rounded-xl">
-                  {categories.map((item: string, index: number) => (
+                <Select className="ml-5 bg-white w-1/6 rounded-xl" size="sm">
+                  {CATEGORIES.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>
                   ))}
                 </Select>
-                <div className="flex w-8/12 flex-wrap md:flex-nowrap gap-4 rounded-xl">
-                  <Input
-                    className="bg-white"
-                    type="text"
-                    placeholder="검색어할 내용을 입력해주세요."
-                  />
-                </div>
+                <Input
+                  className="bg-white w-4/6"
+                  type="text"
+                  placeholder="검색어할 내용을 입력해주세요."
+                  size="sm"
+                />
                 <Button
-                  color="success"
-                  className="w-1/12 text-white text-xl py-7 mr-5 rounded-xl"
+                  className="w-1/12 text-white text-xl rounded-xl"
+                  style={{
+                    backgroundColor: "#52c41a",
+                    boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
+                  }}
+                  size="lg"
                 >
                   검색
                 </Button>
@@ -226,7 +236,6 @@ function FreeBoardBody() {
                 {renderBoard ? renderBoard : "게시글이 없습니다."}
               </TableBody>
             </Table>
-            {/* 페이지 네이션 부분 */}
             <div className="flex items-center" style={{ height: "10%" }}>
               <Pagination
                 disableCursorAnimation

@@ -1,9 +1,23 @@
 import { Button, Select, SelectItem, Input } from "@nextui-org/react";
-import { axios } from "@/lib/axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
+
+const CATEGORYLISTS = [
+  {
+    category: "공지사항",
+    value: "notice",
+  },
+  {
+    category: "고민 상담",
+    value: "1",
+  },
+  {
+    category: "테스트 게시판",
+    value: "2",
+  },
+];
 
 function CreateArticleBody() {
   const navigator = useNavigate();
@@ -25,20 +39,7 @@ function CreateArticleBody() {
     };
     create();
   };
-  const itemLists = [
-    {
-      category: "공지사항",
-      value: "notice",
-    },
-    {
-      category: "고민 상담",
-      value: "1",
-    },
-    {
-      category: "테스트 게시판",
-      value: "2",
-    },
-  ];
+
   const modules = {
     toolbar: [
       ["link", "image", "video"],
@@ -82,7 +83,7 @@ function CreateArticleBody() {
                   className="ml-5 w-2/12 shadow-xl rounded-xl"
                   onChange={(e) => selectCategory(e)}
                 >
-                  {itemLists.map(
+                  {CATEGORYLISTS.map(
                     (
                       item: { category: string; value: string }
                       // index: number

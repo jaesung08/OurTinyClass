@@ -2,14 +2,15 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface Articles {
+  id: number;
+  title: string;
+  content: string;
+  isActive: boolean;
+}
+
 function FreeBoardHeader() {
   const navigator = useNavigate();
-  interface Articles {
-    id: number;
-    title: string;
-    content: string;
-    isActive: boolean;
-  }
   let idCheck: number = 0;
   const [articleState, setArticleState] = useState<Articles[]>([
     {

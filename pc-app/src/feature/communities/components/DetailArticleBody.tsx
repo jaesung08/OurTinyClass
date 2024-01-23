@@ -1,20 +1,17 @@
 import { Button, Avatar } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactQuill from "react-quill";
 import Comments from "./Comments";
 import CommentsList from "./CommentsList";
-import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { editDetail, getDetail } from "../api/detailBoard";
 
 function DetailArticleBody() {
   const [isArticleEdit, setIsArticleEdit] = useState<boolean>(false);
   const [articleContent, setArticleContent] = useState<string>("");
   const [articleTitle, setArticleTitle] = useState<string>("");
-  const navigator = useNavigate();
   const { state } = useLocation();
 
-  //  게시글 상세 조회
   useEffect(() => {
     const renderDetail = async () => {
       try {
@@ -28,53 +25,42 @@ function DetailArticleBody() {
     renderDetail();
   }, []);
 
-  useEffect(() => {
-    console.log("머쓱");
-  });
+  const modules = useMemo(
+    () => ({
+      toolbar: [
+        ["link", "image", "video"],
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        ["blockquote"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        [{ color: [] }, { background: [] }],
+        [{ align: [] }],
+      ],
+      clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+      },
+    }),
+    []
+  );
 
-  // quill 옵션 설정기부분
-  const modules = {
-    toolbar: [
-      ["link", "image", "video"],
-      [{ header: [1, 2, 3, false] }],
-      ["bold", "italic", "underline", "strike"],
-      ["blockquote"],
-      [{ list: "ordered" }, { list: "bullet" }],
-      [{ color: [] }, { background: [] }],
-      [{ align: [] }],
-    ],
-    clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
-    },
-  };
-  // 게시글 수정 기능 활성화
   const editArticle = () => {
     setIsArticleEdit(!isArticleEdit);
   };
 
-  // 게시글 수정 기능
-  const changeValue = (e) => {
-    // 값이 <p></p> < 로 들어오기 때문에 처리해줘야함
-    // todo : 문자열 파싱
+  const checkValue = (e: string) => {
     const check = e.split("<p>");
     const textValue = check[1].split("</p>");
     console.log(textValue);
     setArticleContent(textValue[0]);
   };
-
-  // 게시글 수정 완료 버튼 클릭 동작
-  const completeArticleEdit = () => {
-    // 게시글 데이터 수정 요청
-    const editBoard = async () => {
-      try {
-        const article = await editDetail(articleTitle, articleContent, state);
-        setIsArticleEdit(!isArticleEdit);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    editBoard();
+  const completeArticleEdit = async () => {
+    try {
+      await editDetail(articleTitle, articleContent, state);
+      setIsArticleEdit(!isArticleEdit);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -130,7 +116,7 @@ function DetailArticleBody() {
               className="w-full py-20 pl-10"
               modules={modules}
               value={articleContent}
-              onChange={(e) => changeValue(e)}
+              onChange={(e) => checkValue(e)}
             />
           </div>
         ) : (
