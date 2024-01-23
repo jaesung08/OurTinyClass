@@ -1,7 +1,9 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 function FreeBoardHeader() {
+  const navigator = useNavigate();
   interface Articles {
     id: number;
     title: string;
@@ -50,6 +52,7 @@ function FreeBoardHeader() {
                 : "pl-2 py-5 cursor-pointer list-none"
             }
             key={article.id}
+            onClick={() => navigator("/communities")}
           >
             {article.title}
           </li>
@@ -59,7 +62,7 @@ function FreeBoardHeader() {
   }, [articleState]);
 
   return (
-    <section className="w-2/12 h-full bg-lime-100">
+    <section className="w-2/12 h-full bg-lime-50">
       <div className="w-full bg-lime-500 flex justify-center items-center h-20">
         <p className="text-lg text-white font-bold">TeenEduConnect</p>
       </div>
@@ -68,7 +71,7 @@ function FreeBoardHeader() {
         <Accordion selectionMode="multiple" style={{ padding: "0" }}>
           <AccordionItem
             key="1"
-            className="font-light px-2"
+            className="font-light py-1 px-1"
             aria-label="커뮤니티"
             title="커뮤니티"
           >

@@ -1,42 +1,29 @@
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-  Button,
-  Select,
-  SelectItem,
-  Input,
-  Pagination,
-  PaginationItemType,
-  PaginationItemRenderProps,
-} from "@nextui-org/react";
+import { Button, Select, SelectItem, Input } from "@nextui-org/react";
 import { axios } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
+import { useNavigate } from "react-router-dom";
+import { createBoard } from "../api/createBoard";
+
 function CreateArticleBody() {
-  const [articleCategory, setArticleCategory] = useState();
+  const navigator = useNavigate();
+  const [articleCategory, setArticleCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const selectCategory = (e) => {
     console.log(e.target.value);
     setArticleCategory(e.target.value);
   };
-  const test = () => {
-    axios
-      .post("/board", {
-        title: title,
-        content: content,
-        articleType: articleCategory,
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  const BoardCreate = () => {
+    const create = async () => {
+      try {
+        await createBoard(title, content, articleCategory);
+        navigator("/communities");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    create();
   };
   const itemLists = [
     {
@@ -68,11 +55,17 @@ function CreateArticleBody() {
     },
   };
   return (
-    <section className="w-10/12 h-full border-l-3">
-      <div
-        className="w-full bg-lime-500 flex items-center justify-center"
-        style={{ height: "10%" }}
-      ></div>
+    <section className="w-10/12 h-full border-l-3 realtive">
+      <Button
+        color="success"
+        onClick={() => {
+          navigator("/communities/");
+        }}
+        className="absolute bottom-10 right-10"
+      >
+        ←
+      </Button>
+      <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
       <div className="w-full bg-white" style={{ height: "90%" }}>
         <div
           className="w-full flex justify-center items-center"
@@ -111,7 +104,7 @@ function CreateArticleBody() {
                 <Button
                   color="success"
                   className="w-1/12 text-white text-xl py-7 mr-5 shadow-xl rounded-xl"
-                  onClick={test}
+                  onClick={BoardCreate}
                 >
                   작성
                 </Button>

@@ -20,10 +20,12 @@ import { axios } from "@/lib/axios";
 import { API_URL } from "@/config";
 import { freeBoard } from "../api/freeBoard";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 // import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
 
 function FreeBoardBody() {
+  const navigator = useNavigate();
   const categories = ["내용", "제목", "작성자"];
   const renderItem = ({
     ref,
@@ -106,18 +108,22 @@ function FreeBoardBody() {
           <TableRow key={index}>
             <TableCell>{index + 1}</TableCell>
             <TableCell
+              className="cursor-pointer hover:bg-gray-200"
               style={{
                 whiteSpace: "nowrap",
                 textOverflow: "ellipsis",
                 overflow: "hidden",
                 maxWidth: "25rem",
               }}
+              onClick={() =>
+                navigator("/communities/detail", { state: board.id })
+              }
             >
               {board.title}
             </TableCell>
             <TableCell>{board.name}</TableCell>
             <TableCell>{date.format("YY-MM-DD")}</TableCell>
-            <TableCell>111</TableCell>
+            <TableCell>{board.hit}</TableCell>
             <TableCell>222</TableCell>
           </TableRow>
         );
@@ -127,11 +133,17 @@ function FreeBoardBody() {
   }, [boardList]);
 
   return (
-    <section className="w-10/12 h-full border-l-3">
-      <div
-        className="w-full bg-lime-500 flex items-center justify-center"
-        style={{ height: "10%" }}
+    <section className="w-10/12 h-full border-l-3 relative">
+      <Button
+        color="success"
+        onClick={() => {
+          navigator("/communities/create");
+        }}
+        className="absolute bottom-10 right-10"
       >
+        ✏
+      </Button>
+      <div className="w-full bg-lime-500 flex items-center justify-center h-20">
         <form className="group relative w-11/12 bg-lime-500">
           <svg
             width="20"
@@ -171,32 +183,28 @@ function FreeBoardBody() {
           >
             <div className="w-full" style={{ height: "15%" }}>
               <form className="flex justify-between items-center">
-                <Select
-                  label="카테고리"
-                  className="ml-5 w-2/12 shadow-xl rounded-xl"
-                >
+                <Select className="ml-5 bg-white w-2/12 rounded-xl">
                   {categories.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>
                   ))}
                 </Select>
-                <div className="flex w-8/12 flex-wrap md:flex-nowrap gap-4 shadow-xl rounded-xl">
+                <div className="flex w-8/12 flex-wrap md:flex-nowrap gap-4 rounded-xl">
                   <Input
+                    className="bg-white"
                     type="text"
-                    label="search"
-                    placeholder="검색어를 입력하세요."
+                    placeholder="검색어할 내용을 입력해주세요."
                   />
                 </div>
                 <Button
                   color="success"
-                  className="w-1/12 text-white text-xl py-7 mr-5 shadow-xl rounded-xl"
+                  className="w-1/12 text-white text-xl py-7 mr-5 rounded-xl"
                 >
                   검색
                 </Button>
               </form>
             </div>
-            {/* {boardList ? boardList : null} */}
 
             <Table
               aria-label="Example static collection table"

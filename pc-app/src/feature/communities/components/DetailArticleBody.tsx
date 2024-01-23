@@ -1,28 +1,31 @@
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableColumn,
-  TableRow,
-  TableCell,
-  Button,
-  Select,
-  SelectItem,
-  Input,
-  Avatar,
-} from "@nextui-org/react";
-import { useState } from "react";
+import { Button, Avatar } from "@nextui-org/react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import Comments from "./Comments";
 import CommentsList from "./CommentsList";
 import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
+import { useLocation, useNavigate } from "react-router-dom";
+import { editDetail, getDetail } from "../api/detailBoard";
 
 function DetailArticleBody() {
   const [isArticleEdit, setIsArticleEdit] = useState<boolean>(false);
-  const [articleContent, setArticleContent] = useState<string>(
-    "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolor beatae ipsa sit maxime commodi quas accusamus exercitationem obcaecati vitae unde illum, dolores totam, ratione a? Unde aspernatur porro sapiente quae? Placeat cum quam omnis totam unde quia beatae! Optio rerum ratione minima itaque beatae cumque aliquam a alias voluptatibus doloremque, earum, cum distinctio, eos ea? Vero dolor excepturi fuga hic. Excepturi quod fuga ducimus hic exercitationem, fugit quos tempora a ad eius, impedit, odit placeat sequi nisi natus non voluptas labore harum esse necessitatibus? Laudantium, nisi mollitia! Blanditiis, corporis autem. Cum reprehenderit illo a explicabo, veniam iusto! Earum corrupti accusamus quas expedita itaque saepe laboriosam rerum, numquam temporibus assumenda eum, quibusdam nisi ipsum animi laborum est tempore! Natus, obcaecati adipisci! Facilis iure consectetur aspernatur obcaecati reiciendis ut minima, nihil eligendi nobis placeat, blanditiis ratione amet doloremque quo consequatur non eius, saepe id hic nesciunt vero? Nostrum animi quae eaque nisi? beatae ipsa sit maxime commodi quas accusamus exercitationem obcaecati vitae unde illum, dolores totam, ratione a? Unde aspernatur porro sapiente quae? Placeat cum quam omnis totam unde quia beatae! Optio rerum ratione minima itaque beatae cumque aliquam a alias voluptatibus doloremque, earum, cum distinctio, eos ea? Vero dolor excepturi fuga hic. Excepturi quod fuga ducimus hic exercitationem, fugit quos tempora a ad eius, impedit, odit placeat sequi nisi natus non voluptas labore harum esse necessitatibus? Laudantium, nisi mollitia! Blanditiis, corporis autem. Cum reprehenderit illo a explicabo, veniam iusto! Earum corrupti accusamus quas expedita itaque saepe laboriosam rerum, numquam temporibus assumenda eum, quibusdam nisi ipsum animi laborum est tempore! Natus, obcaecati adipisci! Facilis iure consectetur aspernatur obcaecati reiciendis ut minima, nihil eligendi nobis placeat, blanditiis ratione amet doloremque quo consequatur non eius, saepe id hic nesciunt vero? Nostrum animi quae eaque nisi?"
-  );
+  const [articleContent, setArticleContent] = useState<string>("");
+  const [articleTitle, setArticleTitle] = useState<string>("");
+  const navigator = useNavigate();
+  const { state } = useLocation();
 
+  useEffect(() => {
+    const renderDetail = async () => {
+      try {
+        const article = await getDetail(state);
+        setArticleContent(article.data.content);
+        setArticleTitle(article.data.title);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    renderDetail();
+  }, []);
   const modules = {
     toolbar: [
       ["link", "image", "video"],
@@ -49,7 +52,15 @@ function DetailArticleBody() {
     setArticleContent(textValue[0]);
   };
   const completeArticleEdit = () => {
-    setIsArticleEdit(!isArticleEdit);
+    const editBoard = async () => {
+      try {
+        const article = await editDetail(articleTitle, articleContent, state);
+        setIsArticleEdit(!isArticleEdit);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    editBoard();
   };
   return (
     <article className="w-10/12 h-full border-l-1">
@@ -68,7 +79,7 @@ function DetailArticleBody() {
         </div>
         <div className="w-full flex items-center justify-around">
           <div className="w-8/12">
-            <p className="text-3xl font-bold">여기는 제목 란입니다.</p>
+            <p className="text-3xl font-bold">{articleTitle}</p>
             <div className="flex w-full items-center my-5">
               <Avatar
                 src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
