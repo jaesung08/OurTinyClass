@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 import { Spinner } from "@/components/Elements";
 import MainDashboard from "@/feature/users/routes/MainDashboard";
@@ -24,10 +24,9 @@ export const protectedRoutes = [
   {
     element: <App />,
     children: [
-      { path: "/main-dashboard", element: <MainDashboard /> },
-      { path: "/join-classroom", element: <JoinRoom /> },
-      { path: "/video", element: <Video /> },
-      { path: "*", element: <Navigate to="." /> },
+      { path: "join-classroom", element: <JoinRoom /> },
+      { path: "video", element: <Video /> },
+      { path: "main-dashboard", element: <MainDashboard /> },
     ],
   },
 ];
