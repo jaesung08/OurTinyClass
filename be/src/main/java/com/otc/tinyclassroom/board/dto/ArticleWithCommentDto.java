@@ -11,14 +11,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.entity.Article}
+ * DTO for {@link com.otc.tinyclassroom.board.entity.Article}.
  */
-public record ArticleWithCommentDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType, Set<ArticleCommentDto> articleComments,
+public record ArticleWithCommentDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,int hit, Set<ArticleCommentDto> articleComments,
                                     LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {
 
-    public static ArticleWithCommentDto of(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType, Set<ArticleCommentDto> articleComments,
+    public static ArticleWithCommentDto of(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,int hit, Set<ArticleCommentDto> articleComments,
         LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new ArticleWithCommentDto(id, member, classRoom, title, content, articleType, articleComments, createdAt, createdBy, modifiedAt, modifiedBy);
+        return new ArticleWithCommentDto(id, member, classRoom, title, content, articleType, hit, articleComments, createdAt, createdBy, modifiedAt, modifiedBy);
     }
 
     /**
@@ -32,6 +32,7 @@ public record ArticleWithCommentDto(Long id, MemberDto member, ClassRoomDto clas
             entity.getTitle(),
             entity.getContent(),
             entity.getArticleType(),
+            entity.getHit(),
             entity.getArticleComments().stream()
                 .map(ArticleCommentDto::from)
                 .collect(Collectors.toCollection(LinkedHashSet::new)),

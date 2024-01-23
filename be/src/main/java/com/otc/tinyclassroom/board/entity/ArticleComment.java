@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 댓글 엔티티 정의.
@@ -27,7 +28,8 @@ public class ArticleComment extends AuditingFields {
     private Member member; // 회원
     @ManyToOne(optional = false)
     private Article article; // 게시글
-    @Column
+    @Setter
+    @Column(length = 1000)
     private String content; // 본문
 
     protected ArticleComment() {

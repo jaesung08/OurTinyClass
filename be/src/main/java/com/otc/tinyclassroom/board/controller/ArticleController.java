@@ -3,6 +3,7 @@ package com.otc.tinyclassroom.board.controller;
 import com.otc.tinyclassroom.board.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.board.dto.request.ArticleUpdateRequestDto;
 import com.otc.tinyclassroom.board.dto.response.ArticleResponseDto;
+import com.otc.tinyclassroom.board.dto.response.ArticleWithCommentsResponseDto;
 import com.otc.tinyclassroom.board.entity.type.ArticleType;
 import com.otc.tinyclassroom.board.entity.type.SearchType;
 import com.otc.tinyclassroom.board.service.ArticleService;
@@ -23,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 게시글 controller dto.
+ */
 @RestController
 @RequestMapping("/api/board")
 @RequiredArgsConstructor
@@ -69,9 +73,9 @@ public class ArticleController {
     }
 
     @GetMapping("/{articleId}")
-    public BaseResponse<ArticleResponseDto> getArticleDetail(@PathVariable("articleId") Long articleId) {
-        return BaseResponse.success(HttpStatus.OK.value(), "게시글 반환성공",
-            ArticleResponseDto.from(articleService.getArticle(articleId)));
+    public BaseResponse<ArticleWithCommentsResponseDto> getArticleDetail(@PathVariable("articleId") Long articleId) {
+        ArticleWithCommentsResponseDto article = ArticleWithCommentsResponseDto.from(articleService.getArticle(articleId));
+        return BaseResponse.success(HttpStatus.OK.value(), "게시글 반환성공", article);
     }
 
     /**

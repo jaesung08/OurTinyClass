@@ -1,29 +1,36 @@
 package com.otc.tinyclassroom.board.dto.response;
 
-import com.otc.tinyclassroom.board.dto.ArticleCommentDto;
 import com.otc.tinyclassroom.board.dto.ArticleWithCommentDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.dto.ArticleWithCommentDto}
+ * DTO for {@link com.otc.tinyclassroom.board.dto.ArticleWithCommentDto}.
  */
-public record ArticleWithCommentsResponseDto(Long id, String title, String content, String name, Set<ArticleCommentDto> articleComments, LocalDateTime createdAt) implements Serializable {
+public record ArticleWithCommentsResponseDto(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments, LocalDateTime createdAt,
+                                             LocalDateTime modifiedAt) implements Serializable {
 
-    public static ArticleWithCommentsResponseDto of(Long id, String title, String content, String name, Set<ArticleCommentDto> articleComments, LocalDateTime createdAt) {
-        return new ArticleWithCommentsResponseDto(id, title, content, name, articleComments, createdAt);
+    public static ArticleWithCommentsResponseDto of(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments, LocalDateTime createdAt,
+        LocalDateTime modifiedAt) {
+        return new ArticleWithCommentsResponseDto(id, title, content, name, hit, articleComments, createdAt, modifiedAt);
     }
 
-
-//    public static ArticleWithCommentsResponseDto from(ArticleWithCommentDto dto) {
-//        return new ArticleWithCommentsResponseDto(
-//            dto.id(),
-//            dto.title(),
-//            dto.content(),
-//            dto.member().name(),
-//            dto.articleComments().stream().map()
-//        );
-//    }
+    public static ArticleWithCommentsResponseDto from(ArticleWithCommentDto dto) {
+        return new ArticleWithCommentsResponseDto(
+            dto.id(),
+            dto.title(),
+            dto.content(),
+            dto.member().name(),
+            dto.hit(),
+            dto.articleComments().stream()
+                .map(ArticleCommentResponseDto::from)
+                .collect(Collectors.toCollection(LinkedHashSet::new)),
+            dto.createdAt(),
+            dto.modifiedAt()
+        );
+    }
 
 }

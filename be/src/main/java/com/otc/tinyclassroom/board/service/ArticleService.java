@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.board.service;
 
 import com.otc.tinyclassroom.board.dto.ArticleDto;
+import com.otc.tinyclassroom.board.dto.ArticleWithCommentDto;
 import com.otc.tinyclassroom.board.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.board.dto.request.ArticleUpdateRequestDto;
 import com.otc.tinyclassroom.board.entity.Article;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ *  게시글 service.
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -42,10 +46,10 @@ public class ArticleService {
         };
     }
 
-    public ArticleDto getArticle(Long articleId) {
+    public ArticleWithCommentDto getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(() -> new EntityNotFoundException("게시글 없음 "));
         article.increaseHit();
-        return ArticleDto.from(article);
+        return ArticleWithCommentDto.from(article);
 
     }
 
