@@ -39,7 +39,10 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(Long classRoomId, ArticleType articleType, SearchType searchType, String searchKeyword, Pageable pageable) {
         if (searchKeyword == null || searchKeyword.isBlank()) {
-            return articleRepository.findByClassRoomIsNullAndArticleType(articleType, pageable).map(ArticleDto::from);
+            if (classRoomId == null) {
+                return articleRepository.findByClassRoomIsNullAndArticleType(articleType, pageable).map(ArticleDto::from);
+            }
+            return articleRepository.findByClassRoom_IdAndArticleType(classRoomId, articleType, pageable).map(ArticleDto::from);
         }
         if (classRoomId == null) {
             return switch (searchType) {

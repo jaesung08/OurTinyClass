@@ -29,7 +29,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
 
     Page<Article> findByClassRoomIsNullAndArticleTypeAndMember_NameContaining(ArticleType articleType, String name, Pageable pageable);
 
-    // 전체 게시판은 classRoom이 할당되지 않음
+    // 기본 조회
     Page<Article> findByClassRoomIsNullAndArticleType(ArticleType articleType, Pageable pageable);
 
     // 반 별 게시판
@@ -40,6 +40,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
     Page<Article> findByClassRoom_IdAndArticleTypeAndTitleContainingOrContentContaining(Long classRoomId, ArticleType articleType, String title, String content, Pageable pageable);
 
     Page<Article> findByClassRoom_IdAndArticleTypeAndMember_Name(Long classRoomId, ArticleType articleType, String name, Pageable pageable);
+
+    // 기본 조회
+    Page<Article> findByClassRoom_IdAndArticleType(Long classRoomId, ArticleType articleType, Pageable pageable);
 
     /**
      * 대소문자 구분 없는 검색을 위한 QueryDSL 설정.
