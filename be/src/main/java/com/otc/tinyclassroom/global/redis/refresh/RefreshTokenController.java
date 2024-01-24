@@ -32,16 +32,16 @@ public class RefreshTokenController {
     /**
      * memberId(Long)에 해당하는 Refresh Token 을 조회하는 엔드포인트.
      */
-    @GetMapping("/{memberId}")
-    public ResponseEntity<String> findByMemberId(@PathVariable("memberId") Long memberId) {
-        String refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
-
-        if (!refreshToken.isBlank()) {
-            return new ResponseEntity<>(refreshToken, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-    }
+//    @GetMapping("/{memberId}")
+//    public ResponseEntity<String> findByMemberId(@PathVariable("memberId") Long memberId) {
+//        String refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
+//
+//        if (!refreshToken.isBlank()) {
+//            return new ResponseEntity<>(refreshToken, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     /**
      * memberId(Long)에 해당하는 Refresh Token 의 TTL(Time to Live)을 조회하는 엔드포인트.
@@ -64,7 +64,7 @@ public class RefreshTokenController {
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
 
-        Optional<ReIssueResponseDto> dto = refreshTokenService.reIssue(requestDto.accessToken(), requestDto.refreshToken());
+        Optional<ReIssueResponseDto> dto = refreshTokenService.reIssue(requestDto.refreshToken());
         if (dto.isEmpty()) {
             throw new ClassNotFoundException();
         } else {

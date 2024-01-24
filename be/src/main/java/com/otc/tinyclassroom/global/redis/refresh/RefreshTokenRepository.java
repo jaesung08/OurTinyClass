@@ -28,8 +28,8 @@ public class RefreshTokenRepository {
     public void save(final RefreshToken refreshToken) {
 
         redisTemplate.opsForValue().set(
-            refreshToken.getMemberId(),
             refreshToken.getRefreshToken(),
+            refreshToken.getMemberId(),
             refreshTokenTtl,
             TimeUnit.MILLISECONDS
         );
@@ -38,10 +38,23 @@ public class RefreshTokenRepository {
     /**
      * 회원 식별자에 해당하는 Refresh Token을 조회.
      */
-    public Optional<String> findByMemberId(final String memberId) {
-        if (redisTemplate.opsForValue().get(memberId) == null) {
+//    public Optional<String> findByMemberId(final String memberId) {
+//        if (redisTemplate.opsForValue().get(memberId) == null) {
+//            return Optional.empty();
+//        }
+//        return Optional.of(String.valueOf(redisTemplate.opsForValue().get(memberId)));
+//    }
+
+    /**
+     *  Refresh Token 에 해당하는 memberId 조회.
+     */
+    public Optional<String> findByRefreshToken(final String refreshToken) {
+
+        // TODO: refresh token 수명 다하면 어떻게 나오는지 확인
+        String result = redisTemplate.opsForValue().get(refreshToken).toString();
+        if (result.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(String.valueOf(redisTemplate.opsForValue().get(memberId)));
+        return Optional.of(result);
     }
 }
