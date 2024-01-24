@@ -4,6 +4,7 @@ import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
 
+// todo : 카테고리 결정될 경우 아래 데이터 값들 변경해줘야함
 const CATEGORYLISTS = [
   {
     category: "공지사항",
@@ -24,7 +25,7 @@ function CreateArticleBody() {
   const [articleCategory, setArticleCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const selectCategory = (e) => {
+  const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     console.log(e.target.value);
     setArticleCategory(e.target.value);
   };
@@ -66,6 +67,7 @@ function CreateArticleBody() {
       >
         ←
       </Button>
+      {/* todo : inline style height 속성 tailwind에서 적당한 height 로 변경하기 */}
       <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
       <div className="w-full bg-white" style={{ height: "90%" }}>
         <div
