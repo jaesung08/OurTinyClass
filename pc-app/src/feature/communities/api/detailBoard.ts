@@ -9,7 +9,7 @@ export const editDetail = async (
   content: string,
   article_id: string
 ) => {
-  return await axios.post(`/board/${article_id}`, {
+  return await axios.patch(`/board/${article_id}`, {
     title,
     content,
   });

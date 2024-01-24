@@ -1,16 +1,31 @@
 import { Button, Select, SelectItem, Input } from "@nextui-org/react";
-import { axios } from "@/lib/axios";
-import { useEffect, useState, useMemo } from "react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
 import { useNavigate } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
+
+// todo : 카테고리 결정될 경우 아래 데이터 값들 변경해줘야함
+const CATEGORYLISTS = [
+  {
+    category: "공지사항",
+    value: "notice",
+  },
+  {
+    category: "고민 상담",
+    value: "1",
+  },
+  {
+    category: "테스트 게시판",
+    value: "2",
+  },
+];
 
 function CreateArticleBody() {
   const navigator = useNavigate();
   const [articleCategory, setArticleCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const selectCategory = (e) => {
+  const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     console.log(e.target.value);
     setArticleCategory(e.target.value);
   };
@@ -23,38 +38,23 @@ function CreateArticleBody() {
       console.log(error);
     }
   };
-  const itemLists = [
-    {
-      category: "공지사항",
-      value: "notice",
+
+  const modules = {
+    toolbar: [
+      ["link", "image", "video"],
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      ["blockquote"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+    ],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
     },
-    {
-      category: "고민 상담",
-      value: "1",
-    },
-    {
-      category: "테스트 게시판",
-      value: "2",
-    },
-  ];
-  const modules = useMemo(
-    () => ({
-      toolbar: [
-        ["link", "image", "video"],
-        [{ header: [1, 2, 3, false] }],
-        ["bold", "italic", "underline", "strike"],
-        ["blockquote"],
-        [{ list: "ordered" }, { list: "bullet" }],
-        [{ color: [] }, { background: [] }],
-        [{ align: [] }],
-      ],
-      clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
-        matchVisual: false,
-      },
-    }),
-    []
-  );
+  };
+
   return (
     <section className="w-10/12 h-full border-l-3 realtive">
       <Button
@@ -70,6 +70,7 @@ function CreateArticleBody() {
       >
         ←
       </Button>
+      {/* todo : inline style height 속성 tailwind에서 적당한 height 로 변경하기 */}
       <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
       <div className="w-full bg-white" style={{ height: "90%" }}>
         <div
@@ -87,7 +88,7 @@ function CreateArticleBody() {
                   size="sm"
                   onChange={(e) => selectCategory(e)}
                 >
-                  {itemLists.map(
+                  {CATEGORYLISTS.map(
                     (
                       item: { category: string; value: string }
                       // index: number

@@ -2,14 +2,15 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+interface Articles {
+  id: number;
+  title: string;
+  content: string;
+  isActive: boolean;
+}
+
 function FreeBoardHeader() {
   const navigator = useNavigate();
-  interface Articles {
-    id: number;
-    title: string;
-    content: string;
-    isActive: boolean;
-  }
   let idCheck: number = 0;
   const [articleState, setArticleState] = useState<Articles[]>([
     {
@@ -37,13 +38,14 @@ function FreeBoardHeader() {
       isActive: false,
     },
   ]);
-
+  // 게시판 리스트 가져오는 부분
   const communityList: JSX.Element[] = useMemo(() => {
     return articleState.map(
-      (
-        article: { title: string; id: number; isActive: boolean },
-        index: number
-      ): JSX.Element => {
+      (article: {
+        title: string;
+        id: number;
+        isActive: boolean;
+      }): JSX.Element => {
         return (
           <li
             className={
@@ -52,6 +54,7 @@ function FreeBoardHeader() {
                 : "pl-2 py-5 cursor-pointer list-none"
             }
             key={article.id}
+            // todo : 게시판 별 링크 다르게 설정
             onClick={() => navigator("/communities")}
           >
             {article.title}
@@ -68,6 +71,7 @@ function FreeBoardHeader() {
       </div>
       <div className="w-full" style={{ minHeight: "calc(100vh - 5rem)" }}>
         <p className="font-bold text-lg pl-5 py-4">나작사 커뮤니티</p>
+        {/* todo : 패딩 크기 조절해야함 */}
         <Accordion selectionMode="multiple" style={{ padding: "0" }}>
           <AccordionItem
             key="1"

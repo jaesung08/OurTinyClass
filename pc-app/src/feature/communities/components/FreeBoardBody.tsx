@@ -16,17 +16,22 @@ import {
 import { ChevronIcon } from "@/assets/ChevronIcon";
 import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
-import { axios } from "@/lib/axios";
-import { API_URL } from "@/config";
 import { freeBoard } from "../api/freeBoard";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
-// import { ReactComponent as Search } from "../../../assets/images/Hamburger.svg";
+const CATEGORIES = ["내용", "제목", "작성자"];
+
+interface Board {
+  id: number;
+  title: string;
+  name: string;
+  createdAt: string;
+  hit: number;
+}
 
 function FreeBoardBody() {
   const navigator = useNavigate();
-  const categories = ["내용", "제목", "작성자"];
   const renderItem = ({
     ref,
     key,
@@ -85,8 +90,8 @@ function FreeBoardBody() {
       </button>
     );
   };
-  const [renderBoard, setRenderBoard] = useState();
-  const [boardList, setBoardList] = useState<object[]>([]);
+  const [renderBoard, setRenderBoard] = useState<JSX.Element[] | string>();
+  const [boardList, setBoardList] = useState<Board[]>([]);
 
   useEffect(() => {
     const searchArticle = async () => {
@@ -102,32 +107,34 @@ function FreeBoardBody() {
 
   useEffect(() => {
     if (boardList) {
-      const boards = boardList.map((board, index) => {
-        const date = dayjs(board.createdAt);
-        return (
-          <TableRow key={index}>
-            <TableCell>{index + 1}</TableCell>
-            <TableCell
-              className="cursor-pointer hover:bg-gray-200"
-              style={{
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                maxWidth: "25rem",
-              }}
-              onClick={() =>
-                navigator("/communities/detail", { state: board.id })
-              }
-            >
-              {board.title}
-            </TableCell>
-            <TableCell>{board.name}</TableCell>
-            <TableCell>{date.format("YY-MM-DD")}</TableCell>
-            <TableCell>{board.hit}</TableCell>
-            <TableCell>222</TableCell>
-          </TableRow>
-        );
-      });
+      const boards: JSX.Element[] = boardList.map(
+        (board: Board, index: number): JSX.Element => {
+          const date = dayjs(board.createdAt);
+          return (
+            <TableRow key={index}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell
+                className="cursor-pointer hover:bg-gray-200"
+                style={{
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
+                  maxWidth: "25rem",
+                }}
+                onClick={() =>
+                  navigator("/communities/detail", { state: board.id })
+                }
+              >
+                {board.title}
+              </TableCell>
+              <TableCell>{board.name}</TableCell>
+              <TableCell>{date.format("YY-MM-DD")}</TableCell>
+              <TableCell>{board.hit}</TableCell>
+              <TableCell>222</TableCell>
+            </TableRow>
+          );
+        }
+      );
       setRenderBoard(boards);
     }
   }, [boardList]);
@@ -188,7 +195,7 @@ function FreeBoardBody() {
             <div className="w-full" style={{ height: "15%" }}>
               <form className="flex justify-between items-center">
                 <Select className="ml-5 bg-white w-1/6 rounded-xl" size="sm">
-                  {categories.map((item: string, index: number) => (
+                  {CATEGORIES.map((item: string, index: number) => (
                     <SelectItem key={index} value={item}>
                       {item}
                     </SelectItem>

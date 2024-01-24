@@ -3,14 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import ReactQuill from "react-quill";
 import Comments from "./Comments";
 import CommentsList from "./CommentsList";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { editDetail, getDetail } from "../api/detailBoard";
 
 function DetailArticleBody() {
   const [isArticleEdit, setIsArticleEdit] = useState<boolean>(false);
   const [articleContent, setArticleContent] = useState<string>("");
   const [articleTitle, setArticleTitle] = useState<string>("");
-  const navigator = useNavigate();
   const { state } = useLocation();
 
   useEffect(() => {
@@ -25,6 +24,7 @@ function DetailArticleBody() {
     };
     renderDetail();
   }, []);
+
   const modules = useMemo(
     () => ({
       toolbar: [
@@ -48,23 +48,21 @@ function DetailArticleBody() {
     setIsArticleEdit(!isArticleEdit);
   };
 
-  const checkValue = (e) => {
+  const checkValue = (e: string) => {
     const check = e.split("<p>");
     const textValue = check[1].split("</p>");
     console.log(textValue);
     setArticleContent(textValue[0]);
   };
-  const completeArticleEdit = () => {
-    const editBoard = async () => {
-      try {
-        const article = await editDetail(articleTitle, articleContent, state);
-        setIsArticleEdit(!isArticleEdit);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    editBoard();
+  const completeArticleEdit = async () => {
+    try {
+      await editDetail(articleTitle, articleContent, state);
+      setIsArticleEdit(!isArticleEdit);
+    } catch (err) {
+      console.error(err);
+    }
   };
+
   return (
     <article className="w-10/12 h-full border-l-1">
       <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
