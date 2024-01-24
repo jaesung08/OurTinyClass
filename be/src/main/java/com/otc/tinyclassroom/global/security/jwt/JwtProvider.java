@@ -7,24 +7,17 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.xml.bind.DatatypeConverter;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.Key;
-import java.util.Base64;
+
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Slf4j
 @Component
@@ -56,7 +49,7 @@ public class JwtProvider {
 
     public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-                .getClaim("memberId").asLong();
+            .getClaim("memberId").asLong();
     }
 
     public String getRoleByAccessToken(String token) {
@@ -82,9 +75,9 @@ public class JwtProvider {
 
     public String resolveAccessToken(HttpServletRequest request) {
         // TODO : Exception 터뜨리게
-        if(request.getHeader("authorization") != null )
+        if (request.getHeader("authorization") != null) {
             return request.getHeader("authorization").replace(TOKEN_PREFIX, "");
-
+        }
         return null;
     }
 
@@ -96,7 +89,6 @@ public class JwtProvider {
     // RefreshToken 존재유무 확인
     public boolean existsRefreshToken(String refreshToken) {
         // TODO : RefreshToken 존재 유무 확인
-//        return tokenRepository.existsByRefreshToken(refreshToken);
         return true;
     }
 }

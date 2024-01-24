@@ -14,8 +14,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -59,7 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.info("try loginDto : {}", loginRequestDto);
 
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginRequestDto.getLoginId(), loginRequestDto.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginRequestDto.memberId(), loginRequestDto.password());
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
@@ -91,7 +89,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         RefreshToken toRedis = new RefreshToken(refreshToken, loginMember.getId().toString());
 
         refreshTokenRepository.save(toRedis);
-        LoginResponseDto loginResponseDto = new LoginResponseDto(loginMember.getName(), loginMember.getMemberId(), loginMember.getRole(), loginMember.getPoint());
+        LoginResponseDto loginResponseDto = new LoginResponseDto(loginMember.getName(), loginMember.getMemberId(), loginMember.getRole().getValue(), loginMember.getPoint(), refreshToken);
         setTokenResponse(response, loginResponseDto);
 
         jwtProvider.setHeaderAccessToken(response, accessToken);

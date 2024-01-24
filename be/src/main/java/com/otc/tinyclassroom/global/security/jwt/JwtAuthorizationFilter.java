@@ -91,16 +91,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             } catch (TokenExpiredException exception) {
                 responseDto = new BaseResponse<>(HttpStatus.UNAUTHORIZED.value(), "Access Token이 만료되었습니다.", null);
 
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
+
 
             } catch (Exception e) {
                 responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다.", null);
 
+                response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
+
+
             }
         }
     }
