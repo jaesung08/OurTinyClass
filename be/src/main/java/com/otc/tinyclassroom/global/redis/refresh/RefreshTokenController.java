@@ -62,7 +62,7 @@ public class RefreshTokenController {
      * Access Token 및 Refresh Token 을 사용하여 새로운 Access Token 을 발급하는 엔드포인트.
      */
     @PostMapping("/refresh")
-    public ResponseEntity<RefreshResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
+    public BaseResponse<RefreshResponseDto> refresh(@RequestBody RefreshRequestDto requestDto) throws ClassNotFoundException {
 
         Optional<ReIssueResponseDto> dto = refreshTokenService.reIssue(requestDto.refreshToken());
         if (dto.isEmpty()) {
@@ -74,11 +74,12 @@ public class RefreshTokenController {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", "Bearer " + responseDto.accessToken());
                 RefreshResponseDto refreshResponseDto = new RefreshResponseDto(responseDto.refreshToken());
-                return new ResponseEntity<>(refreshResponseDto, headers, HttpStatus.OK);
+                return new BaseResponse<>(HttpStatus.OK.value(), "Access Token이 재발급 되었습니다.", refreshResponseDto);
             } else {
                 // 새로 발급 실패 등의 상황에 대한 응답 처리
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                return new BaseResponse<>(HttpStatus.UNAUTHORIZED.value(), "재발급에 실패하였습니다.", null);
             }
+
         }
 
     }
