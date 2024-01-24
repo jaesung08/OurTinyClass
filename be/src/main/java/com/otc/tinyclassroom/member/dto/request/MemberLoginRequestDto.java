@@ -1,7 +1,5 @@
 package com.otc.tinyclassroom.member.dto.request;
 
-import lombok.Data;
-
 /**
  * Login 시 필요한 Dto.
  */

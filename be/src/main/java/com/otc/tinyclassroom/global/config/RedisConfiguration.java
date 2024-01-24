@@ -2,7 +2,6 @@ package com.otc.tinyclassroom.global.config;
 
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ public class RedisConfiguration {
     private final RedisProperties redisProperties;
 
     /**
-     * Redis에 연결하기 위한 RedisConnectionFactory 빈을 구성합니다.
+     * Redis 에 연결하기 위한 RedisConnectionFactory 빈을 구성합니다.
      */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -31,8 +30,7 @@ public class RedisConfiguration {
     }
 
     /**
-     * RedisTemplate을 구성하는 빈을 생성.
-     *
+     * RedisTemplate 을 구성하는 빈을 생성.
      */
     @Bean
     public RedisTemplate<String, String> redisTemplate() {

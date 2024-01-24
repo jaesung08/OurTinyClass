@@ -1,17 +1,19 @@
 package com.otc.tinyclassroom.global.security.auth;
 
 import com.otc.tinyclassroom.member.entity.Member;
-import lombok.Data;
+import java.util.ArrayList;
+import java.util.Collection;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+/**
+ * User 정보(권한, 이름, 비밀번호 등)를 관리하는 구현체.
+ */
 @Slf4j
-@Data
+@Getter
 public class PrincipalDetails implements UserDetails {
 
     private final Member member;

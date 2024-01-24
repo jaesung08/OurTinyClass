@@ -30,7 +30,7 @@ class MemberServiceTest {
     @Test
     void givenInfo_whenRequestJoin_thenReturnVoid() {
         // Given
-        // TODO: fixture로 변경
+        // TODO: fixture 로 변경
         Member member = Member.of("test123", "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
         MemberJoinRequestDto request = MemberJoinRequestDto.from(member);
         given(memberRepository.findByMemberId("test123")).willReturn(Optional.empty());

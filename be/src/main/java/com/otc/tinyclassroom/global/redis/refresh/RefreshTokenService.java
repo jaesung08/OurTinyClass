@@ -23,41 +23,29 @@ public class RefreshTokenService {
     private final MemberRepository memberRepository;
 
     /**
-     * 회원 식별자와 Refresh Token 을 받아서 저장.
+     * RefreshToken 으로 Redis Repository 조회.
      */
-    public void save(String memberId, String refreshTokenString) {
-        RefreshToken refreshToken = new RefreshToken(refreshTokenString, memberId);
-        refreshTokenRepository.save(refreshToken);
-    }
-
-    /**
-     *  회원 식별자에 해당하는 Refresh Token 을 조회.
-     */
-//    public String findByMemberId(final String memberId) {
-//        Optional<String> byMemberId = refreshTokenRepository.findByMemberId(memberId);
-//
-//        // 값이 있으면 해당 값을 반환, 값이 없으면 기본값(또는 원하는 동작)을 반환
-//        return byMemberId.orElse(null); // 또는 다른 기본값 또는 동작을 지정할 수 있음
-//    }
     public String findByRefresh(final String refreshToken) {
         Optional<String> byMemberId = refreshTokenRepository.findByRefreshToken(refreshToken);
-        // 값이 있으면 해당 값을 반환, 값이 없으면 기본값(또는 원하는 동작)을 반환
         return byMemberId.orElseThrow(() -> new NoSuchElementException("Refresh token에 해당하는 값이 없습니다."));
     }
 
-    public Long getTtlByMemberId(String key) {
+    /**
+     * RefreshToken 으로 TTL 받기.
+     */
+    public Long getTtlByRefreshToken(String key) {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
     /**
-     * Refresh Token을 사용하여 새로운 Access Token을 발급합니다.
+     * Refresh Token 을 사용하여 새로운 Access Token 을 발급.
      */
     public Optional<ReIssueResponseDto> reIssue(String refreshToken) {
         String memberId = this.findByRefresh(refreshToken);
-        Role role = memberRepository.findById(Long.valueOf(memberId)).get().getRole();
+        Role role = memberRepository.findById(Long.valueOf(memberId)).orElseThrow().getRole();
 
         refreshToken = UUID.randomUUID().toString();
-        RefreshToken toRedis = new RefreshToken(refreshToken, memberId.toString());
+        RefreshToken toRedis = new RefreshToken(refreshToken, memberId);
         refreshTokenRepository.save(toRedis);
 
         String newAccessToken = jwtProvider.createAccessToken(Long.valueOf(memberId), role);

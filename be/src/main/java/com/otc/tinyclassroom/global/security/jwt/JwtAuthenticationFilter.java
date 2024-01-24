@@ -10,7 +10,6 @@ import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 /**
  * Spring Security 를 사용하기 위한 Authentication Filter.
@@ -50,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("JwtAuthentication : 진입");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        MemberLoginRequestDto loginRequestDto = null;
+        MemberLoginRequestDto loginRequestDto;
 
         try {
             loginRequestDto = objectMapper.readValue(request.getInputStream(), MemberLoginRequestDto.class);
@@ -68,7 +66,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             return authentication;
         } catch (MemberException e) {
             log.info("MemberException: {}", e.toString());
-            throw new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID);
+            throw new MemberException(MemberErrorCode.NOT_FOUND_MEMBER);
         } catch (Exception e) {
             log.info("Exception: {}", e.toString());
             throw new RuntimeException("서버에서 오류가 발생했습니다.", e);
@@ -79,7 +77,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(
             HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
-            throws IOException, ServletException {
+            throws IOException {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 

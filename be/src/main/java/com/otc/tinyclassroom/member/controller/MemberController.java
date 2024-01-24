@@ -7,7 +7,6 @@ import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.service.MemberService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +26,6 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtProvider jwtProvider;
     private final RefreshTokenService refreshTokenService;
-    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * 회원가입 메소드.

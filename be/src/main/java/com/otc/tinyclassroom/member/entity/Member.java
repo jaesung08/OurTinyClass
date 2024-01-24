@@ -5,23 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
-
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 import lombok.Getter;
-import lombok.ToString;
-import org.hibernate.annotations.CurrentTimestamp;
 
 /**
  * 회원 엔티티 정의 (memberId, password, name, email, point, birthday).
  *
  * @author ParkJaeseon
  */
-@Data
+
+@Getter
 @Table(name = "member")
 @Entity
 public class Member {

@@ -6,30 +6,28 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+/**
+ * Cors 설정을 위한 Configuration.
+ */
 @Configuration
 public class CorsConfig {
 
+    /**
+     * cors filter 추가.
+     */
     @Bean
     public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
 
-        /*
-         * TODO : addAllowedOriginPattern 을 client 주소로만 접근 가능하게 변경
-         * */
+        // TODO : addAllowedOriginPattern 을 client 주소로만 접근 가능하게 변경
         config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("*");
-        source.registerCorsConfiguration("/**", config);
 
-//        CorsConfiguration apiConfig = new CorsConfiguration();
-//        apiConfig.setAllowCredentials(true);
-//        config.addAllowedOriginPattern("*");
-//        apiConfig.addAllowedHeader("*");
-//        apiConfig.addAllowedMethod("*");
-//        source.registerCorsConfiguration("/api/**", apiConfig);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
     }

@@ -39,7 +39,6 @@ class MemberControllerTest {
     @Test
     void givenInfo_whenRequestJoin_thenReturnSuccess() throws Exception {
         // Given
-        // TODO: fixture 구현으로 변경하기
         MemberJoinRequestDto request = MemberJoinRequestDto.of("test", "test1@Q", "test", "test@gmail.com", LocalDate.now());
         doNothing().when(memberService).join(any(MemberJoinRequestDto.class));
 

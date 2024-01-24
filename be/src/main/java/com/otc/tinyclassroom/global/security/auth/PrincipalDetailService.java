@@ -11,8 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+/**
+ * Spring Security User 정보를 관리하는 클래스.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class PrincipalDetailService implements UserDetailsService {
 
         Member member = memberRepository.findByMemberId(username)
                 .orElseThrow(() ->
-                    new MemberException(MemberErrorCode.NOT_FOUND_MEMBER_ID));
+                    new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         return new PrincipalDetails(member);
     }

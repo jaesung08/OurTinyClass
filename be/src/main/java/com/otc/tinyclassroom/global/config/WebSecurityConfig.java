@@ -21,6 +21,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Spring Security Configuration 추가.
+ */
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -46,11 +49,9 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public AuthenticationFailureHandler failureHandler() {
-//        return new CustomAuthenticationFailureHandler();
-//    }
-
+    /**
+     * filter chain 처리.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -81,15 +82,13 @@ public class WebSecurityConfig {
                     .requestMatchers(("/api/members/join")).permitAll()
                     .requestMatchers("/api/members/login").permitAll()
                     .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
-//                        .requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
-//                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                    //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
+                    //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                     .anyRequest().permitAll()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
             );
-
-
         return http.build();
     }
 }

@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RefreshTokenRepository {
 
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @Value("${jwt.token.refresh-expiration-time}")
     private long refreshTokenTtl;
@@ -36,21 +35,10 @@ public class RefreshTokenRepository {
     }
 
     /**
-     * 회원 식별자에 해당하는 Refresh Token을 조회.
-     */
-//    public Optional<String> findByMemberId(final String memberId) {
-//        if (redisTemplate.opsForValue().get(memberId) == null) {
-//            return Optional.empty();
-//        }
-//        return Optional.of(String.valueOf(redisTemplate.opsForValue().get(memberId)));
-//    }
-
-    /**
      *  Refresh Token 에 해당하는 memberId 조회.
      */
     public Optional<String> findByRefreshToken(final String refreshToken) {
 
-        // TODO: refresh token 수명 다하면 어떻게 나오는지 확인
         String result = redisTemplate.opsForValue().get(refreshToken).toString();
         if (result.isEmpty()) {
             return Optional.empty();
