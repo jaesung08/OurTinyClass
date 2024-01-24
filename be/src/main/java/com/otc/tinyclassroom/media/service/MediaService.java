@@ -65,11 +65,11 @@ public class MediaService {
             throw new MediaException(MediaErrorCode.NOT_EXIST_FILE_NAME);
         }
 
-        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
-        if (!fileValidateList.contains(idxFileName)) {
+        String extension = fileName.substring(fileName.lastIndexOf("."));
+        if (!fileValidateList.contains(extension)) {
             throw new MediaException(MediaErrorCode.WRONG_FILE_EXTENSION);
         }
-        return fileName.substring(fileName.lastIndexOf("."));
+        return extension;
     }
 
 }
