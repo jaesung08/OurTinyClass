@@ -1,6 +1,6 @@
-package com.otc.tinyclassroom.board.repository;
+package com.otc.tinyclassroom.community.repository;
 
-import com.otc.tinyclassroom.board.entity.ArticleComment;
+import com.otc.tinyclassroom.community.entity.ArticleComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

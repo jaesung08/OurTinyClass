@@ -1,6 +1,6 @@
-package com.otc.tinyclassroom.board.dto.response;
+package com.otc.tinyclassroom.community.dto.response;
 
-import com.otc.tinyclassroom.board.dto.ArticleWithCommentDto;
+import com.otc.tinyclassroom.community.dto.ArticleWithCommentDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.dto.ArticleWithCommentDto}.
+ * DTO for {@link com.otc.tinyclassroom.community.dto.ArticleWithCommentDto}.
  */
 public record ArticleWithCommentsResponseDto(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments, LocalDateTime createdAt,
                                              LocalDateTime modifiedAt) implements Serializable {

@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.board.entity;
+package com.otc.tinyclassroom.community.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

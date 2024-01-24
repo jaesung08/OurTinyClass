@@ -1,11 +1,9 @@
-package com.otc.tinyclassroom.board.dto.request;
+package com.otc.tinyclassroom.community.dto.request;
 
-import com.otc.tinyclassroom.board.entity.type.ArticleType;
 import java.io.Serializable;
-import java.util.Optional;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.entity.Article}
+ * DTO for {@link com.otc.tinyclassroom.community.entity.Article}
  */
 public record ArticleCreateRequestDto(Long classRoomId, String title, String content, String articleType) implements Serializable {
 

@@ -1,14 +1,15 @@
-package com.otc.tinyclassroom.board.service;
+package com.otc.tinyclassroom.community.service;
 
-import com.otc.tinyclassroom.board.dto.request.ArticleCommentRequestDto;
-import com.otc.tinyclassroom.board.dto.request.ArticleCommentUpdateRequestDto;
-import com.otc.tinyclassroom.board.entity.Article;
-import com.otc.tinyclassroom.board.entity.ArticleComment;
-import com.otc.tinyclassroom.board.repository.ArticleCommentRepository;
-import com.otc.tinyclassroom.board.repository.ArticleRepository;
+import com.otc.tinyclassroom.community.dto.request.ArticleCommentRequestDto;
+import com.otc.tinyclassroom.community.dto.request.ArticleCommentUpdateRequestDto;
+import com.otc.tinyclassroom.community.entity.Article;
+import com.otc.tinyclassroom.community.entity.ArticleComment;
+import com.otc.tinyclassroom.community.exception.CommunityErrorCode;
+import com.otc.tinyclassroom.community.exception.CommunityException;
+import com.otc.tinyclassroom.community.repository.ArticleCommentRepository;
+import com.otc.tinyclassroom.community.repository.ArticleRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +29,11 @@ public class ArticleCommentService {
     public void createArticleComment(Long memberId, ArticleCommentRequestDto request) {
         //멤버 찾기
         Member member = memberRepository.findById(memberId).orElseThrow(
-            () -> new EntityNotFoundException("Member not found")
+            () -> new CommunityException(CommunityErrorCode.MEMBER_NOT_FOUND)
         );
         // 게시글 찾기
         Article article = articleRepository.findById(request.articleId()).orElseThrow(
-            () -> new EntityNotFoundException("Article not found")
+            () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
         );
         ArticleComment articleComment = ArticleComment.of(member, article, request.content());
         articleCommentRepository.save(articleComment);
@@ -40,15 +41,15 @@ public class ArticleCommentService {
 
     public void updateArticleComment(Long articleCommentId, ArticleCommentUpdateRequestDto request) {
         ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
-            () -> new EntityNotFoundException("없는 댓글입니다.")
+            () -> new CommunityException(CommunityErrorCode.ARTICLE_COMMENT_NOT_FOUND)
         );
         if (request.content() != null && !(request.content().isBlank())) {
             articleComment.setContent(request.content());
         }
     }
 
-    public void removeArticleComment(Long aritcleCommentId) {
-        articleCommentRepository.deleteById(aritcleCommentId);
+    public void removeArticleComment(Long articleCommentId) {
+        articleCommentRepository.deleteById(articleCommentId);
     }
 
 }

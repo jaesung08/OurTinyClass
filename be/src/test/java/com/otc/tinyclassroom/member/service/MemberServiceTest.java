@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.otc.tinyclassroom.global.config.SpringSecurityConfig;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberException;
@@ -16,8 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 
 @DisplayName("member service 테스트")
+@Import(SpringSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 

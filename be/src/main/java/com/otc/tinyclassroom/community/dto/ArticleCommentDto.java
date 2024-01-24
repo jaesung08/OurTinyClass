@@ -1,13 +1,12 @@
-package com.otc.tinyclassroom.board.dto;
+package com.otc.tinyclassroom.community.dto;
 
-import com.otc.tinyclassroom.board.entity.Article;
-import com.otc.tinyclassroom.board.entity.ArticleComment;
+import com.otc.tinyclassroom.community.entity.ArticleComment;
 import com.otc.tinyclassroom.member.dto.MemberDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.entity.ArticleComment}
+ * DTO for {@link com.otc.tinyclassroom.community.entity.ArticleComment}
  */
 public record ArticleCommentDto(Long id, MemberDto member, ArticleDto article, String content,
                                 LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {

@@ -1,14 +1,14 @@
-package com.otc.tinyclassroom.board.dto;
+package com.otc.tinyclassroom.community.dto;
 
-import com.otc.tinyclassroom.board.entity.Article;
-import com.otc.tinyclassroom.board.entity.type.ArticleType;
+import com.otc.tinyclassroom.community.entity.Article;
+import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.MemberDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 게시글 DTO. DTO for {@link com.otc.tinyclassroom.board.entity.Article}
+ * 게시글 DTO. DTO for {@link com.otc.tinyclassroom.community.entity.Article}
  */
 public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,
                          LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy, int hit) implements Serializable {

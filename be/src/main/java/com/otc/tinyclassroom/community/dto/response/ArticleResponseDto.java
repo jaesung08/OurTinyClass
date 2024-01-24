@@ -1,11 +1,11 @@
-package com.otc.tinyclassroom.board.dto.response;
+package com.otc.tinyclassroom.community.dto.response;
 
-import com.otc.tinyclassroom.board.dto.ArticleDto;
+import com.otc.tinyclassroom.community.dto.ArticleDto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.board.entity.Article}
+ * DTO for {@link com.otc.tinyclassroom.community.entity.Article}
  */
 public record ArticleResponseDto(Long id, String title, String content, String name, int hit, LocalDateTime createdAt, LocalDateTime modifiedAt) implements Serializable {
 

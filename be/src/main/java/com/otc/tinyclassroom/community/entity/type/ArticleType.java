@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.board.entity.type;
+package com.otc.tinyclassroom.community.entity.type;
 
 public enum ArticleType {
     NOTICE, FREE, COUNSELING, HOBBY;
