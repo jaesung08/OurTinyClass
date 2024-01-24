@@ -1,10 +1,6 @@
 package com.otc.tinyclassroom.global.redis.refresh;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -29,9 +23,9 @@ public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;
 
-    /**
-     * memberId(Long)에 해당하는 Refresh Token 을 조회하는 엔드포인트.
-     */
+//    /**
+//     * memberId(Long)에 해당하는 Refresh Token 을 조회하는 엔드포인트.
+//     */
 //    @GetMapping("/{memberId}")
 //    public ResponseEntity<String> findByMemberId(@PathVariable("memberId") Long memberId) {
 //        String refreshToken = refreshTokenService.findByMemberId(String.valueOf(memberId));
