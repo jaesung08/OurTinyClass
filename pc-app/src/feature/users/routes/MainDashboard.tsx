@@ -1,14 +1,13 @@
+import { userState } from "@/atoms/user";
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import { Button, Card, CardFooter, CardHeader } from "@nextui-org/react";
 import * as dayjs from "dayjs";
 import { useState } from "react";
+import { useRecoilState } from "recoil";
 function MainDashBoard() {
   const todayDate = dayjs();
-  const [userInfo, setUserInfo] = useState({
-    name: "누네띠네",
-  });
-
+  const userInfo = useRecoilState(userState);
   const dummyNotices = [
     {
       id: 1,
@@ -303,7 +302,7 @@ function MainDashBoard() {
         </header>
         <main className="flex-col gap-8">
           <p>
-            안녕하세요, <span>{userInfo.name}</span>님
+            안녕하세요, <span>{userInfo[0].name}</span>님
           </p>
           <section className="flex gap-6">
             <div className="bg-green-400 p-4 shadow flex space-y-4 rounded w-4/12 h-40">
