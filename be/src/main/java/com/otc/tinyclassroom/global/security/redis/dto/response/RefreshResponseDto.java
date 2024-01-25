@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.global.redis.refresh;
+package com.otc.tinyclassroom.global.security.redis.dto.response;
 
 /**
  * Refresh Token 을 body 에 담아주기 위한 DTO.

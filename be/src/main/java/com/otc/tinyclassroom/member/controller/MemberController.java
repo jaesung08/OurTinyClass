@@ -1,7 +1,7 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenService;
+import com.otc.tinyclassroom.global.security.redis.service.RefreshTokenService;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.service.MemberService;

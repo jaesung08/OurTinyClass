@@ -1,6 +1,9 @@
-package com.otc.tinyclassroom.global.redis.refresh;
+package com.otc.tinyclassroom.global.security.redis.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.global.security.redis.dto.response.ReIssueResponseDto;
+import com.otc.tinyclassroom.global.security.redis.entity.RefreshToken;
+import com.otc.tinyclassroom.global.security.redis.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.NoSuchElementException;
