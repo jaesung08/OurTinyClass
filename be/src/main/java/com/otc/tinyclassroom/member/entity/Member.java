@@ -5,22 +5,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.Getter;
-import lombok.ToString;
 
 /**
  * 회원 엔티티 정의 (memberId, password, name, email, point, birthday).
  *
  * @author ParkJaeseon
  */
+
 @Getter
-@ToString
-@Table(name = "member", indexes = {@Index(columnList = "memberId"), @Index(columnList = "email")})
+@Table(name = "member")
 @Entity
 public class Member {
 
@@ -44,6 +42,8 @@ public class Member {
     private LocalDate birthday; // 생일
     @Column
     private int point; // 포인트
+    @Column
+    private Role role;
 
     protected Member() {
     }
@@ -59,6 +59,7 @@ public class Member {
         this.email = email;
         this.birthday = birthday;
         this.point = point;
+        this.role = Role.ROLE_ADMIN;
     }
 
     /**
