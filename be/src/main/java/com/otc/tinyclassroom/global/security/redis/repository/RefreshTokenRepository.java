@@ -1,7 +1,9 @@
-package com.otc.tinyclassroom.global.redis.refresh;
+package com.otc.tinyclassroom.global.security.redis.repository;
 
+import com.otc.tinyclassroom.global.security.redis.entity.RefreshToken;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,12 +14,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RefreshTokenRepository {
 
-    private final RedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.token.refresh-expiration-time}")
     private long refreshTokenTtl;
 
-    public RefreshTokenRepository(final RedisTemplate redisTemplate) {
+
+    public RefreshTokenRepository(@Autowired RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

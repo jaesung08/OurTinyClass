@@ -28,11 +28,11 @@ public class ArticleCommentController {
      * 댓글 작성.
      */
     @PostMapping()
-    public BaseResponse<Void> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
+    public BaseResponse<Long> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
         // TODO: 권한 체크
         Long memberId = 1L;
-        articleCommentService.createArticleComment(memberId, request);
-        return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", null);
+        Long articleCommentId = articleCommentService.createArticleComment(memberId, request);
+        return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", articleCommentId);
     }
 
     /**

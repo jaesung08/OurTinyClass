@@ -2,10 +2,11 @@ package com.otc.tinyclassroom.global.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.global.redis.refresh.RefreshToken;
-import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenRepository;
+import com.otc.tinyclassroom.global.security.redis.entity.RefreshToken;
+import com.otc.tinyclassroom.global.security.redis.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.dto.request.MemberLoginRequestDto;
+import com.otc.tinyclassroom.member.dto.response.MemberLoginResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
@@ -87,17 +88,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         RefreshToken toRedis = new RefreshToken(refreshToken, loginMember.getId().toString());
 
         refreshTokenRepository.save(toRedis);
-        LoginResponseDto loginResponseDto = new LoginResponseDto(loginMember.getName(), loginMember.getMemberId(), loginMember.getRole().getValue(), loginMember.getPoint(), refreshToken);
-        setTokenResponse(response, loginResponseDto);
+        MemberLoginResponseDto MemberLoginResponseDto = new MemberLoginResponseDto(loginMember.getName(), loginMember.getMemberId(), loginMember.getRole().getValue(), loginMember.getPoint(), refreshToken);
+        setTokenResponse(response, MemberLoginResponseDto);
 
         jwtProvider.setHeaderAccessToken(response, accessToken);
     }
 
-    private void setTokenResponse(HttpServletResponse response, LoginResponseDto loginResponseDto) throws IOException {
+    private void setTokenResponse(HttpServletResponse response, MemberLoginResponseDto MemberLoginResponseDto) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        BaseResponse<LoginResponseDto> responseDto = new BaseResponse<>(200, "로그인 성공", loginResponseDto);
+        BaseResponse<MemberLoginResponseDto> responseDto = new BaseResponse<>(200, "로그인 성공", MemberLoginResponseDto);
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
     }

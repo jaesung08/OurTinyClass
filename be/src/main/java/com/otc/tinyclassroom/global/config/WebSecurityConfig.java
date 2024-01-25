@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.global.config;
 
-import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenRepository;
+import com.otc.tinyclassroom.global.security.redis.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;

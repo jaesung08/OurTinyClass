@@ -10,6 +10,7 @@ import com.otc.tinyclassroom.community.repository.ArticleCommentRepository;
 import com.otc.tinyclassroom.community.repository.ArticleRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class ArticleCommentService {
     private final ArticleCommentRepository articleCommentRepository;
     private final MemberRepository memberRepository;
 
-    public void createArticleComment(Long memberId, ArticleCommentRequestDto request) {
+    public Long createArticleComment(Long memberId, ArticleCommentRequestDto request) {
         //멤버 찾기
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.MEMBER_NOT_FOUND)
@@ -36,7 +37,7 @@ public class ArticleCommentService {
             () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
         );
         ArticleComment articleComment = ArticleComment.of(member, article, request.content());
-        articleCommentRepository.save(articleComment);
+        return articleCommentRepository.save(articleComment).getId();
     }
 
     public void updateArticleComment(Long articleCommentId, ArticleCommentUpdateRequestDto request) {
@@ -51,5 +52,4 @@ public class ArticleCommentService {
     public void removeArticleComment(Long articleCommentId) {
         articleCommentRepository.deleteById(articleCommentId);
     }
-
 }
