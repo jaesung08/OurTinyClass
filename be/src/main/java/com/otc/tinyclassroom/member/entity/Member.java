@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -23,10 +24,14 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // db에 기록되는 번호 (auto increment)
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String memberId; // 유저 id
+
+    @ManyToOne(optional = true)
+    private ClassRoom classRoom;
+
     @Column(nullable = false)
     private String password; // 비밀번호
     @Column(nullable = false)
@@ -46,8 +51,9 @@ public class Member {
     /**
      * 파라미터 생성자.
      */
-    private Member(String memberId, String password, String name, String email, LocalDate birthday, int point) {
+    private Member(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point) {
         this.memberId = memberId;
+        this.classRoom = classRoom;
         this.password = password;
         this.name = name;
         this.email = email;
@@ -59,8 +65,8 @@ public class Member {
     /**
      * 파라미터로 부터 멤버 엔티티 객체를 생성하는 함수.
      */
-    public static Member of(String memberId, String password, String name, String email, LocalDate birthday, int point) {
-        return new Member(memberId, password, name, email, birthday, point);
+    public static Member of(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point) {
+        return new Member(memberId, classRoom, password, name, email, birthday, point);
     }
 
     @Override

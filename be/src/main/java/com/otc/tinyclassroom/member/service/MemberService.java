@@ -51,8 +51,10 @@ public class MemberService {
         if (!isValidEmail(dto.email())) {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
+
         Member member = Member
-                .of(dto.memberId(), passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+                .of(dto.memberId(), null, passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+
         memberRepository.save(member);
     }
 

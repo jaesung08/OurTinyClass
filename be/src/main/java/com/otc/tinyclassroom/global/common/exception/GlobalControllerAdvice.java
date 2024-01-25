@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.global.common.exception;
 
+import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import lombok.extern.slf4j.Slf4j;
@@ -25,5 +26,14 @@ public class GlobalControllerAdvice {
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
+    /**
+     * Board Exception Handler.
+     */
+    @ExceptionHandler(CommunityException.class)
+    public ResponseEntity<?> BoardExceptionHandler(CommunityException e){
+        log.error("Board Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
 
 }

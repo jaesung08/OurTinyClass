@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.otc.tinyclassroom.global.config.SpringSecurityConfig;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
@@ -18,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @DisplayName("member controller 테스트")
+@Import(SpringSecurityConfig.class)
 @WebMvcTest(MemberController.class)
 class MemberControllerTest {
 
