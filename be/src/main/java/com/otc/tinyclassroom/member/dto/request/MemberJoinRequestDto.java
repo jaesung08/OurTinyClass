@@ -16,9 +16,7 @@ public record MemberJoinRequestDto(String memberId, String password, String name
 
 
     /**
-     * MeemberDto 를 MemberJoinRequestDto로 변환하는 메소드.
-     *
-     * @return MemberJoinRequestDto
+     * Member 를 MemberJoinRequestDto로 변환하는 메소드.
      */
     public static MemberJoinRequestDto from(Member entity) {
         return new MemberJoinRequestDto(

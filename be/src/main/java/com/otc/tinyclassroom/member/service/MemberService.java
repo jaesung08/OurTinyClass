@@ -8,6 +8,7 @@ import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,13 @@ public class MemberService {
     // 회원가입 초기화 포인트
     static final int INITIAL_POINT = 0;
     private final MemberRepository memberRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 회원 가입 메소드.
      */
     @Transactional
     public void join(MemberJoinRequestDto dto) {
-        System.out.println(dto);
         // 빈 필드 확인
         if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);
@@ -50,7 +51,10 @@ public class MemberService {
         if (!isValidEmail(dto.email())) {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
-        Member member = Member.of(dto.memberId(), dto.password(), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+
+        Member member = Member
+                .of(dto.memberId(), null, passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+
         memberRepository.save(member);
     }
 
