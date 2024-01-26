@@ -27,7 +27,6 @@ import lombok.Setter;
  */
 @Getter
 @Table(indexes = {
-    @Index(columnList = "title"),
     @Index(columnList = "createdAt")
 })
 @Entity
