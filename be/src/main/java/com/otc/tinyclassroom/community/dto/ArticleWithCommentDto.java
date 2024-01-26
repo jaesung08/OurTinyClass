@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 /**
  * DTO for {@link com.otc.tinyclassroom.community.entity.Article}.
  */
-public record ArticleWithCommentDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,int hit, Set<ArticleCommentDto> articleComments,
+public record ArticleWithCommentDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType, int hit, Set<ArticleCommentDto> articleComments,
                                     LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {
 
-    public static ArticleWithCommentDto of(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,int hit, Set<ArticleCommentDto> articleComments,
+    public static ArticleWithCommentDto of(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType, int hit, Set<ArticleCommentDto> articleComments,
         LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
         return new ArticleWithCommentDto(id, member, classRoom, title, content, articleType, hit, articleComments, createdAt, createdBy, modifiedAt, modifiedBy);
     }

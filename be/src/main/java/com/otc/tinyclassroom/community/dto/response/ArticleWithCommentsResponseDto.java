@@ -18,6 +18,9 @@ public record ArticleWithCommentsResponseDto(Long id, String title, String conte
         return new ArticleWithCommentsResponseDto(id, title, content, name, hit, articleComments, createdAt, modifiedAt);
     }
 
+    /**
+     * 게시글과 댓글을 반환하는 Dto.
+     */
     public static ArticleWithCommentsResponseDto from(ArticleWithCommentDto dto) {
         return new ArticleWithCommentsResponseDto(
             dto.id(),

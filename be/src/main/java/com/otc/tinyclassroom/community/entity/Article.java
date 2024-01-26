@@ -22,6 +22,9 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Article 엔티티.
+ */
 @Getter
 @Table(indexes = {
     @Index(columnList = "title"),

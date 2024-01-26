@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.community.entity.Article}
+ * DTO for ArticleResponse.
  */
 public record ArticleResponseDto(Long id, String title, String content, String name, int hit, LocalDateTime createdAt, LocalDateTime modifiedAt) implements Serializable {
 
@@ -13,6 +13,9 @@ public record ArticleResponseDto(Long id, String title, String content, String n
         return new ArticleResponseDto(id, title, content, name, hit, createdAt, modifiedAt);
     }
 
+    /**
+     * ArticleDto 로부터 ArticleResponseDto 로 전환.
+     */
     public static ArticleResponseDto from(ArticleDto dto) {
         return new ArticleResponseDto(
             dto.id(),

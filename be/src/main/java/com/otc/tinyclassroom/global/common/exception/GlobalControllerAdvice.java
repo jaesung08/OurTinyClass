@@ -30,7 +30,7 @@ public class GlobalControllerAdvice {
      * Board Exception Handler.
      */
     @ExceptionHandler(CommunityException.class)
-    public ResponseEntity<?> BoardExceptionHandler(CommunityException e){
+    public ResponseEntity<?> boardExceptionHandler(CommunityException e) {
         log.error("Board Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
