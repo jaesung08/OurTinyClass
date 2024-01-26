@@ -1,9 +1,9 @@
 package com.otc.tinyclassroom.global.config;
 
-import com.otc.tinyclassroom.global.redis.refresh.RefreshTokenRepository;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.global.security.refreshtoken.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

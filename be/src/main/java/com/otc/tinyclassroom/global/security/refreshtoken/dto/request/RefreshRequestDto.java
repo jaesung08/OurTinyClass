@@ -1,4 +1,6 @@
-package com.otc.tinyclassroom.global.redis.refresh;
+package com.otc.tinyclassroom.global.security.refreshtoken.dto.request;
+
+import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.ReIssueResponseDto;
 
 /**
  * Refresh 요청을 수행하기 위한 RequestDto.

@@ -28,9 +28,9 @@ public class ArticleCommentController {
      * 댓글 작성.
      */
     @PostMapping()
-    public BaseResponse<Void> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
-        articleCommentService.createArticleComment(articleCommentService.getCurrentUserId(), request);
-        return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", null);
+    public BaseResponse<Long> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
+        Long articleCommentId = articleCommentService.createArticleComment(articleCommentService.getCurrentUserId(), request);
+        return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", articleCommentId);
     }
 
     /**

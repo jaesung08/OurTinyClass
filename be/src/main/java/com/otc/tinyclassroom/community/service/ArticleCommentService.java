@@ -32,7 +32,7 @@ public class ArticleCommentService {
     /**
      * 댓글 생성 메서드.
      */
-    public void createArticleComment(Long memberId, ArticleCommentRequestDto request) {
+    public Long createArticleComment(Long memberId, ArticleCommentRequestDto request) {
         //멤버 찾기
         Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.MEMBER_NOT_FOUND)
@@ -42,7 +42,7 @@ public class ArticleCommentService {
             () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
         );
         ArticleComment articleComment = ArticleComment.of(member, article, request.content());
-        articleCommentRepository.save(articleComment);
+        return articleCommentRepository.save(articleComment).getId();
     }
 
     /**
