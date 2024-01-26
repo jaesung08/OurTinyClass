@@ -10,6 +10,7 @@ import com.otc.tinyclassroom.community.entity.type.SearchType;
 import com.otc.tinyclassroom.community.exception.CommunityErrorCode;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.community.repository.ArticleRepository;
+import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
@@ -32,6 +33,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final ClassRoomRepository classRoomRepository;
+    private final JwtProvider jwtProvider;
 
     /**
      * 게시물 조회.
@@ -62,6 +64,9 @@ public class ArticleService {
         };
     }
 
+    /**
+     * 게시글과 댓글을 함께 조회하는 메서드.
+     */
     public ArticleWithCommentDto getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
@@ -71,6 +76,9 @@ public class ArticleService {
 
     }
 
+    /**
+     * 게시글 생성 메서드.
+     */
     public void createArticle(Long id, ArticleCreateRequestDto request) {
         // member id 찾기
         Member member = memberRepository.findById(id).orElseThrow(
@@ -84,10 +92,16 @@ public class ArticleService {
         articleRepository.save(article);
     }
 
+    /**
+     * 게시글 삭제 메서드.
+     */
     public void removeArticle(Long articleId) {
         articleRepository.deleteById(articleId);
     }
 
+    /**
+     * 게시글 업데이트 메서드.
+     */
     public void updateArticle(Long articleId, ArticleUpdateRequestDto request) {
         Article article = articleRepository.findById(articleId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
@@ -98,5 +112,35 @@ public class ArticleService {
         if (request.content() != null && !(request.content().isBlank())) {
             article.setContent(request.content());
         }
+    }
+
+    /**
+     * 게시글의 작성자를 조회하는 메서드.
+     */
+    public Long getArticleUserId(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+            .orElseThrow(() -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND));
+
+        return Optional.ofNullable(article.getMember())
+            .map(Member::getId)
+            .orElseThrow(() -> new CommunityException(CommunityErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    /**
+     * 게시글 권한이 있는지 확인한다.
+     */
+    public void validateAuthority(Long articleId) {
+        Long loginUserId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Long articleUserId = this.getArticleUserId(articleId);
+        if (!loginUserId.equals(articleUserId)) {
+            throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
+        }
+    }
+
+    /**
+     * 현재 로그인 중인 사용자의 아이디를 리턴한다.
+     */
+    public Long getCurrentUserId() {
+        return Long.valueOf(jwtProvider.getCurrentUserId());
     }
 }

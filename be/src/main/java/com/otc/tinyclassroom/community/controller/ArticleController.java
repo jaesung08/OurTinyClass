@@ -8,7 +8,6 @@ import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
 import com.otc.tinyclassroom.community.service.ArticleService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.member.entity.ClassRoom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +34,6 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
-
     /**
      * 전체 커뮤니티의 게시글 목록 조회.
      */
@@ -50,29 +48,39 @@ public class ArticleController {
             articleService.searchArticles(null, ArticleType.fromString(boardType), SearchType.fromString(searchType), searchValue, pageable).map(ArticleResponseDto::from));
     }
 
+    /**
+     * 게시글 생성.
+     */
     @PostMapping("/articles")
     public BaseResponse<Void> createArticle(@RequestBody ArticleCreateRequestDto articleCreateRequestDto) {
-        // TODO: 토큰으로부터 멤버 아이디 (Long) 추출하기
-        Long memberId = 1L;
-        articleService.createArticle(memberId, articleCreateRequestDto);
+        articleService.createArticle(articleService.getCurrentUserId(), articleCreateRequestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "게시글 작성 완료", null);
     }
 
+    /**
+     * 게시글 삭제.
+     */
     @DeleteMapping("/articles/{articleId}")
     public BaseResponse<Void> removeArticle(@PathVariable("articleId") Long articleId) {
-        //TODO: 토큰으로부터 같은 유저가 보낸 요청인지 확인하기
+        articleService.validateAuthority(articleId);
         articleService.removeArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 
+    /**
+     * 게시글 업데이트.
+     */
     @PatchMapping("/articles/{articleId}")
     public BaseResponse<Void> updateArticle(@PathVariable("articleId") Long articleId,
         @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto) {
-        //TODO: 토큰으로부터 같은 유저가 보낸 요청인지 확인하기
+        articleService.validateAuthority(articleId);
         articleService.updateArticle(articleId, articleUpdateRequestDto);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 
+    /**
+     * 게시글 상세보기.
+     */
     @GetMapping("/articles/{articleId}")
     public BaseResponse<ArticleWithCommentsResponseDto> getArticleDetail(@PathVariable("articleId") Long articleId) {
         ArticleWithCommentsResponseDto article = ArticleWithCommentsResponseDto.from(articleService.getArticle(articleId));
@@ -80,7 +88,7 @@ public class ArticleController {
     }
 
     /**
-     * 커뮤니티의 반별 게시판 조회
+     * 커뮤니티의 반별 게시판 조회.
      */
     @GetMapping("/classRoom/{classRoomId}/articles")
     public BaseResponse<Page<ArticleResponseDto>> getArticleListForClassRoom(
@@ -94,29 +102,39 @@ public class ArticleController {
             articleService.searchArticles(classRoomId, ArticleType.fromString(boardType), SearchType.fromString(searchType), searchValue, pageable).map(ArticleResponseDto::from));
     }
 
+    /**
+     * 반별 게시판 생성.
+     */
     @PostMapping("/classRoom/{classRoomId}/articles")
     public BaseResponse<Void> createArticleForClassRoom(@RequestBody ArticleCreateRequestDto articleCreateRequestDto) {
-        // TODO: 토큰으로부터 멤버 아이디 (Long) 추출하기
-        Long memberId = 1L;
-        articleService.createArticle(memberId, articleCreateRequestDto);
+        articleService.createArticle(articleService.getCurrentUserId(), articleCreateRequestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "게시글 작성 완료", null);
     }
 
+    /**
+     * 반별 게시판 삭제.
+     */
     @DeleteMapping("/classRoom/{classRoomId}/articles/{articleId}")
     public BaseResponse<Void> removeArticleForClassRoom(@PathVariable("articleId") Long articleId) {
-        //TODO: 토큰으로부터 같은 유저가 보낸 요청인지 확인하기
+        articleService.validateAuthority(articleId);
         articleService.removeArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 
+    /**
+     * 반별 게시판 내 게시글 업데이트.
+     */
     @PatchMapping("/classRoom/{classRoomId}/articles/{articleId}")
     public BaseResponse<Void> updateArticleForClassRoom(@PathVariable("articleId") Long articleId,
         @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto) {
-        //TODO: 토큰으로부터 같은 유저가 보낸 요청인지 확인하기
+        articleService.validateAuthority(articleId);
         articleService.updateArticle(articleId, articleUpdateRequestDto);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 
+    /**
+     * 반별 게시판 내 게시글 상세보기.
+     */
     @GetMapping("/classRoom/{classRoomId}/articles/{articleId}")
     public BaseResponse<ArticleWithCommentsResponseDto> getArticleDetailForClassRoom(@PathVariable("articleId") Long articleId) {
         ArticleWithCommentsResponseDto article = ArticleWithCommentsResponseDto.from(articleService.getArticle(articleId));
