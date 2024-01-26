@@ -3,7 +3,6 @@ package com.otc.tinyclassroom.media.controller;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.service.MediaService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +18,6 @@ import java.util.List;
 public class MediaController {
 
     private final MediaService mediaService;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
 
     @PostMapping("/images")
     public BaseResponse<?> uploadImages(@RequestParam("image") List<MultipartFile> multipartFiles) {
