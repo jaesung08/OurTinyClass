@@ -15,17 +15,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
-    // 해당 회원이 특정 시간 사이에 등교한 이력이 있는지 확인
+    /**
+     * 해당 회원이 특정 시간 사이에 등교한 이력이 있는지 확인.
+     */
     boolean existsByMemberIdAndCheckInBetween(Long memberId, Timestamp checkIn, Timestamp checkIn2);
 
-    // 멤버 ID를 통해 조회하고 범위 내 시간 확인
+    /**
+     * 멤버 ID를 통해 조회하고 범위 내 시간 확인.
+     */
     Optional<Attendance> findByMemberIdAndCheckInBetween(
         Long memberId,
         Timestamp startTime,
         Timestamp endTime
     );
 
-    // 쿼리 어노테이션을 통해 파라미터 로 받은 값들을 Attendance 엔티티 조회를 통해 비교한다.
+    /**
+     * 쿼리 어노테이션을 통해 파라미터 로 받은 값들을 Attendance 엔티티 조회를 통해 비교한다. `
+     */
     // Todo : Query DSL로 수정
     @Query("SELECT a FROM Attendance a WHERE a.member.memberId = :memberId AND a.checkIn BETWEEN :startOfMonth AND :endOfMonth")
     List<Attendance> findByMemberIdAndCheckInBetweenMonth(

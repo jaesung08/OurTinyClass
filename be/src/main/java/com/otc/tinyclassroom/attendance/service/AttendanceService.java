@@ -1,17 +1,16 @@
 package com.otc.tinyclassroom.attendance.service;
 
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckDayDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckInResultDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckMonthDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckOutResultDto;
+import com.otc.tinyclassroom.attendance.dto.response.AttendanceCheckInResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.AttendanceCheckOutResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.DailyAttendanceResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.MonthlyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.entity.Attendance;
-import com.otc.tinyclassroom.attendance.entity.AttendanceStatus;
+import com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus;
 import com.otc.tinyclassroom.attendance.exception.AttendanceErrorCode;
 import com.otc.tinyclassroom.attendance.exception.AttendanceException;
 import com.otc.tinyclassroom.attendance.repository.AttendanceRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
-import com.otc.tinyclassroom.member.service.MemberService;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -32,14 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
 
     /**
-     * 회원 등교를 처리하는 메서드
+     * 회원 등교를 처리하는 메서드.
      */
     @Transactional
-    public AttendanceCheckInResultDto checkIn(String memberId, LocalDateTime now) {
+    public AttendanceCheckInResponseDto checkIn(String memberId, LocalDateTime now) {
 
         System.out.println("memberId1 = " + memberId);
         // 리포지토리에서 회원 정보를 가져옴
@@ -53,7 +51,8 @@ public class AttendanceService {
         }
 
         System.out.println("memberID2 = " + member.getId());
-        // 등교 시간을 확인
+
+        // 등교 시간을 확인( 실제 실행시 주석 풀기 )
         //  validateCheckInTime(now);
 
         AttendanceStatus status = determineAttendanceStatus(now);
@@ -62,11 +61,11 @@ public class AttendanceService {
         System.out.println("attendance = " + attendance);
         attendanceRepository.save(attendance);
 
-        return AttendanceCheckInResultDto.from(Timestamp.valueOf(now), status.ordinal());
+        return AttendanceCheckInResponseDto.from(Timestamp.valueOf(now), status.ordinal());
     }
 
     /**
-     * 등교 시간을 확인하는 메서드
+     * 등교 시간을 확인하는 메서드.
      */
     private void validateCheckInTime(LocalDateTime now) {
         int hour = now.getHour();
@@ -80,7 +79,7 @@ public class AttendanceService {
     }
 
     /**
-     * 회원이 오늘 이미 등교했는지 확인하는 메서드
+     * 회원이 오늘 이미 등교했는지 확인하는 메서드.
      */
     private boolean hasCheckedInToday(Long memberId) {
         LocalDateTime todayStart = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0)
@@ -93,7 +92,7 @@ public class AttendanceService {
     }
 
     /**
-     * 등교 시간에 따라 출결 상태를 결정하는 메서드 추가
+     * 등교 시간에 따라 출결 상태를 결정하는 메서드 추가.
      */
     private AttendanceStatus determineAttendanceStatus(LocalDateTime now) {
         int checkInHour = now.getHour();
@@ -103,21 +102,20 @@ public class AttendanceService {
     }
 
     /**
-     * 회원 하교를 처리하는 메서드
+     * 회원 하교를 처리하는 메서드.
      */
     @Transactional
-    public AttendanceCheckOutResultDto checkOut(String memberId, LocalDateTime now) {
+    public AttendanceCheckOutResponseDto checkOut(String memberId, LocalDateTime now) {
         System.out.println("memberId = " + memberId);
         // 리포지토리에서 회원 정보를 가져옴
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NO_MEMBER_ID));
 
-        System.out.println("member = " + member);
         // 회원이 오늘 등교하지 않았는데 하교를 요청한 경우 예외 처리
         if (!hasCheckedInToday(member.getId())) {
             throw new AttendanceException(AttendanceErrorCode.NOT_CHECKED_IN);
         }
-        System.out.println("member2 = " + member.getId());
+
         // 오늘 등교한 출결 기록을 가져와서 업데이트
         Attendance attendance = attendanceRepository.findByMemberIdAndCheckInBetween(
             member.getId(),
@@ -125,6 +123,7 @@ public class AttendanceService {
             Timestamp.valueOf(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
         ).orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NOT_CHECKED_IN));
 
+        // 하교시간을 확인하고 status 지정 ( 18시 넘을경우 제한 )
         AttendanceStatus status = validateCheckOutTimeAndDetermineStatus(now, attendance.getCheckIn().toLocalDateTime());
 
         // 체크아웃 시간을 설정하고 업데이트된 출결 기록을 저장
@@ -132,12 +131,12 @@ public class AttendanceService {
         attendance.setStatus(status);
         attendanceRepository.save(attendance);
 
-        return AttendanceCheckOutResultDto.from(Timestamp.valueOf(now), status.ordinal());
+        return AttendanceCheckOutResponseDto.from(Timestamp.valueOf(now), status.ordinal());
     }
 
 
     /**
-     * 하교 시간을 확인하고 상태를 지정해주는 메서드
+     * 하교 시간을 확인하고 상태를 지정해주는 메서드.
      */
     private AttendanceStatus validateCheckOutTimeAndDetermineStatus(LocalDateTime now, LocalDateTime checkInTime) {
         int hour = now.getHour();
@@ -160,17 +159,15 @@ public class AttendanceService {
 
 
     /**
-     * 오늘 하루의 출석을 확인하는 메서드
+     * 오늘 하루의 출석을 확인하는 메서드.
      */
     @Transactional
-    public AttendanceCheckDayDto getAttendanceTimeOnDate(String memberId, LocalDateTime date) {
-        System.out.println("memberId1 = " + memberId);
+    public DailyAttendanceResponseDto getAttendanceTimeOnDate(String memberId, LocalDateTime date) {
         List<Attendance> attendanceListOnDate = attendanceRepository.findByMemberIdAndCheckInBetweenDay(
             memberId,
             Timestamp.valueOf(date.withHour(0).withMinute(0).withSecond(0).withNano(0)),
             Timestamp.valueOf(date.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
         );
-        System.out.println("attendanceListOnDate = " + attendanceListOnDate);
 
         if (!attendanceListOnDate.isEmpty()) {
             Attendance attendance = attendanceListOnDate.get(0);
@@ -178,41 +175,40 @@ public class AttendanceService {
             LocalDateTime checkOut = attendance.getCheckOut() != null ? attendance.getCheckOut().toLocalDateTime() : null;
             int status = attendance.getStatus().ordinal();
 
-            AttendanceCheckDayDto.AttendanceDayInfo attendanceInfo = new AttendanceCheckDayDto.AttendanceDayInfo(date.toLocalDate(), checkIn, checkOut, status);
-            return new AttendanceCheckDayDto(attendanceInfo);
+            DailyAttendanceResponseDto.AttendanceDayInfo attendanceInfo = new DailyAttendanceResponseDto.AttendanceDayInfo(date.toLocalDate(), checkIn, checkOut, status);
+            return new DailyAttendanceResponseDto(attendanceInfo);
         } else {
             // checkIn이 없을 경우 모든 필드를 null로 출력
-            AttendanceCheckDayDto.AttendanceDayInfo attendanceDayInfo = new AttendanceCheckDayDto.AttendanceDayInfo(date.toLocalDate(), null, null, -1);
-            return new AttendanceCheckDayDto(attendanceDayInfo);
+            DailyAttendanceResponseDto.AttendanceDayInfo attendanceDayInfo = new DailyAttendanceResponseDto.AttendanceDayInfo(date.toLocalDate(), null, null, -1);
+            return new DailyAttendanceResponseDto(attendanceDayInfo);
         }
     }
 
     /**
-     * 한달간의 출석내역을 확인하는 메서드
+     * 한달간의 출석내역을 확인하는 메서드.
      */
     @Transactional
-    public AttendanceCheckMonthDto getAttendanceTimeOnMonth(String memberId, int year, int month) {
+    public MonthlyAttendanceResponseDto getAttendanceTimeOnMonth(String memberId, int year, int month) {
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1);
-        System.out.println("memberId = " + memberId);
         List<Attendance> monthlyAttendanceList = attendanceRepository.findByMemberIdAndCheckInBetweenMonth(
             memberId,
             Timestamp.valueOf(startOfMonth),
             Timestamp.valueOf(endOfMonth)
         );
 
-        List<AttendanceCheckMonthDto.AttendanceMonthInfo> attendanceList = new ArrayList<>();
+        List<MonthlyAttendanceResponseDto.AttendanceMonthInfo> attendanceList = new ArrayList<>();
         for (Attendance attendance : monthlyAttendanceList) {
             LocalDateTime checkIn = attendance.getCheckIn().toLocalDateTime();
             LocalDateTime checkOut = attendance.getCheckOut().toLocalDateTime();
             int status = attendance.getStatus().ordinal();
 
             LocalDate date = checkIn.toLocalDate();
-            AttendanceCheckMonthDto.AttendanceMonthInfo attendanceMonthInfo = new AttendanceCheckMonthDto.AttendanceMonthInfo(date, checkIn, checkOut, status);
+            MonthlyAttendanceResponseDto.AttendanceMonthInfo attendanceMonthInfo = new MonthlyAttendanceResponseDto.AttendanceMonthInfo(date, checkIn, checkOut, status);
             attendanceList.add(attendanceMonthInfo);
         }
 
-        return new AttendanceCheckMonthDto(attendanceList);
+        return new MonthlyAttendanceResponseDto(attendanceList);
     }
 
 

@@ -1,9 +1,9 @@
 package com.otc.tinyclassroom.attendance.controller;
 
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckDayDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckInResultDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckMonthDto;
-import com.otc.tinyclassroom.attendance.dto.AttendanceCheckOutResultDto;
+import com.otc.tinyclassroom.attendance.dto.response.AttendanceCheckInResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.AttendanceCheckOutResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.DailyAttendanceResponseDto;
+import com.otc.tinyclassroom.attendance.dto.response.MonthlyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.service.AttendanceService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.member.dto.MemberDto;
@@ -30,44 +30,54 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     // Todo : 토큰 받아서 진행시 토큰 처리식으로 변경하기
-    // 등교시간 기록
+
+    /**
+     * 등교시간 기록.
+     */
     @PostMapping("/check-in")
-    public BaseResponse<AttendanceCheckInResultDto> checkIn(@RequestBody MemberDto memberDto) {
+    public BaseResponse<AttendanceCheckInResponseDto> checkIn(@RequestBody MemberDto memberDto) {
         String memberId = memberDto.memberId();
         LocalDateTime now = LocalDateTime.now();
-        AttendanceCheckInResultDto result = attendanceService.checkIn(memberId, now);
+        AttendanceCheckInResponseDto result = attendanceService.checkIn(memberId, now);
         return BaseResponse.success(HttpStatus.OK.value(), "등교에 성공하였습니다!", result);
     }
 
-    // 하교시간 기록
+    /**
+     * 하교시간 기록.
+     */
     @PutMapping("/check-out")
-    public BaseResponse<AttendanceCheckOutResultDto> checkOut(@RequestBody MemberDto memberDto) {
+    public BaseResponse<AttendanceCheckOutResponseDto> checkOut(@RequestBody MemberDto memberDto) {
         String memberId = memberDto.memberId();
         LocalDateTime now = LocalDateTime.now();
-        AttendanceCheckOutResultDto result = attendanceService.checkOut(memberId, now);
+        AttendanceCheckOutResponseDto result = attendanceService.checkOut(memberId, now);
         return BaseResponse.success(HttpStatus.OK.value(), "하교에 성공하였습니다!", result);
     }
 
     // Todo : 토큰받고 memberId 가져와서 진행하는 방향으로 refactoring
-    // 오늘 출석기록 조회
+
+    /**
+     * 오늘 출석기록 조회.
+     */
     @GetMapping("/today-attendance/{memberId}")
-    public BaseResponse<AttendanceCheckDayDto> getDailyAttendanceTime(
+    public BaseResponse<DailyAttendanceResponseDto> getDailyAttendanceTime(
         @PathVariable("memberId") String memberId
     ) {
         LocalDateTime today = LocalDateTime.now();
-        AttendanceCheckDayDto result = attendanceService.getAttendanceTimeOnDate(memberId, today);
+        DailyAttendanceResponseDto result = attendanceService.getAttendanceTimeOnDate(memberId, today);
         String message = String.format("%s의 출석 조회에 성공하였습니다.", today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return BaseResponse.success(HttpStatus.OK.value(), message, result);
     }
 
-    // 한달치 출석기록 조회
+    /**
+     * 한달치 출석기록 조회.
+     */
     @GetMapping("/monthly-total/{memberId}/{year}/{month}")
-    public BaseResponse<AttendanceCheckMonthDto> getMonthlyTotalAttendanceTime(
+    public BaseResponse<MonthlyAttendanceResponseDto> getMonthlyTotalAttendanceTime(
         @PathVariable("memberId") String memberId,
         @PathVariable("year") int year,
         @PathVariable("month") int month
     ) {
-        AttendanceCheckMonthDto result = attendanceService.getAttendanceTimeOnMonth(memberId, year, month);
+        MonthlyAttendanceResponseDto result = attendanceService.getAttendanceTimeOnMonth(memberId, year, month);
         String message = String.format("%d년 %d월 출석 조회에 성공하였습니다.", year, month);
         return BaseResponse.success(HttpStatus.OK.value(), message, result);
     }

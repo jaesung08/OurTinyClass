@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.attendance.entity;
 
+import com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,7 +49,7 @@ public class Attendance {
     }
 
     /**
-     * 파라미터 생성자
+     * 파라미터 생성자.
      */
     private Attendance(Member member, Timestamp checkIn, Timestamp checkOut, AttendanceStatus status) {
         this.member = member;
@@ -58,7 +59,7 @@ public class Attendance {
     }
 
     /**
-     * 파라미터로 부터 attendance 객체를 생성하는 함수
+     * 파라미터로 부터 attendance 객체를 생성하는 함수.
      */
     public static Attendance of(Member member, Timestamp checkIn, Timestamp checkOut, AttendanceStatus status) {
         return new Attendance(member, checkIn, checkOut, status);
