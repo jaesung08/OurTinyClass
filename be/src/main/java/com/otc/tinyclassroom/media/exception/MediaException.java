@@ -3,6 +3,9 @@ package com.otc.tinyclassroom.media.exception;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 미디어 관련 Exception
+ */
 @Getter
 @AllArgsConstructor
 public class MediaException extends RuntimeException {

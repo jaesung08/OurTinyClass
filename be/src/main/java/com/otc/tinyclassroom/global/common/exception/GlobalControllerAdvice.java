@@ -27,11 +27,15 @@ public class GlobalControllerAdvice {
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
+    /**
+     *   Media Exception Handler
+     */
     @ExceptionHandler(MediaException.class)
     public ResponseEntity<?> MediaExceptionHandler(MediaException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
                 .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
 
     /**
      * Board Exception Handler.

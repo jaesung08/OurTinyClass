@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 미디어 서비스 로직.
+ */
 @Service
 @RequiredArgsConstructor
 public class MediaService {
@@ -23,10 +26,17 @@ public class MediaService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    // 파일 확장자 검증 리스트
+    /**
+     * 파일 확장자 검증 리스트
+     */
     private final List<String> fileValidateList = List
             .of(".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG");
 
+    /**
+     * MultipartFile 형식 데이터를 받아 S3에 저장한다.
+     *
+     * 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
+     */
     public List<String> storeImages(List<MultipartFile> files) {
 
         List<String> urlList = new ArrayList<>();
@@ -54,12 +64,23 @@ public class MediaService {
         return urlList;
     }
 
-    // 범용 고유 식별자를 이용해 파일명 중복 방지
+    /**
+     * 범영 고유 식별자를 이용해 파일명 중복 방지.
+     *
+     * @return "UUID.확장자" 형태의 문자열
+     */
     private String createUniqueFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileNameExtension(fileName));
     }
 
-    // 파일 유효성 검사. 파일의 확장자 in (jpg, jpeg, png)
+    /**
+     * 파일 유효성 검사.
+     *
+     * 파일의 확장자가 검증 리스트(fileValidateList)에 포함되었는지 검증
+     *
+     * @return ".xxx" 형태의 파일 확장자 문자열
+     * @throws MediaException 파일명이 존재하지 않거나 파일의 확장자가 검증 리스트에 포함되지 않았을 경우
+     */
     private String getFileNameExtension(String fileName) {
         if (fileName.isEmpty()) {
             throw new MediaException(MediaErrorCode.NOT_EXIST_FILE_NAME);

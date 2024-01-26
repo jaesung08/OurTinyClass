@@ -17,6 +17,9 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    /**
+     * application.yml에서 설정한 accessKey, secretKey, region 을 이용하여 Amazon S3와 연결하기 위한 client bean 생성.
+     */
     @Bean
     public AmazonS3Client amazonS3Client() {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);

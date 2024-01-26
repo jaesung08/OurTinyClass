@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 미디어 에러 코드
+ */
 @Getter
 @AllArgsConstructor
 public enum MediaErrorCode {
