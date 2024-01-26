@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.global.security.redis.dto.response;
+package com.otc.tinyclassroom.global.security.refreshtoken.dto.response;
 
 /**
  * Access Token 재발급에 대한 응답 정보를 담은 DTO 클래스.

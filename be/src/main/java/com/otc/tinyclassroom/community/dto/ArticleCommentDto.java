@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.community.entity.ArticleComment}
+ * DTO for ArticleComment.
  */
 public record ArticleCommentDto(Long id, MemberDto member, ArticleDto article, String content,
                                 LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {

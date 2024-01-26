@@ -1,9 +1,9 @@
-package com.otc.tinyclassroom.global.security.redis.repository;
+package com.otc.tinyclassroom.global.security.refreshtoken.repository;
 
-import com.otc.tinyclassroom.global.security.redis.entity.RefreshToken;
+import com.otc.tinyclassroom.global.security.refreshtoken.entity.RefreshToken;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,20 +14,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RefreshTokenRepository {
 
-    private RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${jwt.token.refresh-expiration-time}")
     private long refreshTokenTtl;
 
-
-    public RefreshTokenRepository(@Autowired RedisTemplate<String, String> redisTemplate) {
+    public RefreshTokenRepository(final RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
     /**
      * Redis 에 저장된 Refresh Token 정보를 저장소에 저장합.
      */
-    public void save(final RefreshToken refreshToken) {
+    public void save(RefreshToken refreshToken) {
 
         redisTemplate.opsForValue().set(
             refreshToken.getRefreshToken(),
@@ -42,7 +41,10 @@ public class RefreshTokenRepository {
      */
     public Optional<String> findByRefreshToken(final String refreshToken) {
 
-        String result = redisTemplate.opsForValue().get(refreshToken).toString();
+        String result = Optional.ofNullable(redisTemplate.opsForValue().get(refreshToken))
+            .map(Object::toString)
+            .orElseThrow(() -> new NoSuchElementException("Refresh token 이 존재하지 않습니다."));
+
         if (result.isEmpty()) {
             return Optional.empty();
         }

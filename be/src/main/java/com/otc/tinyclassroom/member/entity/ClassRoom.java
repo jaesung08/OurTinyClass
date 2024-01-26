@@ -31,6 +31,9 @@ public class ClassRoom {
     protected ClassRoom() {
     }
 
+    /**
+     * 교실 생성자.
+     */
     public ClassRoom(int year, int grade, int number) {
         this.year = year;
         this.grade = grade;

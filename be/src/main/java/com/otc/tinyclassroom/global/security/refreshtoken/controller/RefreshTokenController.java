@@ -1,11 +1,10 @@
-package com.otc.tinyclassroom.global.security.redis.controller;
+package com.otc.tinyclassroom.global.security.refreshtoken.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.global.security.redis.dto.response.ReIssueResponseDto;
-import com.otc.tinyclassroom.global.security.redis.dto.request.RefreshRequestDto;
-import com.otc.tinyclassroom.global.security.redis.dto.response.RefreshResponseDto;
-import com.otc.tinyclassroom.global.security.redis.service.RefreshTokenService;
-import java.util.Optional;
+import com.otc.tinyclassroom.global.security.refreshtoken.dto.request.RefreshRequestDto;
+import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.ReIssueResponseDto;
+import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.RefreshResponseDto;
+import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,18 +45,13 @@ public class RefreshTokenController {
      */
     @PostMapping("/refresh")
     public ResponseEntity<BaseResponse<?>> refresh(@RequestBody RefreshRequestDto requestDto) {
-        try {
-            ReIssueResponseDto dto = refreshTokenService.reIssue(requestDto.refreshToken())
-                .orElseThrow(() -> new ClassNotFoundException(""));
 
-            // 새로 발급한 Access Token을 헤더에 넣어 클라이언트에게 전달
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Bearer " + dto.accessToken());
-            RefreshResponseDto refreshResponseDto = new RefreshResponseDto(dto.refreshToken());
-            return ResponseEntity.ok().headers(headers).body(BaseResponse.success(HttpStatus.OK.value(), "Access Token이 재발급 되었습니다.", refreshResponseDto));
-        } catch (ClassNotFoundException e) {
-            // 새로 발급 실패 등의 상황에 대한 응답 처리
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BaseResponse.error(HttpStatus.UNAUTHORIZED.value(), "재발급에 실패하였습니다."));
-        }
+        ReIssueResponseDto responseDto = refreshTokenService.reIssue(requestDto.refreshToken());
+        // 새로 발급한 Access Token 을 헤더에 넣어 클라이언트에게 전달
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + responseDto.accessToken());
+        RefreshResponseDto refreshResponseDto = new RefreshResponseDto(responseDto.refreshToken());
+        return ResponseEntity.ok().headers(headers).body(BaseResponse.success(HttpStatus.OK.value(), "Access Token 이 재발급 되었습니다.", refreshResponseDto));
     }
 }
+

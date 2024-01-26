@@ -29,9 +29,7 @@ public class ArticleCommentController {
      */
     @PostMapping()
     public BaseResponse<Long> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
-        // TODO: 권한 체크
-        Long memberId = 1L;
-        Long articleCommentId = articleCommentService.createArticleComment(memberId, request);
+        Long articleCommentId = articleCommentService.createArticleComment(articleCommentService.getCurrentUserId(), request);
         return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", articleCommentId);
     }
 
@@ -41,13 +39,17 @@ public class ArticleCommentController {
     @PatchMapping("/{articleCommentId}")
     public BaseResponse<Void> updateArticleComment(@PathVariable("articleCommentId") Long articleCommentId,
         @RequestBody ArticleCommentUpdateRequestDto request) {
-        // TODO: 댓글 쓴 유저가 같은지 검증
+        articleCommentService.validateAuthority(articleCommentId);
         articleCommentService.updateArticleComment(articleCommentId, request);
         return BaseResponse.success(HttpStatus.OK.value(), "댓글 수정 성공", null);
     }
 
+    /**
+     * 댓글 삭제.
+     */
     @DeleteMapping("/{articleCommentId}")
     public BaseResponse<Void> removeArticleComment(@PathVariable("articleCommentId") Long articleCommentId) {
+        articleCommentService.validateAuthority(articleCommentId);
         articleCommentService.removeArticleComment(articleCommentId);
         return BaseResponse.success(HttpStatus.NO_CONTENT.value(), "댓글 삭제 성공", null);
     }

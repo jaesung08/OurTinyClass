@@ -3,7 +3,7 @@ package com.otc.tinyclassroom.community.dto.request;
 import java.io.Serializable;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.community.entity.Article}
+ * 게시글 업데이트 requestDto.
  */
 public record ArticleUpdateRequestDto(String title, String content) implements Serializable {
 

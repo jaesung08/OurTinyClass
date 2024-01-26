@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.global.security.redis.entity;
+package com.otc.tinyclassroom.global.security.refreshtoken.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.Id;

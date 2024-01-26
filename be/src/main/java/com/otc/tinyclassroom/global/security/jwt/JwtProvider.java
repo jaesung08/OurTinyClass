@@ -9,6 +9,9 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 
@@ -49,6 +52,26 @@ public class JwtProvider {
     public String getRoleByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
                 .getClaim("role").asString();
+    }
+
+    /**
+     * 현재 로그인 한 사용자를 확인.
+     */
+    public String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else {
+                // 만약 principal이 UserDetails가 아닌 다른 타입이면, 해당 타입에 맞게 처리
+                return principal.toString();
+            }
+        }
+
+        return null; // 인증된 사용자가 없는 경우
     }
 
     /**

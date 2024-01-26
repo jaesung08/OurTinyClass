@@ -13,6 +13,9 @@ public record ArticleCommentResponseDto(Long id, String content, String name, Lo
         return new ArticleCommentResponseDto(id, content, name, createdAt, modifiedAt);
     }
 
+    /**
+     * ArticleCommentDto 로부터 ArticleCommentResponse 로 전환하는 메서드.
+     */
     public static ArticleCommentResponseDto from(ArticleCommentDto dto) {
         return new ArticleCommentResponseDto(
             dto.id(),
