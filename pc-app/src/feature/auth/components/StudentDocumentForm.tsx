@@ -1,0 +1,145 @@
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
+import { ActualFileObject, FilePondFile } from "filepond";
+import { useCallback, useState } from "react";
+import { FilePond } from "react-filepond";
+import Swal from "sweetalert2";
+
+interface StudentDocumentFormProps {
+  onSubmit: (
+    quitReason: string,
+    beforeSchoolType: number,
+    beforeSchool: string,
+    quitSchoolDocument: ActualFileObject
+  ) => void;
+  goBefore: (current: number) => void;
+  loading: boolean;
+}
+
+const SchoolTypes = [
+  {
+    value: 0,
+    label: "초등학교",
+  },
+  {
+    value: 1,
+    label: "중학교",
+  },
+  {
+    value: 2,
+    label: "고등학교",
+  },
+  {
+    value: 3,
+    label: "기타",
+  },
+];
+function StudentDocumentForm({
+  onSubmit,
+  goBefore,
+  loading,
+}: StudentDocumentFormProps) {
+  const [inputQuitReason, setInputQuitReason] = useState("");
+  const [inputBeforeSchool, setInputBeforeSchool] = useState("");
+  const [files, setFiles] = useState<ActualFileObject[]>([]);
+  const [selectedSchoolType, setSelectedSchoolType] = useState("");
+
+  const onChangeInputQuitReason = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInputQuitReason(e.target.value);
+    },
+    [setInputQuitReason]
+  );
+
+  const onChangeInputBeforeSchool = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInputBeforeSchool(e.target.value);
+    },
+    [setInputBeforeSchool]
+  );
+
+  const onUpdateFiles = (newFiles: FilePondFile[]) => {
+    setFiles(newFiles.map((file) => file.file));
+  };
+
+  const onClickBeforeBtn = useCallback(() => {
+    goBefore(1);
+  }, [goBefore]);
+
+  const onSubmitForm = () => {
+    if (
+      inputQuitReason.trim().length > 0 &&
+      inputBeforeSchool.trim().length > 0 &&
+      files.length &&
+      files[0] &&
+      selectedSchoolType.length
+    ) {
+      onSubmit(
+        inputQuitReason,
+        +selectedSchoolType,
+        inputBeforeSchool,
+        files[0]
+      );
+    } else {
+      Swal.fire("실패", "양식에 값을 모두 채워주세요", "warning");
+    }
+  };
+
+  const handleBeforeSchoolTypeSelectionChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedSchoolType(e.target.value);
+  };
+
+  return (
+    <form className="flex flex-col gap-10 border-1 border-lime-400 p-10 rounded-lg 2xl:w-1/3 xl:w-1/2 lg:w-2/3 w-full">
+      <Select
+        label="기존 학교 종류를 선택해주세요."
+        value={selectedSchoolType}
+        onChange={handleBeforeSchoolTypeSelectionChange}
+        isRequired={true}
+      >
+        {SchoolTypes.map((school) => (
+          <SelectItem key={school.value} value={school.value}>
+            {school.label}
+          </SelectItem>
+        ))}
+      </Select>
+      <Input
+        type="text"
+        label="자퇴 사유"
+        placeholder="자퇴 사유를 입력해주세요."
+        isClearable={true}
+        required={true}
+        value={inputQuitReason}
+        onChange={onChangeInputQuitReason}
+      />
+      <Input
+        type="text"
+        label="기존 소속 학교"
+        placeholder="기존 소속 학교를 입력해주세요."
+        isClearable={true}
+        required={true}
+        value={inputBeforeSchool}
+        onChange={onChangeInputBeforeSchool}
+      />
+      <FilePond
+        files={files}
+        name="files"
+        onupdatefiles={onUpdateFiles}
+        labelIdle="자퇴 확인서를 제출해주세요."
+      />
+      <Button onClick={onClickBeforeBtn} className="text-xl">
+        이전
+      </Button>
+      <Button
+        isLoading={loading}
+        onClick={onSubmitForm}
+        className="bg-lime-500 text-white text-xl"
+      >
+        다음
+      </Button>
+    </form>
+  );
+}
+
+export default StudentDocumentForm;
