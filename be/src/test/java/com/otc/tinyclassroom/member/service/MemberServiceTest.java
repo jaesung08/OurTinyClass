@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.otc.tinyclassroom.global.config.WebSecurityConfig;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberException;
@@ -16,8 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 
 @DisplayName("member service 테스트")
+@Import(WebSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
@@ -31,7 +34,7 @@ class MemberServiceTest {
     void givenInfo_whenRequestJoin_thenReturnVoid() {
         // Given
         // TODO: fixture로 변경
-        Member member = Member.of("test123", "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
+        Member member = Member.of("test123", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
         MemberJoinRequestDto request = MemberJoinRequestDto.from(member);
         given(memberRepository.findByMemberId("test123")).willReturn(Optional.empty());
         given(memberRepository.save(member)).willReturn(member);
@@ -63,7 +66,7 @@ class MemberServiceTest {
     @Test
     void givenDuplicatedMemberId_whenRequestJoin_thenThrowDuplicatedException() {
         // Given
-        Member exist = Member.of("test1", "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
+        Member exist = Member.of("test1", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
         MemberJoinRequestDto request = MemberJoinRequestDto.from(exist);
         given(memberRepository.findByMemberId(request.memberId())).willReturn(Optional.of(exist));
 
