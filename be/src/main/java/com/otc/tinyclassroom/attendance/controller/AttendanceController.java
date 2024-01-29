@@ -29,13 +29,14 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    // Todo : 토큰 받아서 진행시 토큰 처리식으로 변경하기
+
 
     /**
      * 등교시간 기록.
      */
     @PostMapping("/check-in")
     public BaseResponse<AttendanceCheckInResponseDto> checkIn(@RequestBody MemberDto memberDto) {
+        // Todo : 토큰받고 토큰내에서 memberId 가져와서 진행방식으로 전환
         String memberId = memberDto.memberId();
         LocalDateTime now = LocalDateTime.now();
         AttendanceCheckInResponseDto result = attendanceService.checkIn(memberId, now);
@@ -47,13 +48,14 @@ public class AttendanceController {
      */
     @PutMapping("/check-out")
     public BaseResponse<AttendanceCheckOutResponseDto> checkOut(@RequestBody MemberDto memberDto) {
+        // Todo : 토큰받고 토큰내에서 memberId 가져와서 진행방식으로 전환
         String memberId = memberDto.memberId();
         LocalDateTime now = LocalDateTime.now();
         AttendanceCheckOutResponseDto result = attendanceService.checkOut(memberId, now);
         return BaseResponse.success(HttpStatus.OK.value(), "하교에 성공하였습니다!", result);
     }
 
-    // Todo : 토큰받고 memberId 가져와서 진행하는 방향으로 refactoring
+
 
     /**
      * 오늘 출석기록 조회.

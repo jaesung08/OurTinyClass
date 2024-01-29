@@ -13,6 +13,7 @@ public record MonthlyAttendanceResponseDto(List<MonthlyAttendanceResponseDto.Att
     /**
      * MonthlyAttendanceResponseDto 에서 사용되는 출석 월별 정보를 담는 내부 클래스.
      */
+    // Todo : Dto -> Dto 사용하여 Service 단의 코드 경량화하기.
     public record AttendanceMonthInfo(LocalDate date, LocalDateTime checkIn, LocalDateTime checkOut, int status) {
 
     }

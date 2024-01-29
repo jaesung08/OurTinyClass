@@ -72,7 +72,7 @@ tasks.withType(JavaCompile).configureEach {
 
 // java source set에 querydsl QClass 위치 추가
 sourceSets {
-    main.java.srcDirs += [ generated ]
+    main.java.srcDirs += [generated]
 }
 
 clean {

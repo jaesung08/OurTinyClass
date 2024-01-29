@@ -38,19 +38,14 @@ public class AttendanceService {
      */
     @Transactional
     public AttendanceCheckInResponseDto checkIn(String memberId, LocalDateTime now) {
-
-        System.out.println("memberId1 = " + memberId);
         // 리포지토리에서 회원 정보를 가져옴
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NO_MEMBER_ID));
 
-        System.out.println("member = " + member);
         // 회원이 오늘 이미 등교한 경우 예외 처리
         if (hasCheckedInToday(member.getId())) {
             throw new AttendanceException(AttendanceErrorCode.ALREADY_ATTEND);
         }
-
-        System.out.println("memberID2 = " + member.getId());
 
         // 등교 시간을 확인( 실제 실행시 주석 풀기 )
         //  validateCheckInTime(now);
@@ -58,7 +53,6 @@ public class AttendanceService {
         AttendanceStatus status = determineAttendanceStatus(now);
         // 등교를 위한 Attendance 엔티티 생성 및 저장
         Attendance attendance = Attendance.of(member, Timestamp.valueOf(now), null, status);
-        System.out.println("attendance = " + attendance);
         attendanceRepository.save(attendance);
 
         return AttendanceCheckInResponseDto.from(Timestamp.valueOf(now), status.ordinal());
@@ -106,7 +100,6 @@ public class AttendanceService {
      */
     @Transactional
     public AttendanceCheckOutResponseDto checkOut(String memberId, LocalDateTime now) {
-        System.out.println("memberId = " + memberId);
         // 리포지토리에서 회원 정보를 가져옴
         Member member = memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NO_MEMBER_ID));
@@ -126,6 +119,11 @@ public class AttendanceService {
         // 하교시간을 확인하고 status 지정 ( 18시 넘을경우 제한 )
         AttendanceStatus status = validateCheckOutTimeAndDetermineStatus(now, attendance.getCheckIn().toLocalDateTime());
 
+        // 15시가 넘었을 경우 기존 status 를 반환
+        if (status == null) {
+            status = attendance.getStatus();
+        }
+
         // 체크아웃 시간을 설정하고 업데이트된 출결 기록을 저장
         attendance.setCheckOut(Timestamp.valueOf(now));
         attendance.setStatus(status);
@@ -133,7 +131,6 @@ public class AttendanceService {
 
         return AttendanceCheckOutResponseDto.from(Timestamp.valueOf(now), status.ordinal());
     }
-
 
     /**
      * 하교 시간을 확인하고 상태를 지정해주는 메서드.
@@ -149,11 +146,17 @@ public class AttendanceService {
         // 등교 시간과 하교 시간의 차이를 계산
         Duration duration = Duration.between(checkInTime, now);
 
-        // 차이가 4시간 이내면 결석으로 표시, 그렇지 않으면 조퇴로 표시
+        // 등교시간 차이와 하교 시간을 계산하여 값 지정
+        // TODO: 스케줄러 도입 -> 매일 18시 checkOut 하지 않을 시 결석으로 전환
+        // 차이가 4시간 이내면 결석으로 표시
         if (duration.toHours() < 4) {
             return AttendanceStatus.ABSENCE;
-        } else {
+        } else if (duration.toHours() < 15) {
+            // 15시가 안됐으면 조퇴로 표시
             return AttendanceStatus.LEAVE_EARLY;
+        } else {
+            // 15시가 넘었으면 null 표시
+            return null;
         }
     }
 
@@ -200,9 +203,8 @@ public class AttendanceService {
         List<MonthlyAttendanceResponseDto.AttendanceMonthInfo> attendanceList = new ArrayList<>();
         for (Attendance attendance : monthlyAttendanceList) {
             LocalDateTime checkIn = attendance.getCheckIn().toLocalDateTime();
-            LocalDateTime checkOut = attendance.getCheckOut().toLocalDateTime();
+            LocalDateTime checkOut = attendance.getCheckOut() != null ? attendance.getCheckOut().toLocalDateTime() : null;
             int status = attendance.getStatus().ordinal();
-
             LocalDate date = checkIn.toLocalDate();
             MonthlyAttendanceResponseDto.AttendanceMonthInfo attendanceMonthInfo = new MonthlyAttendanceResponseDto.AttendanceMonthInfo(date, checkIn, checkOut, status);
             attendanceList.add(attendanceMonthInfo);
@@ -210,6 +212,4 @@ public class AttendanceService {
 
         return new MonthlyAttendanceResponseDto(attendanceList);
     }
-
-
 }
