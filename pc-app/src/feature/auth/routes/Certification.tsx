@@ -2,7 +2,7 @@ import { Button, Image } from "@nextui-org/react";
 import { useState } from "react";
 import MentorImg from "../assets/MentorImage.png";
 import StudentImg from "../assets/StudentImage.png";
-import MentoDocumentForm from "../components/MentoDocumentForm";
+import MentorDocumentForm from "../components/MentorDocumentForm";
 import { CODE } from "@/types/Code";
 import StudentDocumentForm from "../components/StudentDocumentForm";
 import {
@@ -82,7 +82,7 @@ function SelectRole({ onSelectRole }: SelectRoleProps) {
             <Image src={MentorImg} radius="full" />
             <h2 className=" my-5 text-3xl font-bold"> 멘토</h2>
             <Button
-              onClick={() => onSelectRole(CODE.ROLE.MENTO_SELECT)}
+              onClick={() => onSelectRole(CODE.ROLE.MENTOR_SELECT)}
               className="w-full bg-lime-500 text-2xl py-6 text-white"
             >
               가입하기
@@ -119,8 +119,8 @@ function SubmitDocument({
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="my-10 text-3xl">서류를 제출해주세요</h1>
-      {role === CODE.ROLE.MENTO_SELECT ? (
-        <MentoDocumentForm
+      {role === CODE.ROLE.MENTOR_SELECT ? (
+        <MentorDocumentForm
           onSubmit={onSubmitMentorDocument}
           goBefore={goBefore}
           loading={loading}

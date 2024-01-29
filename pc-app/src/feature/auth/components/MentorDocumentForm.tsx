@@ -4,17 +4,17 @@ import { useCallback, useState } from "react";
 import { FilePond } from "react-filepond";
 import Swal from "sweetalert2";
 
-interface MentoDocumentFormProps {
+interface MentorDocumentFormProps {
   onSubmit: (belong: string, belongDocument: ActualFileObject) => void;
   goBefore: (current: number) => void;
   loading: boolean;
 }
 
-function MentoDocumentForm({
+function MentorDocumentForm({
   onSubmit,
   goBefore,
   loading,
-}: MentoDocumentFormProps) {
+}: MentorDocumentFormProps) {
   const [inputBelong, setInputBelong] = useState("");
   const [files, setFiles] = useState<ActualFileObject[]>([]);
 
@@ -75,4 +75,4 @@ function MentoDocumentForm({
   );
 }
 
-export default MentoDocumentForm;
+export default MentorDocumentForm;
