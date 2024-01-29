@@ -1,6 +1,5 @@
 package com.otc.tinyclassroom.member.service;
 
-import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
