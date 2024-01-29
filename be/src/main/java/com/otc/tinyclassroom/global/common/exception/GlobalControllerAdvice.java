@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.global.common.exception;
 
+import com.otc.tinyclassroom.attendance.exception.AttendanceException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;
@@ -28,10 +29,20 @@ public class GlobalControllerAdvice {
     }
 
     /**
-     *   Media Exception Handler
+     * Attendance Exception Handler.
+     */
+    @ExceptionHandler(AttendanceException.class)
+    public ResponseEntity<?> applicationHandler1(AttendanceException e) {
+        log.error("Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+        .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
+
+    /**
+     *   Media Exception Handler.
      */
     @ExceptionHandler(MediaException.class)
-    public ResponseEntity<?> MediaExceptionHandler(MediaException e) {
+    public ResponseEntity<?> mediaExceptionHandler(MediaException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
                 .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
@@ -46,5 +57,4 @@ public class GlobalControllerAdvice {
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
-
 }
