@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.global.common.exception;
 
+import com.otc.tinyclassroom.classformation.exception.ClassFormationException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerAdvice {
 
     /**
-     *  Member Exception Handler.
+     * Member Exception Handler.
      */
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<?> applicationHandler(MemberException e) {
@@ -28,13 +29,13 @@ public class GlobalControllerAdvice {
     }
 
     /**
-     *   Media Exception Handler
+     * Media Exception Handler.
      */
     @ExceptionHandler(MediaException.class)
-    public ResponseEntity<?> MediaExceptionHandler(MediaException e) {
+    public ResponseEntity<?> mediaExceptionHandler(MediaException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
     /**
@@ -43,6 +44,16 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(CommunityException.class)
     public ResponseEntity<?> boardExceptionHandler(CommunityException e) {
         log.error("Board Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
+
+    /**
+     * ClassFormation Exception Handler.
+     */
+    @ExceptionHandler(ClassFormationException.class)
+    public ResponseEntity<?> classForamtionExceptionHandler(ClassFormationException e) {
+        log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }

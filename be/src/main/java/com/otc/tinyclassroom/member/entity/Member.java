@@ -84,5 +84,14 @@ public class Member {
     public int hashCode() {
         return Objects.hash(memberId);
     }
+
+    /**
+     * 반 배정 및 수정시 멤버의 반만 수정하는 함수.
+     */
+    public void updateClassRoom(ClassRoom newClassRoom) {
+        if (newClassRoom != null) {
+            this.classRoom = newClassRoom;
+        }
+    }
 }
 
