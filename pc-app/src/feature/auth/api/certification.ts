@@ -1,4 +1,4 @@
-import { axios } from "@/lib/axios";
+import { fileAxios } from "@/lib/fileAxios";
 import { ActualFileObject } from "filepond";
 
 export const studentCertification = (
@@ -7,7 +7,7 @@ export const studentCertification = (
   quitReason: string,
   quitSchoolDocument: ActualFileObject
 ) => {
-  return axios.post("/members/certification/student", {
+  return fileAxios.post("/members/certification/student", {
     beforeSchool,
     beforeSchoolType,
     quitReason,
@@ -19,7 +19,7 @@ export const mentorCertification = (
   belong: string,
   belongDocument: ActualFileObject
 ) => {
-  return axios.post("/members/certification/mentor", {
+  return fileAxios.post("/members/certification/mentor", {
     belong,
     belongDocument,
   });
