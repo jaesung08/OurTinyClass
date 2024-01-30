@@ -1,8 +1,14 @@
+import { LandingPage } from "@/features/landingpage/routes/LandingPage";
 import { useRoutes } from "react-router-dom";
-import { protectedRoutes } from "./protected";
 
 export const AppRoutes = () => {
-  const element = useRoutes(protectedRoutes);
+  const defaultRoutes = [
+    {
+      path: "/",
+      element: <LandingPage />,
+    },
+  ];
+  const element = useRoutes([...defaultRoutes]);
 
   return <>{element}</>;
 };

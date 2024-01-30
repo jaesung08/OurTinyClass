@@ -3,7 +3,6 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Spinner } from "@/components/Elements";
 import MainDashboard from "@/features/users/routes/MainDashboard";
 import { MainLayout } from "@/components/Layout/MainLayout";
-import FreeBoardPage from "@/features/communities/routes/FreeBoardPage";
 
 const App = () => {
   return (
@@ -27,7 +26,6 @@ export const protectedRoutes = [
     children: [
       { path: "/", element: <MainDashboard /> },
       { path: "*", element: <Navigate to="." /> },
-      { path: "/free-board", element: <FreeBoardPage /> },
     ],
   },
 ];
