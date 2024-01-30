@@ -5,12 +5,7 @@ import { FilePond } from "react-filepond";
 import Swal from "sweetalert2";
 
 interface StudentDocumentFormProps {
-  onSubmit: (
-    quitReason: string,
-    beforeSchoolType: number,
-    beforeSchool: string,
-    quitSchoolDocument: ActualFileObject
-  ) => void;
+  onSubmit: (formData: FormData) => void;
   goBefore: (current: number) => void;
   loading: boolean;
 }
@@ -73,12 +68,12 @@ function StudentDocumentForm({
       files[0] &&
       selectedSchoolType.length
     ) {
-      onSubmit(
-        inputQuitReason,
-        +selectedSchoolType,
-        inputBeforeSchool,
-        files[0]
-      );
+      const formData = new FormData();
+      formData.append("quitReason", inputQuitReason);
+      formData.append("beforeSchool", inputBeforeSchool);
+      formData.append("beforeSchoolType ", selectedSchoolType);
+      formData.append("quitconfirmation ", files[0]);
+      onSubmit(formData);
     } else {
       Swal.fire("실패", "양식에 값을 모두 채워주세요", "warning");
     }

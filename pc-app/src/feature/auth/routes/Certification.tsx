@@ -9,7 +9,6 @@ import {
   mentorCertification,
   studentCertification,
 } from "../api/certification";
-import { ActualFileObject } from "filepond";
 import { useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { AxiosResponse } from "axios";
@@ -96,16 +95,8 @@ function SelectRole({ onSelectRole }: SelectRoleProps) {
 
 interface SubmitDocumentProps {
   role: number;
-  onSubmitStudentDocument: (
-    quitReason: string,
-    beforeSchoolType: number,
-    beforeSchool: string,
-    quitSchoolDocument: ActualFileObject
-  ) => void;
-  onSubmitMentorDocument: (
-    belong: string,
-    belongDocument: ActualFileObject
-  ) => void;
+  onSubmitStudentDocument: (formData: FormData) => void;
+  onSubmitMentorDocument: (formData: FormData) => void;
   goBefore: (current: number) => void;
   loading: boolean;
 }
@@ -151,18 +142,8 @@ function Certification() {
     setCertificationStep(current - 1);
   };
   const studentCertificationMutation = useMutation({
-    mutationFn: (studentCertificationData: {
-      quitReason: string;
-      beforeSchoolType: number;
-      beforeSchool: string;
-      quitSchoolDocument: ActualFileObject;
-    }) => {
-      return studentCertification(
-        studentCertificationData.beforeSchool,
-        studentCertificationData.beforeSchoolType,
-        studentCertificationData.quitReason,
-        studentCertificationData.quitSchoolDocument
-      );
+    mutationFn: (formData: FormData) => {
+      return studentCertification(formData);
     },
 
     onSuccess: () => {
@@ -187,14 +168,8 @@ function Certification() {
   });
 
   const mentorCertificationMutation = useMutation({
-    mutationFn: (mentorCertificationData: {
-      belong: string;
-      belongDocument: ActualFileObject;
-    }) => {
-      return mentorCertification(
-        mentorCertificationData.belong,
-        mentorCertificationData.belongDocument
-      );
+    mutationFn: (formData: FormData) => {
+      return mentorCertification(formData);
     },
 
     onSuccess: () => {
@@ -218,30 +193,14 @@ function Certification() {
     },
   });
 
-  const onSubmitStudentDocument = (
-    quitReason: string,
-    beforeSchoolType: number,
-    beforeSchool: string,
-    quitSchoolDocument: ActualFileObject
-  ) => {
+  const onSubmitStudentDocument = (formData: FormData) => {
     setLoading(true);
-    studentCertificationMutation.mutate({
-      quitReason,
-      beforeSchoolType,
-      beforeSchool,
-      quitSchoolDocument,
-    });
+    studentCertificationMutation.mutate(formData);
   };
 
-  const onSubmitMentorDocument = (
-    belong: string,
-    belongDocument: ActualFileObject
-  ) => {
+  const onSubmitMentorDocument = (formData: FormData) => {
     setLoading(true);
-    mentorCertificationMutation.mutate({
-      belong,
-      belongDocument,
-    });
+    mentorCertificationMutation.mutate(formData);
   };
 
   return (

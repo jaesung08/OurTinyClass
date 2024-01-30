@@ -5,7 +5,7 @@ import { FilePond } from "react-filepond";
 import Swal from "sweetalert2";
 
 interface MentorDocumentFormProps {
-  onSubmit: (belong: string, belongDocument: ActualFileObject) => void;
+  onSubmit: (formData: FormData) => void;
   goBefore: (current: number) => void;
   loading: boolean;
 }
@@ -34,7 +34,10 @@ function MentorDocumentForm({
 
   const onSubmitForm = () => {
     if (inputBelong.trim().length && files.length) {
-      onSubmit(inputBelong, files[0]);
+      const formData = new FormData();
+      formData.append("belong", inputBelong);
+      formData.append("belongDocument", files[0]);
+      onSubmit(formData);
     } else {
       Swal.fire("실패", "양식에 값을 모두 채워주세요", "warning");
     }
