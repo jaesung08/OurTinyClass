@@ -32,7 +32,7 @@ function Steps({ certificationStep }: StepsProps) {
         <li
           className={
             getStepStyle(0) +
-            " bg-lime-500 text-white font-bold px-10 py-5 rounded-full"
+            " bg-lime-500 text-white font-bold px-5 py-2 rounded-full"
           }
         >
           회원 유형 선택
@@ -40,7 +40,7 @@ function Steps({ certificationStep }: StepsProps) {
         <li
           className={
             getStepStyle(1) +
-            " bg-lime-500 text-white font-bold px-10 py-5 rounded-full"
+            " bg-lime-500 text-white font-bold px-5 py-2 rounded-full"
           }
         >
           회원 정보 등록
@@ -48,7 +48,7 @@ function Steps({ certificationStep }: StepsProps) {
         <li
           className={
             getStepStyle(2) +
-            " bg-lime-500 text-white font-bold px-10 py-5 rounded-full"
+            " bg-lime-500 text-white font-bold px-5 py-2 rounded-full"
           }
         >
           회원 승인 대기
@@ -67,9 +67,9 @@ function SelectRole({ onSelectRole }: SelectRoleProps) {
         활동할 역할을 선택해주세요
       </h1>
       <div className="flex items-center justify-center">
-        <ul className="flex gap-1 w-full">
+        <ul className="flex gap-20 w-full">
           <li className="flex flex-col items-center justify-center w-full border-3 rounded-lg p-10 hover:border-lime-300 hover:bg-lime-50">
-            <Image src={StudentImg} radius="full" />
+            <Image height={200} width={200} src={StudentImg} radius="full" />
             <h2 className=" my-5 text-3xl font-bold"> 학생</h2>
             <Button
               onClick={() => onSelectRole(CODE.ROLE.STUDENT_SELECT)}
@@ -79,7 +79,7 @@ function SelectRole({ onSelectRole }: SelectRoleProps) {
             </Button>
           </li>
           <li className="flex flex-col items-center justify-center w-full border-3 rounded-lg p-10 hover:border-lime-300 hover:bg-lime-50">
-            <Image src={MentorImg} radius="full" />
+            <Image height={200} width={200} src={MentorImg} radius="full" />
             <h2 className=" my-5 text-3xl font-bold"> 멘토</h2>
             <Button
               onClick={() => onSelectRole(CODE.ROLE.MENTOR_SELECT)}
@@ -118,7 +118,7 @@ function SubmitDocument({
 }: SubmitDocumentProps) {
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="my-10 text-3xl">서류를 제출해주세요</h1>
+      <h1 className="my-6 text-xl">서류를 제출해주세요</h1>
       {role === CODE.ROLE.MENTOR_SELECT ? (
         <MentorDocumentForm
           onSubmit={onSubmitMentorDocument}

@@ -91,12 +91,13 @@ function StudentDocumentForm({
   };
 
   return (
-    <form className="flex flex-col gap-10 border-1 border-lime-400 p-10 rounded-lg 2xl:w-1/3 xl:w-1/2 lg:w-2/3 w-full">
+    <form className="flex flex-col gap-5 border-1 border-lime-400 p-5 rounded-lg 2xl:w-1/3 xl:w-1/2 lg:w-2/3 w-full">
       <Select
         label="기존 학교 종류를 선택해주세요."
         value={selectedSchoolType}
         onChange={handleBeforeSchoolTypeSelectionChange}
         isRequired={true}
+        size="sm"
       >
         {SchoolTypes.map((school) => (
           <SelectItem key={school.value} value={school.value}>
@@ -112,6 +113,7 @@ function StudentDocumentForm({
         required={true}
         value={inputQuitReason}
         onChange={onChangeInputQuitReason}
+        size="sm"
       />
       <Input
         type="text"
@@ -121,13 +123,18 @@ function StudentDocumentForm({
         required={true}
         value={inputBeforeSchool}
         onChange={onChangeInputBeforeSchool}
+        size="sm"
       />
-      <FilePond
-        files={files}
-        name="files"
-        onupdatefiles={onUpdateFiles}
-        labelIdle="자퇴 확인서를 제출해주세요."
-      />
+      <div className="flex flex-col gap-2">
+        <label htmlFor="files"> 자퇴 확인서를 제출해주세요.</label>
+        <FilePond
+          files={files}
+          name="files"
+          onupdatefiles={onUpdateFiles}
+          labelIdle=" 끌어놓거나, 클릭해서 찾아보세요."
+        />
+      </div>
+
       <Button onClick={onClickBeforeBtn} className="text-xl">
         이전
       </Button>
