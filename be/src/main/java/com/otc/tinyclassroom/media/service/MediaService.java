@@ -6,7 +6,9 @@ import com.otc.tinyclassroom.media.exception.MediaErrorCode;
 import com.otc.tinyclassroom.media.exception.MediaException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,14 +38,16 @@ public class MediaService {
      * MultipartFile 형식 데이터를 받아 S3에 저장한다.
      * 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
      */
-    public List<String> storeImages(List<MultipartFile> files) {
+    public Map<String, List<String>> storeImages(List<MultipartFile> files) {
 
         List<String> urlList = new ArrayList<>();
+        List<String> originalName = new ArrayList<>();
         List<String> storeNames = new ArrayList<>();
 
         // 이미지명 검증 및 변환
         for (MultipartFile file : files) {
             storeNames.add(createUniqueFileName(file.getOriginalFilename()));
+            originalName.add(file.getOriginalFilename());
         }
 
         for (int i = 0; i < files.size(); i++) {
@@ -59,8 +63,12 @@ public class MediaService {
                 throw new MediaException(MediaErrorCode.INTERNAL_SERVER_ERROR);
             }
         }
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("urlList", urlList);
+        result.put("storeNames", storeNames);
+        result.put("originalName", originalName);
 
-        return urlList;
+        return result;
     }
 
     /**
@@ -90,5 +98,4 @@ public class MediaService {
         }
         return extension;
     }
-
 }
