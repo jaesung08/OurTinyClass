@@ -3,6 +3,7 @@ import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import {
   Button,
   Card,
+  CardBody,
   CardFooter,
   CardHeader,
   Divider,
@@ -16,6 +17,8 @@ import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import { checkOut } from "@/feature/attendance/api/checkOut";
 import { Tag } from "@/components/Elements/Tag/Tag";
+import { useRecoilState } from "recoil";
+import { userState } from "@/atoms/user";
 
 const dummyNotices = [
   {
@@ -498,16 +501,13 @@ function Calender({ planList, todayDate }: CalenderProps) {
 function CurrentLectureCard() {
   return (
     <div>
-      <h1>MainDashBoard</h1>
-      <h3 className="pb-3 text-large">진행중인 수업</h3>
       <Card className="p-4 rounded-lg">
         <CardHeader>
-          <div className="flex items-center justify-between w-full gap-3">
-            <h6 className="text-lg font-semibold">3학년 2반</h6>
+          <div className="flex justify-between w-full gap-3">
+            <h6 className="text-lg font-semibold">3학년 2반 교실</h6>
           </div>
         </CardHeader>
-        {/* TODO : 여기에 진행중인 수업의 썸네일 넣어야 한다. */}
-        <CardFooter className="mt-4 flex flex-col gap-2">
+        <CardBody>
           <div className="flex justify-between items-center w-full">
             <p>참석자 수 : </p>
             <p>● 34/40</p>{" "}
@@ -520,6 +520,10 @@ function CurrentLectureCard() {
 
             {/* TODO 수업 데이터로 전환해야 한다.*/}
           </div>
+        </CardBody>
+
+        <CardFooter>
+          <Button color="success">참석하기</Button>
         </CardFooter>
       </Card>
     </div>
@@ -527,10 +531,7 @@ function CurrentLectureCard() {
 }
 export default function MainDashBoard() {
   const todayDate = dayjs().startOf("day");
-  const userInfo = {
-    name: "누네띠네",
-  };
-
+  const userInfo = useRecoilState(userState);
   const [planStartDate, setPlanStartDate] = useState(todayDate);
   const [attendanceState, setAttendanceState] = useState<
     Attendance | undefined
@@ -601,11 +602,6 @@ export default function MainDashBoard() {
       setAttendanceState(res.data.attendanceOnDate);
     } catch (e) {
       console.log(e);
-      Swal.fire(
-        "출석 실패",
-        "시스템에 문제가 생겨 입실에 실패하였습니다.",
-        "error"
-      );
     }
   };
   return (
@@ -615,23 +611,18 @@ export default function MainDashBoard() {
           <h1 className="text-2xl font-bold">나만의 작은 코너</h1>
           <div className="flex space-x-2"></div>
         </header>
-        <main className="flex-col gap-8">
-          <p>
-            안녕하세요, <span>{userInfo[0].name}</span>님
-          </p>
-          <section className="flex gap-6">
-            <AttendanceCard
-              todayDate={todayDate}
-              checkIn={attendanceState?.checkIn}
-              checkOut={attendanceState?.checkOut}
-              status={attendanceState?.status}
-              doCheckIn={doCheckIn}
-              doCheckOut={doCheckOut}
-            />
-            <NoticeListCard />
-          </section>
-        </main>
-        <div className="px-24 h-1/2">
+        <section className="flex gap-6 px-24">
+          <AttendanceCard
+            todayDate={todayDate}
+            checkIn={attendanceState?.checkIn}
+            checkOut={attendanceState?.checkOut}
+            status={attendanceState?.status}
+            doCheckIn={doCheckIn}
+            doCheckOut={doCheckOut}
+          />
+          <NoticeListCard />
+        </section>
+        <div className="px-24 h-1/2 mt-5">
           <div className="flex flex-col gap-5 h-full">
             <CalenderHeader
               planStartDate={planStartDate}
