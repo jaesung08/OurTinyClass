@@ -37,11 +37,11 @@ function SideBar() {
       localStorage.clear();
       goLogin();
     }
-  }, []);
+  }, [goLogin]);
 
   return (
     <>
-      <article className="w-1/12 bg-lime-100 min-h-screen h-full flex flex-col items-center justify-between py-10 gap-5">
+      <article className=" bg-lime-100 min-h-screen h-full flex flex-col items-center justify-between py-10 px-5 gap-5">
         <div className="flex flex-col items-center gap-5">
           <Button
             onClick={goHome}

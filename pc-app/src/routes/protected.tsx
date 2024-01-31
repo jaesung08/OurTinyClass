@@ -30,7 +30,7 @@ export const protectedRoutes = [
       { path: "join-classroom", element: <JoinRoom /> },
       { path: "video", element: <Video /> },
       { path: "main-dashboard", element: <MainDashboard /> },
-      { path: "communities", element: <CommunitiesRoutes /> },
+      { path: "communities/*", element: <CommunitiesRoutes /> },
     ],
   },
 ];
