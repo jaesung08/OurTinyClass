@@ -1,7 +1,7 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 
 const checkOut = () => {
-  return axios.put("/attendances/check-out", {
+  return commonAxios.put("/attendances/check-out", {
     memberId: "ssafy123",
     password: "Jtjgml^^7",
     name: "초롱초롱 어피치",

@@ -1,9 +1,9 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 import { LoginResponse } from "..";
 
 export const login = (
   memberId: string,
   password: string
 ): Promise<LoginResponse> => {
-  return axios.post("/members/login", { memberId, password });
+  return commonAxios.post("/members/login", { memberId, password });
 };

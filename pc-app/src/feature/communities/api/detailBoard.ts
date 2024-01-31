@@ -1,7 +1,7 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 
 export const getDetail = async (article_id: string) => {
-  return await axios.get(`/board/${article_id}`);
+  return await commonAxios.get(`/community/articles/${article_id}`);
 };
 
 export const editDetail = async (
@@ -9,7 +9,7 @@ export const editDetail = async (
   content: string,
   article_id: string
 ) => {
-  return await axios.patch(`/board/${article_id}`, {
+  return await commonAxios.patch(`/community/articles/${article_id}`, {
     title,
     content,
   });

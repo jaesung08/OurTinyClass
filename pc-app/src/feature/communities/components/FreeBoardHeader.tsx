@@ -38,12 +38,14 @@ function FreeBoardHeader() {
       isActive: false,
     },
   ]);
+
   // 게시판 리스트 가져오는 부분
   const communityList: JSX.Element[] = useMemo(() => {
     return articleState.map(
       (article: {
         title: string;
         id: number;
+        content: string;
         isActive: boolean;
       }): JSX.Element => {
         return (
@@ -54,8 +56,24 @@ function FreeBoardHeader() {
                 : "pl-2 py-5 cursor-pointer list-none"
             }
             key={article.id}
+            value={article.id}
             // todo : 게시판 별 링크 다르게 설정
-            onClick={() => navigator("/communities")}
+            onClick={(e) => {
+              const updatedArticleState = articleState.map((article, index) => {
+                if (e.currentTarget.value === index) {
+                  return { ...article, isActive: true };
+                } else {
+                  return { ...article, isActive: false };
+                }
+              });
+              setArticleState(updatedArticleState);
+              navigator("/communities", {
+                state: {
+                  title: `${article.title}`,
+                  content: `${article.content}`,
+                },
+              });
+            }}
           >
             {article.title}
           </li>
@@ -69,10 +87,10 @@ function FreeBoardHeader() {
       <div className="w-full bg-lime-500 flex justify-center items-center h-20">
         <p className="text-lg text-white font-bold">TeenEduConnect</p>
       </div>
-      <div className="w-full" style={{ minHeight: "calc(100vh - 5rem)" }}>
+      <div className="w-full min-h-[calc(100vh - 5rem)]">
         <p className="font-bold text-lg pl-5 py-4">나작사 커뮤니티</p>
         {/* todo : 패딩 크기 조절해야함 */}
-        <Accordion selectionMode="multiple" style={{ padding: "0" }}>
+        <Accordion selectionMode="multiple" className="p-0">
           <AccordionItem
             key="1"
             className="font-light py-1 px-1"

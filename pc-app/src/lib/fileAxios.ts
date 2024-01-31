@@ -4,12 +4,13 @@ import Axios from "axios";
 import { API_URL } from "@/config";
 import Cookies from "js-cookie";
 import { CODE } from "@/types/Code";
+import { commonAxios } from "./commonAxios";
 
-export const axios = Axios.create({
+export const fileAxios = Axios.create({
   baseURL: API_URL,
 });
 
-axios.interceptors.request.use(function (config): any {
+fileAxios.interceptors.request.use(function (config): any {
   // eslint-disable-next-line valid-typeof
   if (typeof window === undefined) {
     return;
@@ -26,7 +27,7 @@ axios.interceptors.request.use(function (config): any {
     return cfg;
   }
   config.headers = Object.assign({}, config.headers, {
-    "Content-Type": "application/json",
+    "Content-Type": "multipart/form-data",
     Authorization: Cookies.get("accessToken"),
   });
   return config;
@@ -34,7 +35,7 @@ axios.interceptors.request.use(function (config): any {
 
 let isTokenRefreshing = false;
 
-axios.interceptors.response.use(
+fileAxios.interceptors.response.use(
   (response) => {
     if (
       response.config.url?.includes("/login") ||
@@ -62,17 +63,16 @@ axios.interceptors.response.use(
         // 에러가 발생했던 컴포넌트의 axios로 이동하고자 하는 경우
         // 반드시 return을 붙여야 한다.
         try {
-          const refreshTokenResult = await axios.post<{ refreshToken: string }>(
-            "/members/token/refresh",
-            {
-              refreshToken: Cookies.get("refreshToken"),
-            }
-          );
+          const refreshTokenResult = await commonAxios.post<{
+            refreshToken: string;
+          }>("/members/token/refresh", {
+            refreshToken: Cookies.get("refreshToken"),
+          });
           const newRefreshToken = refreshTokenResult.data.refreshToken;
           Cookies.set("refreshToken", newRefreshToken);
-          axios.defaults.headers.common["Authorization"] =
+          fileAxios.defaults.headers.common["Authorization"] =
             Cookies.get("accessToken");
-          return await axios(originalRequest);
+          return await fileAxios(originalRequest);
         } catch (e) {
           console.log(e);
         } finally {

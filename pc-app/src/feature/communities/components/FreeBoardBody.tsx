@@ -13,25 +13,36 @@ import {
   PaginationItemType,
   PaginationItemRenderProps,
 } from "@nextui-org/react";
-import { ChevronIcon } from "@/assets/ChevronIcon";
 import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
-import { freeBoard } from "../api/freeBoard";
+import { freeBoard, searchBoard } from "../api/freeBoard";
 import dayjs from "dayjs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Board } from "../types/board";
+import { ChevronIcon } from "@/assets/img/ChevronIcon";
 
-const CATEGORIES = ["내용", "제목", "작성자"];
-
-interface Board {
-  id: number;
-  title: string;
-  name: string;
-  createdAt: string;
-  hit: number;
-}
-
+const CATEGORIES = [
+  {
+    name: "제목",
+    value: "title",
+  },
+  {
+    name: "내용",
+    value: "content",
+  },
+  {
+    name: "제목 + 내용",
+    value: "title_content",
+  },
+  {
+    name: "작성자",
+    value: "name",
+  },
+];
 function FreeBoardBody() {
   const navigator = useNavigate();
+  const navState = useLocation().state;
+  // 페이지 네이션 처리 과정
   const renderItem = ({
     ref,
     key,
@@ -84,69 +95,104 @@ function FreeBoardBody() {
           isActive &&
             "text-white bg-gradient-to-br from-lime-400 to-lime-300 font-bold"
         )}
-        onClick={() => setPage(value)}
+        onClick={() => {
+          handlePageChange(value);
+          setPage(currentPage);
+        }}
       >
         {value}
       </button>
     );
   };
-  const [renderBoard, setRenderBoard] = useState<JSX.Element[] | string>();
   const [boardList, setBoardList] = useState<Board[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [searchType, setSearchType] = useState<string>(CATEGORIES[0].value);
+  const [editPagination, setEditPagination] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isSearched, setIsSearched] = useState<boolean>(false);
+  const [currentType, setCurrentType] = useState<string>("notice");
+
+  // 페이지 렌더링시 게시글 전체 불러오기
+  useEffect(() => {
+    if (navState) {
+      if (navState.title === "공지사항 🔊") {
+        setCurrentType("notice");
+      } else if (navState.title === "자유 게시판 ✨") {
+        setCurrentType("free");
+      } else if (navState.title === "고민 나눔 🧶") {
+        setCurrentType("counseling");
+      } else if (navState.title === "취미 공유 🎨") setCurrentType("hobby");
+    }
+  }, [navState]);
 
   useEffect(() => {
-    const searchArticle = async () => {
+    const totalArticle = async () => {
       try {
-        const articles = await freeBoard();
+        const articles = await freeBoard(currentType);
         setBoardList(articles.data.content);
+        setIsSearched(false);
+        setCurrentPage(1);
+        setEditPagination(articles.data.totalPages - 1);
       } catch (error) {
         console.error(error);
       }
     };
-    searchArticle();
-  }, []);
+    totalArticle();
+  }, [currentType]);
 
+  // 페이지 네이션 체크
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // 페이지네이션 함수
   useEffect(() => {
-    if (boardList) {
-      const boards: JSX.Element[] = boardList.map(
-        (board: Board, index: number): JSX.Element => {
-          const date = dayjs(board.createdAt);
-          return (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell
-                className="cursor-pointer hover:bg-gray-200"
-                style={{
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  maxWidth: "25rem",
-                }}
-                onClick={() =>
-                  navigator("/communities/detail", { state: board.id })
-                }
-              >
-                {board.title}
-              </TableCell>
-              <TableCell>{board.name}</TableCell>
-              <TableCell>{date.format("YY-MM-DD")}</TableCell>
-              <TableCell>{board.hit}</TableCell>
-              <TableCell>222</TableCell>
-            </TableRow>
+    const reRenderArticles = async () => {
+      try {
+        if (isSearched) {
+          const newArticles = await searchBoard(
+            currentType,
+            searchType,
+            searchKeyword,
+            currentPage
           );
+          setBoardList(newArticles.data.content);
+        } else {
+          const newArticles = await freeBoard(currentType, currentPage);
+          setBoardList(newArticles.data.content);
         }
-      );
-      setRenderBoard(boards);
-    }
-  }, [boardList]);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    reRenderArticles();
+  }, [currentPage, currentType, isSearched, searchType, searchKeyword]);
 
+  // 게시글 검색기능
+  const searchHandler = async () => {
+    if (searchKeyword.trim()) {
+      try {
+        const searchLists = await searchBoard(
+          currentType,
+          searchType,
+          searchKeyword
+        );
+        if (searchLists.data.content) {
+          setEditPagination(searchLists.data.totalPages - 1);
+          setCurrentPage(1);
+          setIsSearched(true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      alert("내용을 입력하세요");
+    }
+  };
   return (
     <section className="w-10/12 h-full border-l-3 relative">
       <Button
-        className="fixed bottom-5 right-5 text-white text-xl rounded-full"
-        style={{
-          backgroundColor: "#52c41a",
-          boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-        }}
+        className="fixed bottom-5 right-5 text-white text-xl rounded-full bg-lime-500 shadow"
         size="lg"
         onClick={() => {
           navigator("/communities/create");
@@ -178,42 +224,52 @@ function FreeBoardBody() {
           />
         </form>
       </div>
-      <div className="w-full bg-white" style={{ height: "90%" }}>
-        <div className="flex w-full p-5 items-center" style={{ height: "8%" }}>
-          <p className="text-2xl w-2/12 f">고민 나눔</p>
-          <p className="w-10/12">가슴속에 쌓아둔 이야기를 털어보세요</p>
+      <div className="w-full bg-white h-[90%]">
+        <div className="flex w-full p-5 items-center h-[8%]">
+          {navState ? (
+            <>
+              <p className="text-2xl w-2/12 f">{navState.title}</p>
+              <p className="w-10/12">{navState.content}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-2xl w-2/12 f">고민 나눔</p>
+              <p className="w-10/12">가슴속에 쌓아둔 이야기를 털어보세요</p>
+            </>
+          )}
         </div>
         <hr className="border-b-2" />
-        <div
-          className="w-full flex justify-center items-center"
-          style={{ height: "90%" }}
-        >
-          <div
-            className="w-5/6 flex flex-col justify-between py-3 items-center"
-            style={{ height: "90%" }}
-          >
-            <div className="w-full" style={{ height: "15%" }}>
+        <div className="w-full flex justify-center items-center h-[90%]">
+          <div className="w-5/6 flex flex-col justify-between py-3 items-center h-[90%]">
+            <div className="w-full h-[15%]">
               <form className="flex justify-between items-center">
-                <Select className="ml-5 bg-white w-1/6 rounded-xl" size="sm">
-                  {CATEGORIES.map((item: string, index: number) => (
-                    <SelectItem key={index} value={item}>
-                      {item}
+                <Select
+                  className="ml-5 bg-white w-1/6 rounded-xl"
+                  size="sm"
+                  defaultSelectedKeys={[CATEGORIES[0].name]}
+                >
+                  {CATEGORIES.map((item) => (
+                    <SelectItem
+                      key={item.name}
+                      value={item.value}
+                      onClick={() => setSearchType(item.value)}
+                    >
+                      {item.name}
                     </SelectItem>
                   ))}
                 </Select>
                 <Input
                   className="bg-white w-4/6"
                   type="text"
-                  placeholder="검색어할 내용을 입력해주세요."
+                  placeholder="검색할 내용을 입력해주세요."
                   size="sm"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
                 />
                 <Button
-                  className="w-1/12 text-white text-xl rounded-xl"
-                  style={{
-                    backgroundColor: "#52c41a",
-                    boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-                  }}
+                  className="w-1/12 text-white text-xl rounded-xl bg-lime-500 shadow"
                   size="lg"
+                  onClick={() => searchHandler()}
                 >
                   검색
                 </Button>
@@ -233,15 +289,42 @@ function FreeBoardBody() {
                 <TableColumn>추천수</TableColumn>
               </TableHeader>
               <TableBody>
-                {renderBoard ? renderBoard : "게시글이 없습니다."}
+                {boardList.map((board: Board, index: number): JSX.Element => {
+                  const date = dayjs(board.createdAt);
+                  return (
+                    <TableRow key={index} className="hover:bg-gray-200">
+                      <TableCell>{board.id}</TableCell>
+                      <TableCell
+                        className="cursor-pointer"
+                        // 테이블 속성에서 너비 조정이 제대로 먹지않아서 inline 속성으로 style 적용함. 추후에 css 파일로 분리 예정
+                        style={{
+                          whiteSpace: "nowrap",
+                          textOverflow: "ellipsis",
+                          overflow: "hidden",
+                          maxWidth: "25rem",
+                        }}
+                        onClick={() =>
+                          navigator("/communities/detail", { state: board.id })
+                        }
+                      >
+                        {board.title}
+                      </TableCell>
+                      <TableCell>{board.name}</TableCell>
+                      <TableCell>{date.format("YY-MM-DD")}</TableCell>
+                      <TableCell>{board.hit}</TableCell>
+                      <TableCell>222</TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
-            <div className="flex items-center" style={{ height: "10%" }}>
+            <div className="flex items-center h-[10%]">
               <Pagination
                 disableCursorAnimation
                 showControls
-                total={10}
-                initialPage={1}
+                total={editPagination}
+                initialPage={currentPage}
+                page={currentPage}
                 className="gap-2"
                 radius="full"
                 renderItem={renderItem}

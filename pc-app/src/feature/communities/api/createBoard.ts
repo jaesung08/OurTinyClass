@@ -1,11 +1,11 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 
 export const createBoard = (
   title: string,
   content: string,
   articleType: string
 ) => {
-  return axios.post("/board", {
+  return commonAxios.post("/community/articles", {
     title,
     content,
     articleType,

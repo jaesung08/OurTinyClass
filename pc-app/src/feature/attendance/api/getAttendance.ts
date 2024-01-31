@@ -1,8 +1,8 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 import { getTodayAttendanceResponse } from "..";
 
 const getTodayAttendance = (): Promise<getTodayAttendanceResponse> => {
-  return axios.get("/attendances/today-attendance/ssafy123", {
+  return commonAxios.get("/attendances/today-attendance/ssafy123", {
     params: {
       memberId: "ssafy123",
       password: "Jtjgml^^7",
