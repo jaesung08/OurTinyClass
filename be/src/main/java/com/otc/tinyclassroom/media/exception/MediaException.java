@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 미디어 관련 Exception
+ * 미디어 관련 Exception.
  */
 @Getter
 @AllArgsConstructor

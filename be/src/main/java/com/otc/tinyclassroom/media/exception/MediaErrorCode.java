@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 미디어 에러 코드
+ * 미디어 에러 코드.
  */
 @Getter
 @AllArgsConstructor
