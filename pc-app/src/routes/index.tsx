@@ -1,16 +1,15 @@
-import { useRoutes } from "react-router-dom";
+import { Navigate, useRoutes } from "react-router-dom";
 
 import { protectedRoutes } from "./protected";
 import { publicRoutes } from "./public";
-import Landing from "@/feature/misc/Landing";
 import Cookies from "js-cookie";
 
 export const AppRoutes = () => {
-  const auth = Cookies.get("token");
+  const auth = Cookies.get("accessToken");
   const defaultRoutes = [
     {
-      path: "/",
-      element: <Landing />,
+      path: "*",
+      element: <Navigate to={auth ? "main-dashboard" : "auth/login"} />,
     },
   ];
 

@@ -60,6 +60,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
     "electron": "^28.1.3",
+    "electron-builder": "^24.9.1",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
@@ -71,8 +72,8 @@
   },
   "build": {
     "appId": "com.devname.package",
-    "productName": "Project Name",
-    "copyright": "Copyright © 2023 ${author}",
+    "productName": "OurTinyClassroom",
+    "copyright": "Copyright © 2023 OTC",
     "mac": {
       "category": "public.app-category.utilities"
     },
