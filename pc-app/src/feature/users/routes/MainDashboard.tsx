@@ -17,8 +17,6 @@ import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import { checkOut } from "@/feature/attendance/api/checkOut";
 import { Tag } from "@/components/Elements/Tag/Tag";
-import { useRecoilState } from "recoil";
-import { userState } from "@/atoms/user";
 
 const dummyNotices = [
   {
@@ -531,7 +529,6 @@ function CurrentLectureCard() {
 }
 export default function MainDashBoard() {
   const todayDate = dayjs().startOf("day");
-  const userInfo = useRecoilState(userState);
   const [planStartDate, setPlanStartDate] = useState(todayDate);
   const [attendanceState, setAttendanceState] = useState<
     Attendance | undefined
