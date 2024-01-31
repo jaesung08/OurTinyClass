@@ -2,15 +2,24 @@ package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
+import com.otc.tinyclassroom.media.service.MediaService;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
+import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.RoleUpdateResponseDto;
+import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.MemberService;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 멤버 컨트롤러 정의. 로그인, 회원가입.
@@ -21,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MediaService mediaService;
+    private final CertificationService certificationService;
     private final RefreshTokenService refreshTokenService;
 
     /**
@@ -51,5 +62,31 @@ public class MemberController {
         refreshTokenService.deleteRefreshToken(currentUserId);
 
         return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(currentUserId));
+    }
+
+    /**
+     * 사용자 입장에서 학생 ROLE 변경 요청.
+     */
+    @PostMapping("/certification/student")
+    public BaseResponse<RoleUpdateResponseDto> studentRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "requestDto") StudentRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 해야하지 않을까?
+        Map<String, List<String>> result = mediaService.storeImages(files);
+        List<String> urlList = result.get("urlList");
+        List<String> originalName = result.get("originalName");
+        certificationService.saveStudent(originalName, urlList, requestDto);
+        return BaseResponse.success(HttpStatus.OK.value(), "Student Role 업데이트 요청 성공!", null);
+    }
+
+    /**
+     * 사용자 입장에서 Mentor ROLE 변경 요청.
+     */
+    @PostMapping("/certification/mentor")
+    public BaseResponse<RoleUpdateResponseDto> mentorRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "requestDto") MentorRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 해야하지 않을까?
+        Map<String, List<String>> result = mediaService.storeImages(files);
+        List<String> urlList = result.get("urlList");
+        List<String> originalName = result.get("originalName");
+        certificationService.saveMentor(originalName, urlList, requestDto);
+        return BaseResponse.success(HttpStatus.OK.value(), "Mentor Role 업데이트 요청 성공!", null);
     }
 }
