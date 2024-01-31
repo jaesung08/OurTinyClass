@@ -54,8 +54,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
             log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
 
-            responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "access token 이 존재하지 않음.", null);
-
+            responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "access token 이 존재하지 않음.", null);
+            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
@@ -98,7 +98,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 
             } catch (Exception e) {
-                responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다.", null);
+
+                responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "잘못된 Access Token입니다.", null);
 
                 response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
                 response.setContentType("application/json");

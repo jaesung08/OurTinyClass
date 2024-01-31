@@ -36,17 +36,20 @@ public class JwtProvider {
     }
 
     // Create token
-    private String createToken(Long memberId, Role role, long tokenValid) {
+    private String createToken(Long id, Role role, long tokenValid) {
         return JWT.create()
                 .withExpiresAt(new Date(System.currentTimeMillis() + tokenValid))
-                .withClaim("memberId", memberId)
+                .withClaim("id", id)
                 .withClaim("role", role.name())
                 .sign(Algorithm.HMAC512(secret));
     }
 
+    /**
+     * AccessToken 으로부터 Member 의 Id를 가져온다.
+     */
     public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-            .getClaim("memberId").asLong();
+            .getClaim("id").asLong();
     }
 
     public String getRoleByAccessToken(String token) {
