@@ -1,4 +1,4 @@
-import { Tag } from "@/components/Elements/Tag/Tag";
+import { userState } from "@/atoms/user";
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import {
@@ -16,6 +16,8 @@ import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
 import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import { checkOut } from "@/feature/attendance/api/checkOut";
+import { useRecoilState } from "recoil";
+import { Tag } from "@/components/Elements/Tag/Tag";
 
 const dummyNotices = [
   {
@@ -525,10 +527,8 @@ function CurrentLectureCard() {
   );
 }
 function MainDashBoard() {
-  const todayDate = dayjs().startOf("day");
-  const userInfo = {
-    name: "누네띠네",
-  };
+  const todayDate = dayjs();
+  const userInfo = useRecoilState(userState);
 
   const [planStartDate, setPlanStartDate] = useState(todayDate);
   const [attendanceState, setAttendanceState] = useState<
@@ -614,9 +614,9 @@ function MainDashBoard() {
           <h1 className="text-2xl font-bold">나만의 작은 코너</h1>
           <div className="flex space-x-2"></div>
         </header>
-        <main className="flex-col gap-8 px-24 pb-8">
-          <p className="text-2xl py-5">
-            안녕하세요, <span className="font-semibold">{userInfo.name}</span>님
+        <main className="flex-col gap-8">
+          <p>
+            안녕하세요, <span>{userInfo[0].name}</span>님
           </p>
           <section className="flex gap-6">
             <AttendanceCard

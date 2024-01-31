@@ -7,10 +7,10 @@ const isDev = process.env.IS_DEV == "true" ? true : false;
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 1024,
-    height: 650,
+    width: 1400,
+    height: 1000,
     autoHideMenuBar: true,
-    resizable: false,
+    resizable: true,
     frame: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
