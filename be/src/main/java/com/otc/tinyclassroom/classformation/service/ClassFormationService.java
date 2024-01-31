@@ -11,6 +11,7 @@ import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -101,5 +102,48 @@ public class ClassFormationService {
 
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new ClassFormationException(ClassFormationErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    /**
+     * 랜덤으로 반 평성하기.
+     */
+    public List<MemberDto> randomAssignClassRooms(int targetGrade, int targetYear, int year1, int year2) {
+        List<Member> allMembers = memberRepository.findAll();
+        List<ClassRoom> allClassRooms = classRoomRepository.findAll();
+
+        // role이 1이고 year1과 year2 사이의 생일을 가진 멤버들 중에서 입력받은 grade의 반들만 골라내기
+        List<Member> students = new ArrayList<>(allMembers.stream()
+            .filter(member -> member.getRole() == Role.ROLE_STUDENT && member.getBirthday().getYear() >= year1 && member.getBirthday().getYear() <= year2)
+            .toList());
+
+        // 입력받은 grade, targetYear의 반들만 골라내기
+        List<ClassRoom> targetClassRooms = allClassRooms.stream()
+            .filter(classRoom -> classRoom.getGrade() == targetGrade && classRoom.getYear() == targetYear)
+            .toList();
+
+        // 멤버들을 랜덤한 순서로 섞기
+        Collections.shuffle(students);
+
+        // 남은 학생들에 대해 처음 반부터 다시 반복하여 배정
+        int studentIndex = 0;
+        for (Member student : students) {
+            // 현재 반에 배정할 수 있는지 확인
+            if (studentIndex >= targetClassRooms.size()) {
+                // 남은 반이 없으면 처음 반으로 돌아가기
+                studentIndex = 0;
+            }
+
+            // 현재 학생에게 현재 반 배정
+            ClassRoom currentClassRoom = targetClassRooms.get(studentIndex);
+            student.updateClassRoom(currentClassRoom);
+
+            // 다음 반으로 넘어가기
+            studentIndex++;
+        }
+
+        // 저장된 멤버 엔터티들을 DTO로 변환하여 반환
+        return students.stream()
+            .map(MemberDto::from)
+            .collect(Collectors.toList());
     }
 }

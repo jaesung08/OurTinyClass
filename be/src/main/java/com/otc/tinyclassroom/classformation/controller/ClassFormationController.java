@@ -1,7 +1,8 @@
 package com.otc.tinyclassroom.classformation.controller;
 
-import com.otc.tinyclassroom.classformation.dto.FormationMembersRequestDto;
-import com.otc.tinyclassroom.classformation.dto.UpdateMemberClassRequestDto;
+import com.otc.tinyclassroom.classformation.dto.request.FormationMembersRequestDto;
+import com.otc.tinyclassroom.classformation.dto.request.RandomFormationMemberRequestDto;
+import com.otc.tinyclassroom.classformation.dto.request.UpdateMemberClassRequestDto;
 import com.otc.tinyclassroom.classformation.service.ClassFormationService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
@@ -64,5 +65,14 @@ public class ClassFormationController {
     public BaseResponse<List<MemberDto>> getMembersByClassRoom(@PathVariable Long classRoomId) {
         List<MemberDto> members = classFormationService.getMembersByClassRoom(classRoomId);
         return BaseResponse.success(HttpStatus.OK.value(), "반의 멤버 조회에 성공하였습니다!", members);
+    }
+
+    /**
+     * 랜덤으로 반 편성하기.
+     */
+    @PutMapping("/randomFormationClassRooms")
+    public BaseResponse<List<MemberDto>> randomAssignClassRooms(@RequestBody RandomFormationMemberRequestDto dto) {
+        List<MemberDto> updatedMembers = classFormationService.randomAssignClassRooms(dto.targetGrade(), dto.targetYear(), dto.year1(), dto.year2());
+        return BaseResponse.success(HttpStatus.OK.value(), "랜덤으로 반을 부여하였습니다!", updatedMembers);
     }
 }

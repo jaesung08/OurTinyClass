@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.classformation.dto;
+package com.otc.tinyclassroom.classformation.dto.request;
 
 import java.util.List;
 

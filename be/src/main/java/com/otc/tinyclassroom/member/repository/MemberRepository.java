@@ -15,6 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 회원 아이디 검색
     Optional<Member> findByMemberId(String memberId);
 
-    //
+    // 회원 classRoomId 검색
     List<Member> findAllByClassRoomId(Long classRoomId);
 }
