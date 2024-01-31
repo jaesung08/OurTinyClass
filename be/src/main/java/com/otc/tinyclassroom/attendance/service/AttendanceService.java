@@ -9,7 +9,10 @@ import com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus;
 import com.otc.tinyclassroom.attendance.exception.AttendanceErrorCode;
 import com.otc.tinyclassroom.attendance.exception.AttendanceException;
 import com.otc.tinyclassroom.attendance.repository.AttendanceRepository;
+import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.exception.MemberErrorCode;
+import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -32,23 +35,26 @@ public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
     private final MemberRepository memberRepository;
+    private final JwtProvider jwtProvider;
+    // Check-in 및 Check-out 시간을 구성하는 값들
+    private static final int CHECKINSTARTTIME = 8;
+    private static final int CHECKINENDTIME = 13;
+    private static final int BASETIME = 9;
 
     /**
      * 회원 등교를 처리하는 메서드.
      */
     @Transactional
-    public AttendanceCheckInResponseDto checkIn(String memberId, LocalDateTime now) {
-        // 리포지토리에서 회원 정보를 가져옴
-        Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NO_MEMBER_ID));
-
+    public AttendanceCheckInResponseDto checkIn(LocalDateTime now) {
+        Long memberId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         // 회원이 오늘 이미 등교한 경우 예외 처리
-        if (hasCheckedInToday(member.getId())) {
+        if (hasCheckedInToday(memberId)) {
             throw new AttendanceException(AttendanceErrorCode.ALREADY_ATTEND);
         }
 
-        // 등교 시간을 확인( 실제 실행시 주석 풀기 )
-        //  validateCheckInTime(now);
+        // 등교 시간을 확인
+        validateCheckInTime(now);
 
         AttendanceStatus status = determineAttendanceStatus(now);
         // 등교를 위한 Attendance 엔티티 생성 및 저장
@@ -64,10 +70,7 @@ public class AttendanceService {
     private void validateCheckInTime(LocalDateTime now) {
         int hour = now.getHour();
         // 현재 시간이 허용된 등교 시간 내에 있는지 확인
-        // Check-in 및 Check-out 시간을 구성하는 값들
-        int checkInStartTime = 8;
-        int checkInEndTime = 9;
-        if (hour < checkInStartTime || hour >= checkInEndTime) {
+        if (hour < CHECKINSTARTTIME || hour >= CHECKINENDTIME) {
             throw new AttendanceException(AttendanceErrorCode.NOT_CHECK_IN_TIME);
         }
     }
@@ -90,22 +93,19 @@ public class AttendanceService {
      */
     private AttendanceStatus determineAttendanceStatus(LocalDateTime now) {
         int checkInHour = now.getHour();
-        int lateThresholdHour = 9;
-
-        return (checkInHour < lateThresholdHour) ? AttendanceStatus.ATTENDANCE : AttendanceStatus.LATE;
+        return (checkInHour < BASETIME) ? AttendanceStatus.ATTENDANCE : AttendanceStatus.LATE;
     }
 
     /**
      * 회원 하교를 처리하는 메서드.
      */
     @Transactional
-    public AttendanceCheckOutResponseDto checkOut(String memberId, LocalDateTime now) {
-        // 리포지토리에서 회원 정보를 가져옴
-        Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new AttendanceException(AttendanceErrorCode.NO_MEMBER_ID));
+    public AttendanceCheckOutResponseDto checkOut(LocalDateTime now) {
+        Long memberId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         // 회원이 오늘 등교하지 않았는데 하교를 요청한 경우 예외 처리
-        if (!hasCheckedInToday(member.getId())) {
+        if (!hasCheckedInToday(memberId)) {
             throw new AttendanceException(AttendanceErrorCode.NOT_CHECKED_IN);
         }
 
@@ -125,8 +125,7 @@ public class AttendanceService {
         }
 
         // 체크아웃 시간을 설정하고 업데이트된 출결 기록을 저장
-        attendance.setCheckOut(Timestamp.valueOf(now));
-        attendance.setStatus(status);
+        attendance.updateCheckOutTime(Timestamp.valueOf(now), status);
         attendanceRepository.save(attendance);
 
         return AttendanceCheckOutResponseDto.from(Timestamp.valueOf(now), status.ordinal());
@@ -211,5 +210,12 @@ public class AttendanceService {
         }
 
         return new MonthlyAttendanceResponseDto(attendanceList);
+    }
+
+    /**
+     * Token 에서 memberId 가져오기.
+     */
+    public Long getMemberId() {
+        return Long.valueOf(jwtProvider.getCurrentUserId());
     }
 }

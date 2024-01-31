@@ -6,7 +6,6 @@ import com.otc.tinyclassroom.attendance.dto.response.DailyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.dto.response.MonthlyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.service.AttendanceService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
-import com.otc.tinyclassroom.member.dto.MemberDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,16 +28,12 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
 
-
     /**
      * 등교시간 기록.
      */
     @PostMapping("/check-in")
-    public BaseResponse<AttendanceCheckInResponseDto> checkIn(@RequestBody MemberDto memberDto) {
-        // Todo : 토큰받고 토큰내에서 memberId 가져와서 진행방식으로 전환
-        String memberId = memberDto.memberId();
-        LocalDateTime now = LocalDateTime.now();
-        AttendanceCheckInResponseDto result = attendanceService.checkIn(memberId, now);
+    public BaseResponse<AttendanceCheckInResponseDto> checkIn() {
+        AttendanceCheckInResponseDto result = attendanceService.checkIn(LocalDateTime.now());
         return BaseResponse.success(HttpStatus.OK.value(), "등교에 성공하였습니다!", result);
     }
 
@@ -47,15 +41,10 @@ public class AttendanceController {
      * 하교시간 기록.
      */
     @PutMapping("/check-out")
-    public BaseResponse<AttendanceCheckOutResponseDto> checkOut(@RequestBody MemberDto memberDto) {
-        // Todo : 토큰받고 토큰내에서 memberId 가져와서 진행방식으로 전환
-        String memberId = memberDto.memberId();
-        LocalDateTime now = LocalDateTime.now();
-        AttendanceCheckOutResponseDto result = attendanceService.checkOut(memberId, now);
+    public BaseResponse<AttendanceCheckOutResponseDto> checkOut() {
+        AttendanceCheckOutResponseDto result = attendanceService.checkOut(LocalDateTime.now());
         return BaseResponse.success(HttpStatus.OK.value(), "하교에 성공하였습니다!", result);
     }
-
-
 
     /**
      * 오늘 출석기록 조회.

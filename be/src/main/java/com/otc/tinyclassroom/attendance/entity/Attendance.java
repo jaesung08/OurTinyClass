@@ -21,7 +21,6 @@ import lombok.ToString.Exclude;
  * @author JangJaeSung
  */
 @Getter
-@Setter
 @ToString
 @Table(name = "attendance")
 @Entity
@@ -65,5 +64,13 @@ public class Attendance {
         return new Attendance(member, checkIn, checkOut, status);
     }
 
-
+    /**
+     * checkout 시 수정하는 함수.
+     */
+    public void updateCheckOutTime(Timestamp timestamp, AttendanceStatus status) {
+        if (timestamp != null && status != null) {
+            this.checkOut = timestamp;
+            this.status = status;
+        }
+    }
 }
