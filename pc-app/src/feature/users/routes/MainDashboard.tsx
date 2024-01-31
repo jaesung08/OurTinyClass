@@ -1,4 +1,3 @@
-import { Tag } from "@/components/Elements/Tag/Tag";
 import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import {
@@ -9,7 +8,14 @@ import {
   Divider,
 } from "@nextui-org/react";
 import * as dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { checkIn } from "../../attendance/api/checkIn";
+import { Attendance } from "@/feature/attendance";
+import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
+import Swal from "sweetalert2";
+import { useMutation } from "@tanstack/react-query";
+import { checkOut } from "@/feature/attendance/api/checkOut";
+import { Tag } from "@/components/Elements/Tag/Tag";
 
 const dummyNotices = [
   {
@@ -291,11 +297,19 @@ interface AttendanceCardProps {
   todayDate: dayjs.Dayjs;
   checkIn?: string;
   checkOut?: string;
-  status: number;
+  status?: number;
+  doCheckIn: () => void;
+  doCheckOut: () => void;
 }
 
 //입실, 퇴실 정보를 조회하고 입, 퇴실을 할 수 있는 기능을 가진 카드
-function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
+function AttendanceCard({
+  todayDate,
+  checkIn,
+  checkOut,
+  doCheckIn,
+  doCheckOut,
+}: AttendanceCardProps) {
   return (
     <div className="bg-green-400 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
       <h2 className="text-lg font-bold">출석체크 현황</h2>
@@ -318,7 +332,10 @@ function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
               <span className="text-white text-xs">정상 출석</span>
             </div>
           ) : (
-            <Button className="text-blue-500 bg-white h-full rounded-none w-8 font-bold hover:bg-blue-600 hover:text-white ">
+            <Button
+              onClick={doCheckIn}
+              className="text-blue-500 bg-white h-full rounded-none w-8 font-bold hover:bg-blue-600 hover:text-white "
+            >
               입실하기
             </Button>
           )}
@@ -326,7 +343,10 @@ function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
           {
             checkIn ? ( // 아직 입실을 하지 않았다면 퇴실 버튼을 보일 필요가 없으므로 입실 여부 확인.
               checkOut ? ( // 퇴실을 한 상태라면, 다시 갱신할 수 있는 버튼
-                <Button className="p-2 flex flex-col items-center bg-zinc-500 justify-evenly rounded-none h-full hover:bg-blue-500 font-bold">
+                <Button
+                  onClick={doCheckOut}
+                  className="p-2 flex flex-col items-center bg-zinc-500 justify-evenly rounded-none h-full hover:bg-blue-500 font-bold"
+                >
                   <span className="text-white h-8">
                     {dayjs(checkOut).format("hh:mm")}
                   </span>
@@ -334,7 +354,10 @@ function AttendanceCard({ todayDate, checkIn, checkOut }: AttendanceCardProps) {
                 </Button>
               ) : (
                 // 입실을 했지만 아직 퇴실을 하지 않은 상태
-                <Button className="text-blue-500 bg-white h-full rounded-none w-8 font-bold">
+                <Button
+                  onClick={doCheckOut}
+                  className="text-blue-500 bg-white h-full rounded-none w-8 font-bold"
+                >
                   퇴실하기
                 </Button>
               )
@@ -509,6 +532,13 @@ export default function MainDashBoard() {
   };
 
   const [planStartDate, setPlanStartDate] = useState(todayDate);
+  const [attendanceState, setAttendanceState] = useState<
+    Attendance | undefined
+  >();
+
+  useEffect(() => {
+    getAttendanceState();
+  }, []);
   const onClickChangePlanDate = (isBefore: boolean) => {
     if (isBefore) {
       setPlanStartDate(planStartDate.subtract(7, "day")); // 일주일 빼기
@@ -516,12 +546,68 @@ export default function MainDashBoard() {
       setPlanStartDate(planStartDate.add(7, "day")); // 일주일 더하기
     }
   };
-  const attendance = {
-    status: 0,
-    checkIn: "2024-01-22",
-    checkOut: "2024-01-23",
+
+  const checkInMutation = useMutation({
+    mutationFn: checkIn,
+    onSuccess: (res) => {
+      setAttendanceState({
+        date: attendanceState?.date,
+        checkOut: attendanceState?.checkOut,
+        checkIn: res.data.checkInTime,
+        status: res.data.status,
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (e: any) => {
+      Swal.fire(
+        "에러 발생!",
+        e?.response.data.message ?? "등교에 실패하였습니다. 다시 시도해주세요.",
+        "error"
+      );
+    },
+  });
+
+  const checkOutMutation = useMutation({
+    mutationFn: checkOut,
+    onSuccess: (res) => {
+      setAttendanceState({
+        date: attendanceState?.date,
+        checkIn: attendanceState?.checkIn,
+        checkOut: res.data.checkOutTime,
+        status: res.data.status,
+      });
+    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (e: any) => {
+      Swal.fire(
+        "에러 발생!",
+        e?.response.data.message ?? "하교에 실패하였습니다. 다시 시도해주세요.",
+        "error"
+      );
+    },
+  });
+
+  const doCheckIn = async () => {
+    checkInMutation.mutate();
   };
 
+  const doCheckOut = async () => {
+    checkOutMutation.mutate();
+  };
+
+  const getAttendanceState = async () => {
+    try {
+      const res = await getTodayAttendance();
+      setAttendanceState(res.data.attendanceOnDate);
+    } catch (e) {
+      console.log(e);
+      Swal.fire(
+        "출석 실패",
+        "시스템에 문제가 생겨 입실에 실패하였습니다.",
+        "error"
+      );
+    }
+  };
   return (
     <div className="flex w-full">
       <div className="bg-white min-h-screen w-5/6 ">
@@ -529,16 +615,18 @@ export default function MainDashBoard() {
           <h1 className="text-2xl font-bold">나만의 작은 코너</h1>
           <div className="flex space-x-2"></div>
         </header>
-        <main className="flex-col gap-8 px-24 pb-8">
-          <p className="text-2xl py-5">
-            안녕하세요, <span className="font-semibold">{userInfo.name}</span>님
+        <main className="flex-col gap-8">
+          <p>
+            안녕하세요, <span>{userInfo[0].name}</span>님
           </p>
           <section className="flex gap-6">
             <AttendanceCard
               todayDate={todayDate}
-              checkIn={attendance.checkIn}
-              checkOut={attendance.checkOut}
-              status={attendance.status}
+              checkIn={attendanceState?.checkIn}
+              checkOut={attendanceState?.checkOut}
+              status={attendanceState?.status}
+              doCheckIn={doCheckIn}
+              doCheckOut={doCheckOut}
             />
             <NoticeListCard />
           </section>
