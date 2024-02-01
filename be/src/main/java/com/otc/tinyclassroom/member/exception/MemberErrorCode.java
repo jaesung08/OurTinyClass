@@ -5,11 +5,12 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 회원 에러 코드.
+ * 회원관련 ErrorCode.
  */
 @Getter
 @AllArgsConstructor
 public enum MemberErrorCode {
+
     // 회원가입 에러 코드
     INVALID_FIELD_VALUE(HttpStatus.BAD_REQUEST, "빈 필드값이 있습니다."),
     DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "중복된 아이디입니다."),
@@ -20,5 +21,4 @@ public enum MemberErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
-
 }
