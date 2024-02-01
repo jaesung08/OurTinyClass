@@ -64,13 +64,9 @@ public class WebSecurityConfig {
             .sessionManagement((sessionManagement) -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .formLogin((formLogin) -> formLogin
-                .disable()
-            )
+            .formLogin(AbstractHttpConfigurer::disable)
             // httpBasic 인증 방식 해제.
-            .httpBasic((httpBasic) -> httpBasic
-                .disable()
-            )
+            .httpBasic(AbstractHttpConfigurer::disable)
 
             // 로그인 이전에 access token을 처리할 jwt 인가 필터 추가.
             .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)

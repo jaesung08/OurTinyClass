@@ -30,7 +30,13 @@ public class JwtProvider {
 
     private static final String TOKEN_PREFIX = "Bearer ";
 
-    // Access Token 생성.
+    /**
+     * 회원 아이디와 등급이 담긴 AccessToken을 생성해준다.
+     *
+     * @param id   회원 아이디(Long)
+     * @param role 등급
+     * @return AccessToken
+     */
     public String createAccessToken(Long id, Role role) {
         return this.createToken(id, role, accessExpirationTime);
     }
@@ -38,44 +44,58 @@ public class JwtProvider {
     // Create token
     private String createToken(Long memberId, Role role, long tokenValid) {
         return JWT.create()
-                .withExpiresAt(new Date(System.currentTimeMillis() + tokenValid))
-                .withClaim("memberId", memberId)
-                .withClaim("role", role.name())
-                .sign(Algorithm.HMAC512(secret));
+            .withExpiresAt(new Date(System.currentTimeMillis() + tokenValid))
+            .withClaim("memberId", memberId)
+            .withClaim("role", role.name())
+            .sign(Algorithm.HMAC512(secret));
     }
 
+    /**
+     * AccessToken으로부터 회원 아이디를 가져온다.
+     *
+     * @param token AccessToken
+     */
     public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
             .getClaim("memberId").asLong();
     }
 
+    /**
+     * AccessToken으로부터 권한을 가져온다.
+     *
+     * @param token AccessToken
+     * @return 권한
+     */
     public String getRoleByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-                .getClaim("role").asString();
+            .getClaim("role").asString();
     }
 
     /**
-     * 현재 로그인 한 사용자를 확인.
+     * 현재 사용자의 아이디(Long)을 가져온다.
+     *
+     * @return 회원 아이디
      */
-    public String getCurrentUserId() {
+    public Long getCurrentMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
 
             if (principal instanceof UserDetails) {
-                return ((UserDetails) principal).getUsername();
+                String memberId = ((UserDetails) principal).getUsername();
+                return Long.valueOf(memberId);
             } else {
-                // 만약 principal이 UserDetails가 아닌 다른 타입이면, 해당 타입에 맞게 처리
-                return principal.toString();
+                // 만약 principal UserDetails 아닌 다른 타입이면, 해당 타입에 맞게 처리
+                String objId = principal.toString();
+                return Long.valueOf(objId);
             }
         }
-
         return null; // 인증된 사용자가 없는 경우
     }
 
     /**
-     *  토큰 header 확인.
+     * 토큰 header 확인.
      */
     public String resolveAccessToken(HttpServletRequest request) {
         if (request.getHeader("authorization") != null) {
@@ -84,7 +104,12 @@ public class JwtProvider {
         return null;
     }
 
-    // 어세스 토큰 헤더 설정
+    /**
+     * accessToken을 응답헤더에 넣는다.
+     *
+     * @param response    응답
+     * @param accessToken accessToken
+     */
     public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
         response.setHeader("authorization", "Bearer " + accessToken);
     }

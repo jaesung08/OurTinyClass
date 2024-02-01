@@ -25,16 +25,23 @@ public class ArticleCommentController {
     private final ArticleCommentService articleCommentService;
 
     /**
-     * 댓글 작성.
+     * 게시글 작성요청을 처리한다.
+     *
+     * @param request 게시글 작성정보
+     * @return 응답코드, 메세지, 댓글 아이디
      */
     @PostMapping()
     public BaseResponse<Long> createArticleComment(@RequestBody ArticleCommentRequestDto request) {
-        Long articleCommentId = articleCommentService.createArticleComment(articleCommentService.getCurrentUserId(), request);
+        Long articleCommentId = articleCommentService.createArticleComment(articleCommentService.getCurrentMemberId(), request);
         return BaseResponse.success(HttpStatus.CREATED.value(), "댓글 작성완료", articleCommentId);
     }
 
     /**
-     * 댓글 수정.
+     * 댓글 수정 요청을 처리한다.
+     *
+     * @param articleCommentId 수정할 댓글 아이디
+     * @param request          수정 정보
+     * @return 응답코드, 메세지, 댓글 아이디
      */
     @PatchMapping("/{articleCommentId}")
     public BaseResponse<Void> updateArticleComment(@PathVariable("articleCommentId") Long articleCommentId,
@@ -45,12 +52,15 @@ public class ArticleCommentController {
     }
 
     /**
-     * 댓글 삭제.
+     * 댓글 삭제요청을 처리한다.
+     *
+     * @param articleCommentId 댓글 아이디
+     * @return 응답코드, 메세지
      */
     @DeleteMapping("/{articleCommentId}")
-    public BaseResponse<Void> removeArticleComment(@PathVariable("articleCommentId") Long articleCommentId) {
+    public BaseResponse<Void> deleteArticleComment(@PathVariable("articleCommentId") Long articleCommentId) {
         articleCommentService.validateAuthority(articleCommentId);
-        articleCommentService.removeArticleComment(articleCommentId);
+        articleCommentService.deleteArticleComment(articleCommentId);
         return BaseResponse.success(HttpStatus.NO_CONTENT.value(), "댓글 삭제 성공", null);
     }
 }

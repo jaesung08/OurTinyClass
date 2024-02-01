@@ -6,11 +6,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 /**
- * 댓글 repository.
+ * 댓글 Repository.
  */
 @Repository
 public interface ArticleCommentRepository extends JpaRepository<ArticleComment, Long> {
-
 
     @NonNull
     @Override

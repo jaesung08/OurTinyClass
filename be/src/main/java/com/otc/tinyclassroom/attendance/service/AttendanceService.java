@@ -46,7 +46,7 @@ public class AttendanceService {
      */
     @Transactional
     public AttendanceCheckInResponseDto checkIn(LocalDateTime now) {
-        Long memberId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Long memberId = jwtProvider.getCurrentMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         // 회원이 오늘 이미 등교한 경우 예외 처리
         if (hasCheckedInToday(memberId)) {
@@ -101,7 +101,7 @@ public class AttendanceService {
      */
     @Transactional
     public AttendanceCheckOutResponseDto checkOut(LocalDateTime now) {
-        Long memberId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Long memberId = jwtProvider.getCurrentMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         // 회원이 오늘 등교하지 않았는데 하교를 요청한 경우 예외 처리
@@ -216,6 +216,6 @@ public class AttendanceService {
      * Token 에서 memberId 가져오기.
      */
     public Long getMemberId() {
-        return Long.valueOf(jwtProvider.getCurrentUserId());
+        return jwtProvider.getCurrentMemberId();
     }
 }
