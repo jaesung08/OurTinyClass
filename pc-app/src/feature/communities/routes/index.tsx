@@ -8,7 +8,7 @@ export const CommunitiesRoutes = () => {
   return (
     <Routes>
       <Route
-        path="create"
+        path="write/:articleId"
         element={
           <CommunityLayout>
             <CreateArticle />
@@ -24,7 +24,7 @@ export const CommunitiesRoutes = () => {
         }
       />
       <Route
-        path=""
+        path="/*"
         element={
           <CommunityLayout>
             <FreeBoardPage />

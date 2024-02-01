@@ -1,5 +1,5 @@
 import { commonAxios } from "@/lib/commonAxios";
-import { FetchArticleListResponse } from "../types/board";
+import { FetchArticleListResponse } from "../types";
 
 export const fetchArticles = async (
   boardType?: string,

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getDetail } from "../api/detailBoard";
 import { editComment, removeComment } from "../api/comments";
-import { BoardDetail } from "../types/board";
+import { BoardDetail } from "../types";
 import {
   BreadcrumbItem,
   Breadcrumbs,
@@ -10,14 +10,16 @@ import {
   Skeleton,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import Comments from "../components/Comments";
 import CommentsList from "../components/CommentsList";
+import Parser from "html-react-parser";
+import CommentInput from "../components/CommentInput";
 
 function DetailArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState<object[]>([]);
   const [boardDetails, setBoardDetails] = useState<null | BoardDetail>(null);
   const { state } = useLocation();
+  const navigator = useNavigate();
 
   // 렌더링 시 데이터 불러오는 부분
   useEffect(() => {
@@ -68,9 +70,13 @@ function DetailArticle() {
     }
   };
 
+  const goEditArticle = () => {
+    navigator(`/communities/write/${state}`);
+  };
+
   return (
-    <article className="w-10/12 xl:w-8/12 ">
-      <div className="w-full p-4 md:p-6 lg:p-8">
+    <article className="w-10/12 h-screen overflow-y-auto">
+      <div className="w-full xl:w-10/12 p-4 md:p-6 lg:p-8 ">
         <div className="flex flex-col gap-10 prose prose-gray dark:prose-invert">
           <div className="flex flex-col gap-3 space-y-2 not-prose">
             <Breadcrumbs size="lg">
@@ -103,6 +109,7 @@ function DetailArticle() {
                     </span>
                   </div>
                   <Button
+                    onClick={goEditArticle}
                     variant="ghost"
                     color="success"
                     className=" font-bold"
@@ -114,9 +121,9 @@ function DetailArticle() {
             </div>
           </div>
           <Skeleton isLoaded={isLoaded} className="rounded-lg">
-            <p>{boardDetails ? boardDetails.content : ""}</p>
+            <p>{boardDetails ? Parser(boardDetails.content) : ""}</p>
           </Skeleton>
-          <Comments
+          <CommentInput
             articleId={state}
             commentList={commentList}
             setList={setCommentList}

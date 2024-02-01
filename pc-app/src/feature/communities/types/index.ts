@@ -8,10 +8,18 @@ export interface Board {
   hit: number;
 }
 
+export interface Comment {
+  id: number;
+  content: string;
+  createdAt: string;
+  modifiedAt: string;
+  name: string;
+}
+
 export interface BoardDetail extends Board {
   content: string;
   modifiedAt: string;
-  articleComments: [];
+  articleComments: Comment[];
 }
 
 export const TYPE = {
@@ -22,7 +30,7 @@ export const TYPE = {
   BOARD_CATEGORY: {
     NOTICE: 0, // 공지사항 게시판
     FREE: 1, // 자유게시판
-    CONCERN: 2, // 고민나눔 게시판
+    COUNSELING: 2, // 고민나눔 게시판
     HOBBY: 3, // 취미 공유 게시판
   },
 };

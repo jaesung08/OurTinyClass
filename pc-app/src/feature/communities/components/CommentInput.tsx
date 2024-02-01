@@ -9,7 +9,7 @@ interface Comment {
   setList: React.Dispatch<React.SetStateAction<object[]>>;
 }
 
-function Comments({ articleId, commentList, setList }: Comment) {
+function CommentInput({ articleId, commentList, setList }: Comment) {
   const [createComment, setCreateComment] = useState<string>("");
   const inputFocus = useRef<HTMLInputElement | null>(null);
   const commentHandler = async () => {
@@ -31,7 +31,7 @@ function Comments({ articleId, commentList, setList }: Comment) {
     }
   };
   return (
-    <article className="w-10/12 h-20 flex justify-between items-center">
+    <article className="w-full h-20 flex justify-between items-center gap-3">
       <Input
         type="text"
         placeholder="댓글을 입력하세요."
@@ -51,4 +51,4 @@ function Comments({ articleId, commentList, setList }: Comment) {
   );
 }
 
-export default Comments;
+export default CommentInput;

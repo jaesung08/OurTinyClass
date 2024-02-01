@@ -1,9 +1,9 @@
-import FreeBoardSideBar from "../components/CommunitySideBar";
 import {
+  BoardCategoriesMap,
   CommunityHeaderContents,
   SearchArticlesOptions,
 } from "../assets/textContent";
-import { Board, TYPE } from "../types/board";
+import { Board, TYPE } from "../types";
 import {
   Button,
   Divider,
@@ -11,6 +11,7 @@ import {
   Pagination,
   Select,
   SelectItem,
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +22,9 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { searchBoard } from "../api/freeBoard";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
+import { getPathInfo } from "../utils/getPathInfo";
+import EditIcon from "@/assets/img/EditIcon";
 
 interface CommunityHeaderProps {
   boardCategory: number;
@@ -60,7 +63,10 @@ function SearchBar({
   onSubmit,
 }: SearchBarProps) {
   return (
-    <form className="flex justify-between items-center" onSubmit={onSubmit}>
+    <form
+      className="w-full flex justify-between items-center"
+      onSubmit={onSubmit}
+    >
       <Select
         className="ml-5 bg-white w-1/6 rounded-xl"
         size="sm"
@@ -140,7 +146,11 @@ function CommunityBoardTable({
         <TableColumn key="createdAt">날짜</TableColumn>
         <TableColumn key="hit">조회수</TableColumn>
       </TableHeader>
-      <TableBody items={boardList} loadingState={loading ? "loading" : "idle"}>
+      <TableBody
+        items={boardList}
+        loadingState={loading ? "loading" : "idle"}
+        loadingContent={<Spinner />}
+      >
         {(board) => (
           <TableRow
             key={board.id}
@@ -176,51 +186,78 @@ function Community() {
   );
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [boardList, setBoardList] = useState<Board[]>([]);
-  const boardType = "notice";
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [boardCategory, setBoardCategory] = useState(
+    TYPE.BOARD_CATEGORY.NOTICE
+  );
+  const location = useLocation();
+  useEffect(() => {
+    const { boardCategory } = getPathInfo(location.pathname);
+    setBoardCategory(boardCategory);
+  }, [location]);
   const navigator = useNavigate();
 
   const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
       const res = await searchBoard({
-        searchType: searchType,
-        searchValue: searchKeyword,
-        boardType,
+        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
         page: currentPage,
       });
       const data = res.data;
-      setBoardList(data.content);
-      setTotalPage(data.totalPages);
+      if (currentPage === res.data.number) {
+        setBoardList(data.content);
+        setTotalPage(data.totalPages - 1);
+      }
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [boardType, currentPage, searchKeyword, searchType]);
+  }, [boardCategory, currentPage]);
 
-  const onChangeCurrentPage = (newPage: number) => {
-    setCurrentPage(newPage);
-    fetchArticles();
-  };
-
-  const onSearchBoard = async () => {
-    setCurrentPage(1);
-    await fetchArticles();
+  const searchArticles = async () => {
+    try {
+      setLoading(true);
+      const res = await searchBoard({
+        searchType: searchType,
+        searchValue: searchKeyword,
+        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
+        page: currentPage,
+      });
+      const data = res.data;
+      setBoardList(data.content);
+      setTotalPage(data.totalPages - 1);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchArticles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchArticles]);
+
+  const onChangeCurrentPage = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const onSearchBoard = async () => {
+    setCurrentPage(1);
+    await searchArticles();
+  };
+
+  const goCreateBoard = () => {
+    navigator("/communities/write/new");
+  };
 
   return (
-    <div className="flex flex-col w-full">
-      <CommunityHeader boardCategory={TYPE.BOARD_CATEGORY.FREE} />
-      <div>
+    <div className="flex flex-col w-10/12">
+      <CommunityHeader boardCategory={boardCategory} />
+      <div className="lg:w-11/12 xl:w-10/12 mx-auto flex flex-col gap-10 py-10 items-center">
         <SearchBar
           searchType={searchType}
           searchKeyword={searchKeyword}
@@ -237,6 +274,13 @@ function Community() {
           navigator={navigator}
         />
       </div>
+      <button
+        className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
+        aria-label="게시글 작성"
+        onClick={goCreateBoard}
+      >
+        <EditIcon />
+      </button>
     </div>
   );
 }
