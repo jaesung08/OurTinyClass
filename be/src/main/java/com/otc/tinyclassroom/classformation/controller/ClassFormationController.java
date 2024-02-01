@@ -11,9 +11,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +41,7 @@ public class ClassFormationController {
     /**
      * 학생들 반 편성.
      */
-    @PutMapping("/members/place")
+    @PatchMapping("/members/place")
     public BaseResponse<List<MemberDto>> placeMembers(@RequestBody FormationMembersRequestDto request) {
         classFormationService.checkTeacherOrAdmin();
         List<MemberDto> placedMembers = classFormationService.placeMembers(request.memberIds(), request.classRoomId());
@@ -51,7 +51,7 @@ public class ClassFormationController {
     /**
      * 학생(하나) 반 편성.
      */
-    @PutMapping("/updateMemberClass")
+    @PatchMapping("/updateMemberClass")
     public BaseResponse<MemberDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto) {
         classFormationService.checkTeacherOrAdmin();
         MemberDto updatedMember = classFormationService.updateMemberClass(dto.memberId(), dto.classRoomId());
@@ -70,9 +70,9 @@ public class ClassFormationController {
     /**
      * 랜덤으로 반 편성하기.
      */
-    @PutMapping("/randomFormationClassRooms")
-    public BaseResponse<List<MemberDto>> randomAssignClassRooms(@RequestBody RandomFormationMemberRequestDto dto) {
-        List<MemberDto> updatedMembers = classFormationService.randomAssignClassRooms(dto.targetGrade(), dto.targetYear(), dto.year1(), dto.year2());
+    @PatchMapping("/randomFormationClassRooms")
+    public BaseResponse<List<MemberDto>> randomFormationClassRooms(@RequestBody RandomFormationMemberRequestDto dto) {
+        List<MemberDto> updatedMembers = classFormationService.randomFormationClassRooms(dto.targetGrade(), dto.targetYear(), dto.year1(), dto.year2());
         return BaseResponse.success(HttpStatus.OK.value(), "랜덤으로 반을 부여하였습니다!", updatedMembers);
     }
 }

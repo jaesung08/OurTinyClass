@@ -107,7 +107,7 @@ public class ClassFormationService {
     /**
      * 랜덤으로 반 평성하기.
      */
-    public List<MemberDto> randomAssignClassRooms(int targetGrade, int targetYear, int year1, int year2) {
+    public List<MemberDto> randomFormationClassRooms(int targetGrade, int targetYear, int year1, int year2) {
         List<Member> allMembers = memberRepository.findAll();
         List<ClassRoom> allClassRooms = classRoomRepository.findAll();
 
