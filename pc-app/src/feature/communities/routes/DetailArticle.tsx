@@ -1,4 +1,4 @@
-import FreeBoardHeader from "../components/FreeBoardHeader";
+import FreeBoardHeader from "../components/FreeBoardSideBar";
 import DetailArticleBody from "../components/DetailArticleBody";
 
 function DetailArticle() {
