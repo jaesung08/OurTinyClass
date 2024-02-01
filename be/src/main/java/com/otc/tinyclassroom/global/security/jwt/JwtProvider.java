@@ -31,7 +31,7 @@ public class JwtProvider {
     private static final String TOKEN_PREFIX = "Bearer ";
 
     /**
-     * 회원 아이디와 등급이 담긴 AccessToken을 생성해준다.
+     * 회원 아이디와 등급이 담긴 AccessToken을 생성한다.
      *
      * @param id   회원 아이디(Long)
      * @param role 등급
@@ -41,7 +41,14 @@ public class JwtProvider {
         return this.createToken(id, role, accessExpirationTime);
     }
 
-    // Create token
+    /**
+     * Token을 생성한다.
+     *
+     * @param memberId   멤버 Id (Long)
+     * @param role       멤버 권한
+     * @param tokenValid token의 유효시간.
+     * @return JWTtoken
+     */
     private String createToken(Long memberId, Role role, long tokenValid) {
         return JWT.create()
             .withExpiresAt(new Date(System.currentTimeMillis() + tokenValid))
@@ -95,7 +102,10 @@ public class JwtProvider {
     }
 
     /**
-     * 토큰 header 확인.
+     * AccessToken을 Header에 넣어 요청을 보낸 경우 Token의 Prefix를 제거한다.
+     *
+     * @param request 요청
+     * @return Bearer가 제거된 AccessToken
      */
     public String resolveAccessToken(HttpServletRequest request) {
         if (request.getHeader("authorization") != null) {

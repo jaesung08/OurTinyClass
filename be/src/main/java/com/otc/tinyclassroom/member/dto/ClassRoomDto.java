@@ -28,4 +28,16 @@ public record ClassRoomDto(Long id, int year, int grade, int number) {
             classRoom.getNumber()
         );
     }
+
+    /**
+     * ClassromDto로 부터 Classroom Entity로 바궈주는 메소드.
+     */
+    public static ClassRoom toEntity(ClassRoomDto dto) {
+        return ClassRoom.of(
+            dto.year,
+            dto.grade,
+            dto.number
+        );
+    }
+
 }

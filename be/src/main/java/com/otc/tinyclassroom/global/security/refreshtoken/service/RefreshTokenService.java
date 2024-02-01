@@ -14,36 +14,47 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * Refresh Token 과 관련된 비즈니스 로직을 처리하는 서비스 클래스.
+ * Refresh Token 과 관련된 비즈니스 로직을 처리하는 Service.
  */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
+
     private final RedisTemplate<String, String> redisTemplate;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
 
     /**
-     * RefreshToken 으로 Redis Repository 조회.
+     * RefreshToken으로부터 멤버 아이디를 반환한다.
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @return 회원 Id
      */
-    public String findByRefresh(final String refreshToken) {
-        return refreshTokenRepository.findByRefreshToken(refreshToken)
-            .orElseThrow(() -> new NoSuchElementException("Refresh token 에 해당하는 값이 없습니다."));
+    public String findMemberIdByRefreshToken(final String refreshToken) {
+        return refreshTokenRepository.findMemberIdByRefreshToken(refreshToken)
+            .orElseThrow(() -> new NoSuchElementException("Refresh token이 없습니다."));
     }
 
     /**
-     * RefreshToken 으로 TTL 받기.
+     * refreshToken으로부터 TTL을 반환. 양수: 남아있는 TTL -1: 영구보관 -2: 키가 존재하지 않음
+     *
+     * @param refreshToken refreshToken
+     * @return TTL 상태
      */
-    public Long getTtlByRefreshToken(String key) {
-        return redisTemplate.getExpire(key, TimeUnit.SECONDS);
+    public Long getTtlByRefreshToken(String refreshToken) {
+        return redisTemplate.getExpire(refreshToken, TimeUnit.SECONDS);
     }
 
     /**
-     * Refresh Token 을 사용하여 새로운 Access Token 을 발급.
+     * RefreshToken을 통해 모든 Token을 재발급한다.
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @return 새로 발급된 Refresh Token과  AccessToken을 담은 DTO
      */
     public ReIssueResponseDto reIssue(String refreshToken) {
-        String memberId = this.findByRefresh(refreshToken);
+        String memberId = this.findMemberIdByRefreshToken(refreshToken);
+        redisTemplate.delete(String.valueOf(memberId));
         Role role = memberRepository.findById(Long.valueOf(memberId)).orElseThrow().getRole();
 
         refreshToken = UUID.randomUUID().toString();
@@ -55,14 +66,18 @@ public class RefreshTokenService {
     }
 
     /**
-     * refreshToken 삭제.
+     * 회원 아이디로부터 리프레시토큰 삭제.
+     *
+     * @param memberId 회원 아이디
      */
     public void deleteRefreshToken(Long memberId) {
         redisTemplate.delete(String.valueOf(memberId));
     }
 
     /**
-     * 현재 로그인한 사용자의 Id 가져오기.
+     * 현재 로그인한 사용자 아이디 가져오기.
+     *
+     * @return 현재 로그인한 유저 아이디 (Long)
      */
     public Long getCurrentMemberId() {
         return jwtProvider.getCurrentMemberId();

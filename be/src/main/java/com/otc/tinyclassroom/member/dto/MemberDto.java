@@ -29,4 +29,21 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
             entity.getPoint()
         );
     }
+
+
+    /**
+     * MemberDto를 Member로 변환하는 메소드.
+     */
+    public static Member toEntity(MemberDto dto) {
+        return Member.of(
+            dto.memberId(),
+            ClassRoomDto.toEntity(dto.classRoomDto()),
+            dto.password(),
+            dto.name(),
+            dto.email(),
+            dto.birthday(),
+            dto.point()
+        );
+    }
+
 }
