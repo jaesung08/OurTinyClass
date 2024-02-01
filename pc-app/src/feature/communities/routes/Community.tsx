@@ -176,7 +176,7 @@ function Community() {
   );
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [boardList, setBoardList] = useState<Board[]>([]);
-  const [boardType, setBoardType] = useState<string>("notice");
+  const boardType = "notice";
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
@@ -218,29 +218,26 @@ function Community() {
   }, []);
 
   return (
-    <section className="w-screen min-h-screen flex">
-      <FreeBoardSideBar />
-      <div className="flex flex-col w-full">
-        <CommunityHeader boardCategory={TYPE.BOARD_CATEGORY.FREE} />
-        <div>
-          <SearchBar
-            searchType={searchType}
-            searchKeyword={searchKeyword}
-            setSearchKeyword={setSearchKeyword}
-            setSearchType={setSearchType}
-            onSubmit={onSearchBoard}
-          />
-          <CommunityBoardTable
-            boardList={boardList}
-            currentPage={currentPage}
-            totalPage={totalPage}
-            setCurrentPage={onChangeCurrentPage}
-            loading={loading}
-            navigator={navigator}
-          />
-        </div>
+    <div className="flex flex-col w-full">
+      <CommunityHeader boardCategory={TYPE.BOARD_CATEGORY.FREE} />
+      <div>
+        <SearchBar
+          searchType={searchType}
+          searchKeyword={searchKeyword}
+          setSearchKeyword={setSearchKeyword}
+          setSearchType={setSearchType}
+          onSubmit={onSearchBoard}
+        />
+        <CommunityBoardTable
+          boardList={boardList}
+          currentPage={currentPage}
+          totalPage={totalPage}
+          setCurrentPage={onChangeCurrentPage}
+          loading={loading}
+          navigator={navigator}
+        />
       </div>
-    </section>
+    </div>
   );
 }
 

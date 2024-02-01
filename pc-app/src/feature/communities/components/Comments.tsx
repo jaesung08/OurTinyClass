@@ -1,6 +1,7 @@
 import { Button } from "@nextui-org/button";
 import { useState, useRef } from "react";
 import { newComment } from "../api/comments";
+import { Input } from "@nextui-org/react";
 
 interface Comment {
   articleId: number;
@@ -31,9 +32,8 @@ function Comments({ articleId, commentList, setList }: Comment) {
   };
   return (
     <article className="w-10/12 h-20 flex justify-between items-center">
-      <input
+      <Input
         type="text"
-        className="w-5/6 p-5 rounded-lg shadow-2xl border-2"
         placeholder="댓글을 입력하세요."
         value={createComment}
         onChange={(e) => setCreateComment(e.target.value)}

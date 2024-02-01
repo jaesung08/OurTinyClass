@@ -104,8 +104,7 @@ function DetailArticleBody() {
   };
 
   return (
-    <article className="w-10/12 h-full border-l-1">
-      <div className="w-full bg-lime-500 flex items-center justify-center h-20"></div>
+    <article>
       <div
         className="w-full  pb-20"
         style={{ minHeight: "calc(100vh - 5rem)" }}

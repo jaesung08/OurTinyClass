@@ -8,13 +8,10 @@ export interface Board {
   hit: number;
 }
 
-export interface FetchArticleListResponse extends BaseResponse {
-  data: {
-    content: Array<Board>;
-    pageNumber: number;
-    totalPages: number;
-    number: number;
-  };
+export interface BoardDetail extends Board {
+  content: string;
+  modifiedAt: string;
+  articleComments: [];
 }
 
 export const TYPE = {
@@ -29,3 +26,16 @@ export const TYPE = {
     HOBBY: 3, // 취미 공유 게시판
   },
 };
+
+export interface FetchArticleListResponse extends BaseResponse {
+  data: {
+    content: Array<Board>;
+    pageNumber: number;
+    totalPages: number;
+    number: number;
+  };
+}
+
+export interface FetchArticleDetailResponse extends BaseResponse {
+  data: BoardDetail;
+}

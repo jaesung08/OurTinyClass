@@ -1,6 +1,9 @@
 import { commonAxios } from "@/lib/commonAxios";
+import { FetchArticleDetailResponse } from "../types/board";
 
-export const getDetail = async (article_id: string) => {
+export const getDetail = async (
+  article_id: string
+): Promise<FetchArticleDetailResponse> => {
   return await commonAxios.get(`/community/articles/${article_id}`);
 };
 
