@@ -21,6 +21,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { searchBoard } from "../api/freeBoard";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface CommunityHeaderProps {
   boardCategory: number;
@@ -102,6 +103,7 @@ interface CommunityBoardProps {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   loading: boolean;
+  navigator: NavigateFunction;
 }
 function CommunityBoardTable({
   boardList,
@@ -109,10 +111,12 @@ function CommunityBoardTable({
   currentPage,
   setCurrentPage,
   loading,
+  navigator,
 }: CommunityBoardProps) {
   return (
     <Table
-      aria-label="Example static collection table"
+      aria-label="커뮤니티 게시판"
+      selectionMode="single"
       bottomContent={
         totalPage > 0 ? (
           <div className="flex w-full justify-center">
@@ -138,7 +142,12 @@ function CommunityBoardTable({
       </TableHeader>
       <TableBody items={boardList} loadingState={loading ? "loading" : "idle"}>
         {(board) => (
-          <TableRow key={board.id}>
+          <TableRow
+            key={board.id}
+            onClick={() =>
+              navigator("/communities/detail", { state: board.id })
+            }
+          >
             <TableCell>{board.id}</TableCell>
             <TableCell
               className="cursor-pointer"
@@ -149,9 +158,6 @@ function CommunityBoardTable({
                 overflow: "hidden",
                 maxWidth: "25rem",
               }}
-              // onClick={() =>
-              //   navigator("/communities/detail", { state: board.id })
-              // }
             >
               {board.title}
             </TableCell>
@@ -174,6 +180,8 @@ function Community() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const navigator = useNavigate();
 
   const fetchArticles = useCallback(async () => {
     try {
@@ -228,6 +236,7 @@ function Community() {
             totalPage={totalPage}
             setCurrentPage={onChangeCurrentPage}
             loading={loading}
+            navigator={navigator}
           />
         </div>
       </div>
