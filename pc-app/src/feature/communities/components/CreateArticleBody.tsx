@@ -147,6 +147,7 @@ function CreateArticleBody() {
                 <Select
                   className="bg-white w-1/6 rounded-xl"
                   size="sm"
+                  aria-label="어떤 카테고리에 글을 작성할지 선택해주세요. "
                   defaultSelectedKeys={[CATEGORYLISTS[0].value]}
                   onChange={(e) => selectCategory(e)}
                 >

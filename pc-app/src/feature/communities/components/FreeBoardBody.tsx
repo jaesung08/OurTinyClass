@@ -247,6 +247,7 @@ function FreeBoardBody() {
                   className="ml-5 bg-white w-1/6 rounded-xl"
                   size="sm"
                   defaultSelectedKeys={[CATEGORIES[0].name]}
+                  aria-label="게시글을 검색할 방법을 선택해주세요."
                 >
                   {CATEGORIES.map((item) => (
                     <SelectItem

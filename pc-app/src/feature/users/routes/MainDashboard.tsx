@@ -8,7 +8,7 @@ import {
   CardHeader,
   Divider,
 } from "@nextui-org/react";
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { checkIn } from "../../attendance/api/checkIn";
 import { Attendance } from "@/feature/attendance";
