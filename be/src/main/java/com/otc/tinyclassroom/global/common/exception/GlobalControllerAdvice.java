@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;
 import com.otc.tinyclassroom.member.exception.MemberException;
+import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,23 +19,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerAdvice {
 
     /**
-     *  Member Exception Handler.
+     * Member Exception Handler.
      */
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<?> applicationHandler(MemberException e) {
-        log.error("Error occurs {}", e.toString());
+        log.error("Member Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
     /**
-     *   Media Exception Handler
+     * Media Exception Handler.
      */
     @ExceptionHandler(MediaException.class)
-    public ResponseEntity<?> MediaExceptionHandler(MediaException e) {
-        log.error("Error occurs {}", e.toString());
+    public ResponseEntity<?> mediaExceptionHandler(MediaException e) {
+        log.error("Media Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
     /**
@@ -43,6 +44,16 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(CommunityException.class)
     public ResponseEntity<?> boardExceptionHandler(CommunityException e) {
         log.error("Board Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
+
+    /**
+     * Schedule Exception Handler.
+     */
+    @ExceptionHandler(ScheduleException.class)
+    public ResponseEntity<?> scheduleExceptionHandler(ScheduleException e) {
+        log.error("Schedule Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
