@@ -53,7 +53,7 @@ public class ArticleController {
      */
     @PostMapping("/articles")
     public BaseResponse<Void> createArticle(@RequestBody ArticleCreateRequestDto articleCreateRequestDto) {
-        articleService.createArticle(articleService.getCurrentUserId(), articleCreateRequestDto);
+        articleService.createArticle(articleService.getCurrentMemberId(), articleCreateRequestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "게시글 작성 완료", null);
     }
 
@@ -63,7 +63,7 @@ public class ArticleController {
     @DeleteMapping("/articles/{articleId}")
     public BaseResponse<Void> removeArticle(@PathVariable("articleId") Long articleId) {
         articleService.validateAuthority(articleId);
-        articleService.removeArticle(articleId);
+        articleService.deleteArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 
@@ -107,7 +107,7 @@ public class ArticleController {
      */
     @PostMapping("/classRoom/{classRoomId}/articles")
     public BaseResponse<Void> createArticleForClassRoom(@RequestBody ArticleCreateRequestDto articleCreateRequestDto) {
-        articleService.createArticle(articleService.getCurrentUserId(), articleCreateRequestDto);
+        articleService.createArticle(articleService.getCurrentMemberId(), articleCreateRequestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "게시글 작성 완료", null);
     }
 
@@ -117,7 +117,7 @@ public class ArticleController {
     @DeleteMapping("/classRoom/{classRoomId}/articles/{articleId}")
     public BaseResponse<Void> removeArticleForClassRoom(@PathVariable("articleId") Long articleId) {
         articleService.validateAuthority(articleId);
-        articleService.removeArticle(articleId);
+        articleService.deleteArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
 

@@ -1,13 +1,12 @@
 package com.otc.tinyclassroom.community.dto.response;
 
 import com.otc.tinyclassroom.community.dto.ArticleCommentDto;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * ArticleCommentReponse DTO for {@link com.otc.tinyclassroom.community.entity.ArticleComment}.
+ * 댓글 정보 조회를 위한 DTO.
  */
-public record ArticleCommentResponseDto(Long id, String content, String name, LocalDateTime createdAt, LocalDateTime modifiedAt) implements Serializable {
+public record ArticleCommentResponseDto(Long id, String content, String name, LocalDateTime createdAt, LocalDateTime modifiedAt) {
 
     public static ArticleCommentResponseDto of(Long id, String content, String name, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         return new ArticleCommentResponseDto(id, content, name, createdAt, modifiedAt);
@@ -25,5 +24,4 @@ public record ArticleCommentResponseDto(Long id, String content, String name, Lo
             dto.modifiedAt()
         );
     }
-
 }

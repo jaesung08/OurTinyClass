@@ -1,17 +1,16 @@
 package com.otc.tinyclassroom.community.dto.response;
 
 import com.otc.tinyclassroom.community.dto.ArticleWithCommentDto;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * DTO for {@link com.otc.tinyclassroom.community.dto.ArticleWithCommentDto}.
+ * 게시글 상세 보기시 댓글과 게시글을 함께 넘겨주기 위한 DTO.
  */
-public record ArticleWithCommentsResponseDto(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments, LocalDateTime createdAt,
-                                             LocalDateTime modifiedAt) implements Serializable {
+public record ArticleWithCommentsResponseDto(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments,
+                                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
 
     public static ArticleWithCommentsResponseDto of(Long id, String title, String content, String name, int hit, Set<ArticleCommentResponseDto> articleComments, LocalDateTime createdAt,
         LocalDateTime modifiedAt) {
@@ -35,5 +34,4 @@ public record ArticleWithCommentsResponseDto(Long id, String title, String conte
             dto.modifiedAt()
         );
     }
-
 }
