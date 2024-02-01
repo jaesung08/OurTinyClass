@@ -35,10 +35,10 @@ function LogoutIcon() {
         <defs>
           <filter
             id="filter_dshadow_0_0_0_03030314"
-            color-interpolation-filters="sRGB"
+            colorInterpolationFilters="sRGB"
             filterUnits="userSpaceOnUse"
           >
-            <feFlood flood-opacity="0" result="bg-fix"></feFlood>
+            <feFlood floodOpacity="0" result="bg-fix"></feFlood>
             <feColorMatrix
               in="SourceAlpha"
               type="matrix"

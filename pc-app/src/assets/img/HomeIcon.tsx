@@ -24,10 +24,10 @@ function HomeIcon(props: object) {
       <defs>
         <filter
           id="filter_dshadow_10_0_2_0000001a"
-          color-interpolation-filters="sRGB"
+          colorInterpolationFilters="sRGB"
           filterUnits="userSpaceOnUse"
         >
-          <feFlood flood-opacity="0" result="bg-fix"></feFlood>
+          <feFlood floodOpacity="0" result="bg-fix"></feFlood>
           <feColorMatrix
             in="SourceAlpha"
             type="matrix"
