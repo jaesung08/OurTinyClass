@@ -8,8 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 /**
  * 회원 엔티티 정의 (memberId, password, name, email, point, birthday).
@@ -19,6 +22,8 @@ import lombok.Getter;
 
 @Getter
 @Table(name = "member")
+@SQLDelete(sql = "UPDATE member m SET m.deleted_at = current_timestamp WHERE m.id = ?")
+@SQLRestriction("deleted_at is NULL")
 @Entity
 public class Member {
 
@@ -43,7 +48,9 @@ public class Member {
     @Column
     private int point; // 포인트
     @Column
-    private Role role;
+    private Role role; // 신분
+    @Column
+    private LocalDateTime deletedAt; // 삭제 여부
 
     protected Member() {
     }
@@ -60,6 +67,7 @@ public class Member {
         this.birthday = birthday;
         this.point = point;
         this.role = Role.ROLE_ADMIN;
+        this.deletedAt = null; // 기본값으로 삭제되지 않은 상태로 설정
     }
 
     /**
@@ -83,6 +91,16 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(memberId);
+    }
+
+    /**
+     * 관리자의 멤버 정보 수정 메서드.
+     */
+    // 관리자가 멤버의 정보를 업데이트하는 메서드 추가
+    public void updateMemberAdmin(String name, String email, Role role) {
+        this.name = name;
+        this.email = email;
+        this.role = role;
     }
 }
 

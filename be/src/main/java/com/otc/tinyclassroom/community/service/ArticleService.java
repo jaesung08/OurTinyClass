@@ -15,7 +15,9 @@ import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -143,4 +145,15 @@ public class ArticleService {
     public Long getCurrentUserId() {
         return Long.valueOf(jwtProvider.getCurrentUserId());
     }
+
+    /**
+     * 전체 게시판 목록을 불러온다.
+     */
+    public List<ArticleDto> getAllArticleList() {
+        List<Article> articles = articleRepository.findAll();
+        return articles.stream()
+            .map(ArticleDto::from)
+            .collect(Collectors.toList());
+    }
+
 }

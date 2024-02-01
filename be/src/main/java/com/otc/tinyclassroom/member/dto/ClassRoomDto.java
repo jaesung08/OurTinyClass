@@ -5,7 +5,7 @@ import com.otc.tinyclassroom.member.entity.ClassRoom;
 import java.io.Serializable;
 
 /**
- * ClassRoom Dto.
+ * 반 DTO. DTO for {@link com.otc.tinyclassroom.member.entity.ClassRoom}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ClassRoomDto(Long id, int year, int grade, int number) implements Serializable {

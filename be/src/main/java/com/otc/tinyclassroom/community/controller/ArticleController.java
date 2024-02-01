@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.community.controller;
 
+import com.otc.tinyclassroom.community.dto.ArticleDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleUpdateRequestDto;
 import com.otc.tinyclassroom.community.dto.response.ArticleResponseDto;
@@ -8,6 +9,7 @@ import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
 import com.otc.tinyclassroom.community.service.ArticleService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +37,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     /**
-     * 전체 커뮤니티의 게시글 목록 조회.
+     * 지정 커뮤니티의 게시글 목록 조회.
      */
     @GetMapping("/articles")
     public BaseResponse<Page<ArticleResponseDto>> getArticleList(
@@ -139,6 +141,14 @@ public class ArticleController {
     public BaseResponse<ArticleWithCommentsResponseDto> getArticleDetailForClassRoom(@PathVariable("articleId") Long articleId) {
         ArticleWithCommentsResponseDto article = ArticleWithCommentsResponseDto.from(articleService.getArticle(articleId));
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 반환성공", article);
+    }
+
+    /**
+     * 모든 게시물 조회.
+     */
+    @GetMapping("articles/allList")
+    public BaseResponse<List<ArticleDto>> getAllArticleList() {
+        return BaseResponse.success(HttpStatus.OK.value(), "전체 게시물을 조회했습니다.", articleService.getAllArticleList());
     }
 
 }
