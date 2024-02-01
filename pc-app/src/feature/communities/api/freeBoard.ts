@@ -1,6 +1,10 @@
 import { commonAxios } from "@/lib/commonAxios";
+import { FetchArticleListResponse } from "../types/board";
 
-export const freeBoard = async (boardType?: string, pages?: number) => {
+export const fetchArticles = async (
+  boardType?: string,
+  pages?: number
+): Promise<FetchArticleListResponse> => {
   return await commonAxios.get("/community/articles", {
     params: {
       boardType: boardType ? boardType : "notice",
@@ -9,18 +13,28 @@ export const freeBoard = async (boardType?: string, pages?: number) => {
   });
 };
 
-export const searchBoard = async (
-  boardType: string,
-  searchType: string,
-  searchValue: string,
-  pages?: number
-) => {
+interface SearchBoardProps {
+  boardType: string;
+  searchType?: string;
+  searchValue?: string;
+  page?: number;
+  isClass?: boolean;
+}
+export const searchBoard = async ({
+  boardType,
+  searchType,
+  searchValue,
+  page,
+  isClass,
+}: SearchBoardProps): Promise<FetchArticleListResponse> => {
   return await commonAxios.get(`/community/articles`, {
     params: {
-      boardType: boardType ? boardType : "notice",
-      searchType: searchType,
-      searchValue: searchValue,
-      page: pages,
+      boardType,
+      page,
+      searchValue,
+      searchType,
+      isClass,
+      boardSize: 15,
     },
   });
 };

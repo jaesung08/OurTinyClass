@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import CreateArticle from "./CreateArticle";
-import FreeBoardPage from "./FreeBoardPage";
+import FreeBoardPage from "./Community";
 import DetailArticle from "./DetailArticle";
 
 export const CommunitiesRoutes = () => {

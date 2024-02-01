@@ -12,6 +12,7 @@ import {
   Pagination,
   PaginationItemType,
   PaginationItemRenderProps,
+  Divider,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { cn } from "@nextui-org/react";
@@ -200,45 +201,8 @@ function FreeBoardBody() {
       >
         ✏
       </Button>
-      <div className="w-full bg-lime-500 flex items-center justify-center h-20">
-        <form className="group relative w-11/12 bg-lime-500">
-          <svg
-            width="20"
-            height="20"
-            fill="currentColor"
-            className="absolute left-3 top-1/2 -mt-2.5 text-slate-400 pointer-events-none group-focus-within:text-blue-500"
-            aria-hidden="true"
-          >
-            {" "}
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-            />
-          </svg>
-          <input
-            className="focus:ring-2 focus:ring-blue-500 focus:outline-none appearance-none w-full text-sm leading-6 text-slate-900 placeholder-slate-400 rounded-md py-2 pl-10 ring-1 ring-slate-200 shadow-sm h-2/5"
-            type="text"
-            aria-label="Filter projects"
-            placeholder="Filter projects..."
-          />
-        </form>
-      </div>
+
       <div className="w-full bg-white h-[90%]">
-        <div className="flex w-full p-5 items-center h-[8%]">
-          {navState ? (
-            <>
-              <p className="text-2xl w-2/12 f">{navState.title}</p>
-              <p className="w-10/12">{navState.content}</p>
-            </>
-          ) : (
-            <>
-              <p className="text-2xl w-2/12 f">고민 나눔</p>
-              <p className="w-10/12">가슴속에 쌓아둔 이야기를 털어보세요</p>
-            </>
-          )}
-        </div>
-        <hr className="border-b-2" />
         <div className="w-full flex justify-center items-center h-[90%]">
           <div className="w-5/6 flex flex-col justify-between py-3 items-center h-[90%]">
             <div className="w-full h-[15%]">
