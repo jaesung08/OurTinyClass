@@ -54,7 +54,7 @@ public class RefreshTokenService {
      */
     public ReIssueResponseDto reIssue(String refreshToken) {
         String memberId = this.findMemberIdByRefreshToken(refreshToken);
-        redisTemplate.delete(String.valueOf(memberId));
+        redisTemplate.delete(String.valueOf(refreshToken));
         Role role = memberRepository.findById(Long.valueOf(memberId)).orElseThrow().getRole();
 
         refreshToken = UUID.randomUUID().toString();
@@ -68,10 +68,10 @@ public class RefreshTokenService {
     /**
      * 회원 아이디로부터 리프레시토큰 삭제.
      *
-     * @param memberId 회원 아이디
+     * @param refreshToken 리프레쉬토큰
      */
-    public void deleteRefreshToken(Long memberId) {
-        redisTemplate.delete(String.valueOf(memberId));
+    public void deleteRefreshToken(Long refreshToken) {
+        redisTemplate.delete(String.valueOf(refreshToken));
     }
 
     /**

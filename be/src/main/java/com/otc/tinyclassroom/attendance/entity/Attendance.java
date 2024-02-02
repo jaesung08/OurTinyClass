@@ -9,7 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 /**
@@ -28,10 +28,10 @@ public class Attendance {
     private Member member; // 유저 id
 
     @Column
-    private Timestamp checkIn; // 등교 시간
+    private LocalDateTime checkIn; // 등교 시간
 
     @Column
-    private Timestamp checkOut; // 하교 시간
+    private LocalDateTime checkOut; // 하교 시간
 
     @Column(nullable = false)   // enum 클래스 사용시 자동으로 enum 조건만큼 제약조건이 걸리게된다. 수정시엔 DB다시 create
     private AttendanceStatus status; // 정상등교, 지각 여부 // SELECT * FROM information_schema.check_constraints; 제약조건 확인 쿼리문
@@ -43,7 +43,7 @@ public class Attendance {
     /**
      * 파라미터 생성자.
      */
-    private Attendance(Member member, Timestamp checkIn, Timestamp checkOut, AttendanceStatus status) {
+    private Attendance(Member member, LocalDateTime checkIn, LocalDateTime checkOut, AttendanceStatus status) {
         this.member = member;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
@@ -53,14 +53,14 @@ public class Attendance {
     /**
      * 파라미터로 부터 attendance 객체를 생성하는 함수.
      */
-    public static Attendance of(Member member, Timestamp checkIn, Timestamp checkOut, AttendanceStatus status) {
+    public static Attendance of(Member member, LocalDateTime checkIn, LocalDateTime checkOut, AttendanceStatus status) {
         return new Attendance(member, checkIn, checkOut, status);
     }
 
     /**
      * checkout 시 수정하는 함수.
      */
-    public void updateCheckOutTime(Timestamp timestamp, AttendanceStatus status) {
+    public void updateCheckOutTime(LocalDateTime timestamp, AttendanceStatus status) {
         if (timestamp != null && status != null) {
             this.checkOut = timestamp;
             this.status = status;
