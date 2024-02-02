@@ -1,4 +1,4 @@
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 import { BaseResponse } from "@/types/BaseResponse";
 
 export const join = (
@@ -8,7 +8,7 @@ export const join = (
   email: string,
   birthday: string
 ): Promise<BaseResponse> => {
-  return axios.post("/members/join", {
+  return commonAxios.post("/members/join", {
     memberId,
     password,
     name,

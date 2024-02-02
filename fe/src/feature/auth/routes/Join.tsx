@@ -8,7 +8,6 @@ import JoinForm from "../components/JoinForm";
 import { useMutation } from "@tanstack/react-query";
 import { join } from "../api/join";
 import Swal from "sweetalert2";
-import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 
@@ -38,12 +37,12 @@ export default function Join() {
         navigate("/auth/login");
       });
     },
-    onError: (error: AxiosResponse) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: any) => {
       // 회원가입 실패 처리
-
       Swal.fire(
         "에러 발생",
-        error.data?.message ?? "회원가입에 실패하였습니다.",
+        error?.response.data?.message ?? "회원가입에 실패하였습니다.",
         "error"
       );
     },

@@ -1,11 +1,7 @@
 // test-utils.tsx
 import React from "react";
 import { render, RenderOptions } from "@testing-library/react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  QueryClientProviderProps,
-} from "react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // 테스트용 QueryClient를 생성하는 함수
 const createTestQueryClient = () =>
@@ -20,16 +16,12 @@ const createTestQueryClient = () =>
 // 모든 테스트에서 사용할 수 있는 custom render 함수
 const customRender = (
   ui: React.ReactElement,
-  options?: Omit<RenderOptions, "queries"> & {
-    queryClientProps?: QueryClientProviderProps;
-  }
+  options?: Omit<RenderOptions, "queries">
 ) => {
   const queryClient = createTestQueryClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const AllTheProviders: React.FC = ({ children }: any) => (
-    <QueryClientProvider client={queryClient} {...options?.queryClientProps}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 
   return render(ui, { wrapper: AllTheProviders, ...options });

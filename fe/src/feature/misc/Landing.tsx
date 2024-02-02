@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../auth/api/logout";
 import Swal from "sweetalert2";
-import { axios } from "@/lib/axios";
+import { commonAxios } from "@/lib/commonAxios";
 
 function Landing() {
   const isLogined = Cookies.get("accessToken") ? true : false;
@@ -21,7 +21,7 @@ function Landing() {
 
   const onClickTestBtn = async () => {
     try {
-      await axios.post("/test/test1");
+      await commonAxios.post("/test/test1");
       Swal.fire("성공");
     } catch (e) {
       Swal.fire("실패");
