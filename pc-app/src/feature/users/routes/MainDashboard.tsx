@@ -19,6 +19,7 @@ import { checkOut } from "@/feature/attendance/api/checkOut";
 import { Tag } from "@/components/Elements/Tag/Tag";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
 const dummyNotices = [
   {
@@ -497,8 +498,11 @@ function Calender({ planList, todayDate }: CalenderProps) {
     </div>
   );
 }
-
-function CurrentLectureCard() {
+interface CurrentLectureCardProps {
+  navigator: NavigateFunction;
+}
+function CurrentLectureCard({ navigator }: CurrentLectureCardProps) {
+  const goClassRoom = () => navigator("/video");
   return (
     <div>
       <Card className="p-4 rounded-lg">
@@ -523,7 +527,9 @@ function CurrentLectureCard() {
         </CardBody>
 
         <CardFooter>
-          <Button color="success">참석하기</Button>
+          <Button color="success" onClick={goClassRoom}>
+            참석하기
+          </Button>
         </CardFooter>
       </Card>
     </div>
@@ -536,6 +542,7 @@ export default function MainDashBoard() {
     Attendance | undefined
   >();
   const userInfo = useRecoilValue(userState);
+  const navigator = useNavigate();
 
   useEffect(() => {
     getAttendanceState();
@@ -633,7 +640,7 @@ export default function MainDashBoard() {
         </div>
       </div>
       <div className="bg-lime-100 w-1/4 p-10">
-        <CurrentLectureCard />
+        <CurrentLectureCard navigator={navigator} />
       </div>
     </div>
   );

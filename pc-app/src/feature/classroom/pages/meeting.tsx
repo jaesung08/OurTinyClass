@@ -10,7 +10,7 @@ export default function Video() {
       iframeStyle: {
         width: "100%",
         height: "99%",
-        position: "relative",
+        position: "absolute",
       }
     }).join({url: "${domain}${id}"})`;
 
