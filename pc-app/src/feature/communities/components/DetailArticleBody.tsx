@@ -1,11 +1,11 @@
 import { Button, Avatar } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import ReactQuill from "react-quill";
-import Comments from "./Comments";
 import CommentsList from "./CommentsList";
 import { useLocation } from "react-router-dom";
 import { editDetail, getDetail } from "../api/detailBoard";
 import { editComment, removeComment } from "../api/comments";
+import CommentInput from "./CommentInput";
 
 function DetailArticleBody() {
   const [isArticleEdit, setIsArticleEdit] = useState<boolean>(false);
@@ -173,7 +173,7 @@ function DetailArticleBody() {
         )}
 
         <div className="w-11/12 ml-10">
-          <Comments
+          <CommentInput
             articleId={state}
             commentList={commentList}
             setList={setCommentList}

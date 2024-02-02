@@ -1,17 +1,10 @@
 import { commonAxios } from "@/lib/commonAxios";
 import { getTodayAttendanceResponse } from "..";
 
-const getTodayAttendance = (): Promise<getTodayAttendanceResponse> => {
-  return commonAxios.get("/attendances/today-attendance/ssafy123", {
-    params: {
-      memberId: "ssafy123",
-      password: "Jtjgml^^7",
-      name: "초롱초롱 어피치",
-      email: "ssafy1@ssafy.com",
-      birthday: "2024-01-11",
-      point: 0,
-    },
-  });
+const getTodayAttendance = (
+  memberId: string
+): Promise<getTodayAttendanceResponse> => {
+  return commonAxios.get("/attendances/daily/" + memberId);
 };
 
 export { getTodayAttendance };

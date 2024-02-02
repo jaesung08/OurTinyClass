@@ -17,6 +17,8 @@ import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import { checkOut } from "@/feature/attendance/api/checkOut";
 import { Tag } from "@/components/Elements/Tag/Tag";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 const dummyNotices = [
   {
@@ -533,6 +535,7 @@ export default function MainDashBoard() {
   const [attendanceState, setAttendanceState] = useState<
     Attendance | undefined
   >();
+  const userInfo = useRecoilValue(userState);
 
   useEffect(() => {
     getAttendanceState();
@@ -595,7 +598,7 @@ export default function MainDashBoard() {
 
   const getAttendanceState = async () => {
     try {
-      const res = await getTodayAttendance();
+      const res = await getTodayAttendance(userInfo.memberId);
       setAttendanceState(res.data.attendanceOnDate);
     } catch (e) {
       console.log(e);
