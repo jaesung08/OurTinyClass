@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
 import { fileAxios } from "@/lib/fileAxios";
 import { editDetail, getDetail } from "../api/detailBoard";
+import Swal from "sweetalert2";
 
 // todo : 카테고리 결정될 경우 아래 데이터 값들 변경해줘야함
 const CATEGORYLISTS = [
@@ -30,7 +31,9 @@ const CATEGORYLISTS = [
 function CreateArticle() {
   const navigator = useNavigate();
   const quillRef = useRef<ReactQuill | null>(null);
-  const [articleCategory, setArticleCategory] = useState("");
+  const [articleCategory, setArticleCategory] = useState(
+    CATEGORYLISTS[0].value
+  );
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isModify, setIsModify] = useState(false);
@@ -58,14 +61,30 @@ function CreateArticle() {
   const BoardCreate = async () => {
     try {
       if (isModify && articleId) {
+        // 게시글 수정인 경우
         await editDetail(title, content, articleId);
+        Swal.fire("성공!", "게시글 수정이 성공하였습니다.", "success").then(
+          () => {
+            navigator("/comunities/detail", { state: articleId });
+          }
+        );
       } else {
+        // 게시글 신규 작성인 경우
         await createBoard(title, content, articleCategory);
+        Swal.fire("성공!", "게시글 작성이 성공하였습니다.", "success").then(
+          () => {
+            navigator("/communities");
+          }
+        );
       }
 
-      navigator("/communities");
-    } catch (error) {
-      console.error(error);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      Swal.fire(
+        "에러 발생",
+        error?.response.data?.message ?? "게시글 수정에 실패하였습니다.",
+        "error"
+      );
     }
   };
 

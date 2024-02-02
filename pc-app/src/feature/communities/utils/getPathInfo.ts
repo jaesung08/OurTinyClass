@@ -6,8 +6,8 @@ interface CommunityPathInfo {
 export const getPathInfo = (pathname: string): CommunityPathInfo => {
   const pathParts = pathname.split("/");
   const pathInfo = {
-    boardType: -1,
-    boardCategory: -1,
+    boardType: TYPE.BOARD_TYPE.SCHOOL,
+    boardCategory: TYPE.BOARD_CATEGORY.NOTICE,
   };
 
   if (pathParts[2]) {
@@ -17,6 +17,10 @@ export const getPathInfo = (pathname: string): CommunityPathInfo => {
         break;
       case "class":
         pathInfo.boardType = TYPE.BOARD_TYPE.CLASS;
+        break;
+      default:
+        pathInfo.boardType = -1;
+        pathInfo.boardCategory = -1;
     }
   }
 

@@ -209,7 +209,7 @@ function Community() {
       const data = res.data;
       if (currentPage === res.data.number) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages - 1);
+        setTotalPage(data.totalPages);
       }
     } catch (e) {
       console.error(e);

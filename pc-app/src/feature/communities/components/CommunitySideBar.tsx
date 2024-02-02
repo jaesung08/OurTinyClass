@@ -30,7 +30,7 @@ function FreeBoardHeader() {
 
   return (
     <section className=" min-w-56 w-2/12 h-full bg-lime-50 py-3">
-      <Link to={"/communities/school/notice"}>
+      <Link to={"/communities"}>
         <p className="text-xl px-3 py-4 font-bold "> 학교 게시판</p>
       </Link>
       <ul className="text-lg py-3 flex flex-col gap-1 bg-lime-200 ">
