@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 미디어 업로드를 컨트롤러.
+ * 미디어 Controller.
  */
 @RestController
 @RequestMapping("/api/media")
@@ -26,7 +26,7 @@ public class MediaController {
      * 업로드 시 UUID로 파일명 변경.
      */
     @PostMapping("/images")
-    public BaseResponse<?> uploadImages(@RequestParam("image") List<MultipartFile> multipartFiles) {
+    public BaseResponse<List<String>> uploadImages(@RequestParam("image") List<MultipartFile> multipartFiles) {
         List<String> imageList = mediaService.storeImages(multipartFiles);
         return BaseResponse.success(HttpStatus.CREATED.value(), "이미지 링크가 생성되었습니다.", imageList);
     }

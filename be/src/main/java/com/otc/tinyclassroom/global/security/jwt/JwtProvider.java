@@ -38,7 +38,7 @@ public class JwtProvider {
      * @return AccessToken
      */
     public String createAccessToken(Long id, Role role) {
-        return this.createToken(id, role, accessExpirationTime);
+        return createToken(id, role, accessExpirationTime);
     }
 
     /**

@@ -85,7 +85,6 @@ public class ArticleService {
      * @param articleId 게시글 Id
      * @return 댓글을 포함한 게시글 상세정보
      */
-    @Transactional(readOnly = true)
     public ArticleWithCommentDto getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND)
@@ -162,7 +161,7 @@ public class ArticleService {
      */
     public void validateAuthority(Long articleId) {
         Long loginUserId = jwtProvider.getCurrentMemberId();
-        Long articleUserId = this.getArticleUserId(articleId);
+        Long articleUserId = getArticleUserId(articleId);
         if (!loginUserId.equals(articleUserId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
         }

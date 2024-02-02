@@ -11,17 +11,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.ToString.Exclude;
 
 /**
- * 출석관련 엔티티 정의 (member, checkIn, checkOut, status).
- *
- * @author JangJaeSung
+ * 출석 Entity.
  */
 @Getter
-@ToString
 @Table(name = "attendance")
 @Entity
 public class Attendance {
@@ -31,7 +25,6 @@ public class Attendance {
     private Long id; //db 번호
 
     @ManyToOne(optional = false)
-    @Exclude
     private Member member; // 유저 id
 
     @Column

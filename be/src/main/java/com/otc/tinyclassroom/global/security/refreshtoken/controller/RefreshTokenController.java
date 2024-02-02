@@ -35,10 +35,11 @@ public class RefreshTokenController {
         if (restTtl > 0) {
             return BaseResponse.success(HttpStatus.OK.value(), "Refresh Token의 남은 유효 시간.", restTtl);
         } else if (restTtl == -1) {
-            return BaseResponse.error(HttpStatus.NOT_FOUND.value(), "Refresh Token이 만료되었습니다.");
+            return BaseResponse.success(HttpStatus.NOT_FOUND.value(), "Refresh Token이 존재합니다.", null);
         } else if (restTtl == -2) {
             return BaseResponse.error(HttpStatus.NOT_FOUND.value(), "Refresh Token이 존재하지 않습니다.");
         }
+        return BaseResponse.error(HttpStatus.NOT_FOUND.value(), "Refresh Token이 존재하지 않습니다.");
     }
 
 

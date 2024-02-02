@@ -37,9 +37,9 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     // Check-in 및 Check-out 시간을 구성하는 값들
-    private static final int CHECKINSTARTTIME = 8;
-    private static final int CHECKINENDTIME = 13;
-    private static final int BASETIME = 9;
+    private static final int CHECKIN_START_TIME = 8;
+    private static final int CHECKIN_END_TIME = 13;
+    private static final int BASE_TIME = 9;
 
     /**
      * 회원 등교를 처리하는 메서드.
@@ -70,7 +70,7 @@ public class AttendanceService {
     private void validateCheckInTime(LocalDateTime now) {
         int hour = now.getHour();
         // 현재 시간이 허용된 등교 시간 내에 있는지 확인
-        if (hour < CHECKINSTARTTIME || hour >= CHECKINENDTIME) {
+        if (hour < CHECKIN_START_TIME || hour >= CHECKIN_END_TIME) {
             throw new AttendanceException(AttendanceErrorCode.NOT_CHECK_IN_TIME);
         }
     }
@@ -93,7 +93,7 @@ public class AttendanceService {
      */
     private AttendanceStatus determineAttendanceStatus(LocalDateTime now) {
         int checkInHour = now.getHour();
-        return (checkInHour < BASETIME) ? AttendanceStatus.ATTENDANCE : AttendanceStatus.LATE;
+        return (checkInHour < BASE_TIME) ? AttendanceStatus.ATTENDANCE : AttendanceStatus.LATE;
     }
 
     /**
