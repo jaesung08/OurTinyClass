@@ -58,19 +58,19 @@ public class MemberController {
      */
     @PostMapping("/logout")
     public BaseResponse<String> logoutMember() {
-        Long currentUserId = refreshTokenService.getCurrentUserId();
-        refreshTokenService.deleteRefreshToken(currentUserId);
+        String refreshTokenByUserId = refreshTokenService.getRefreshTokenByUserId(refreshTokenService.getCurrentUserId());
+        refreshTokenService.deleteRefreshToken(refreshTokenByUserId);
 
-        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(currentUserId));
+        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(refreshTokenByUserId));
     }
 
     /**
      * 사용자 입장에서 학생 ROLE 변경 요청.
      */
     @PostMapping("/certification/student")
-    public BaseResponse<RoleUpdateResponseDto> studentRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "requestDto") StudentRoleUpdateRequestDto requestDto) {
-        // TODO : ROLE_USER 일때만 해야하지 않을까?
-        Map<String, List<String>> result = mediaService.storeImages(files);
+    public BaseResponse<RoleUpdateResponseDto> studentRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "userInfo") StudentRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 요청을 보낼 수 있도록 구현
+        Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(files);
         List<String> urlList = result.get("urlList");
         List<String> originalName = result.get("originalName");
         certificationService.saveStudent(originalName, urlList, requestDto);
@@ -81,9 +81,9 @@ public class MemberController {
      * 사용자 입장에서 Mentor ROLE 변경 요청.
      */
     @PostMapping("/certification/mentor")
-    public BaseResponse<RoleUpdateResponseDto> mentorRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "requestDto") MentorRoleUpdateRequestDto requestDto) {
-        // TODO : ROLE_USER 일때만 해야하지 않을까?
-        Map<String, List<String>> result = mediaService.storeImages(files);
+    public BaseResponse<RoleUpdateResponseDto> mentorRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "userInfo") MentorRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 요청을 보낼 수 있도록 구현
+        Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(files);
         List<String> urlList = result.get("urlList");
         List<String> originalName = result.get("originalName");
         certificationService.saveMentor(originalName, urlList, requestDto);

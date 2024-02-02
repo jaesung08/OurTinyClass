@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -25,14 +24,15 @@ public class StudentRoleUpdateRequest {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "member_id")
     private Member member;
 
-    private String content;
-
-    // Student의 등업신청 속성
+    // 학생의 이전 학교 분류
     private int beforeSchoolType;
-    private int quitReason;
+
+    private String quitReason;
+
+    // 학생의 이전 학교 이름
+    private String beforeSchool;
 
     @Convert(converter = StringListConverter.class)
     private List<String> originalFileNames;
@@ -40,11 +40,11 @@ public class StudentRoleUpdateRequest {
     @Convert(converter = StringListConverter.class)
     private List<String> quitConfirmationPaths; // 파일 경로들을 저장하는 리스트
 
-    private StudentRoleUpdateRequest(Member member, String content, int beforeSchoolType, int quitReason, List<String> originalFileNames, List<String>  quitConfirmationPaths) {
+    private StudentRoleUpdateRequest(Member member, int beforeSchoolType, String quitReason, String beforeSchool, List<String> originalFileNames, List<String>  quitConfirmationPaths) {
         this.member = member;
-        this.content = content;
         this.beforeSchoolType = beforeSchoolType;
         this.quitReason = quitReason;
+        this.beforeSchool = beforeSchool;
         this.originalFileNames = originalFileNames;
         this.quitConfirmationPaths = quitConfirmationPaths;
     }
@@ -52,7 +52,7 @@ public class StudentRoleUpdateRequest {
     protected StudentRoleUpdateRequest() {
     }
 
-    public static StudentRoleUpdateRequest of(Member member, String content, int beforeSchoolType, int quitReason, List<String> originalFileNames, List<String> quitConfirmationPaths) {
-        return new StudentRoleUpdateRequest(member, content, beforeSchoolType, quitReason, originalFileNames, quitConfirmationPaths);
+    public static StudentRoleUpdateRequest of(Member member, int beforeSchoolType, String quitReason, String beforeSchool, List<String> originalFileNames, List<String> quitConfirmationPaths) {
+        return new StudentRoleUpdateRequest(member, beforeSchoolType, quitReason, beforeSchool, originalFileNames, quitConfirmationPaths);
     }
 }

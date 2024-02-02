@@ -3,30 +3,31 @@ package com.otc.tinyclassroom.member.service;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.MentorRoleUpdateDetailResponseDto;
 import com.otc.tinyclassroom.member.dto.response.RoleUpdateResponseDto;
+import com.otc.tinyclassroom.member.dto.response.StudentRoleUpdateDetailResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MentorRoleUpdateRequest;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.entity.StudentRoleUpdateRequest;
-import com.otc.tinyclassroom.member.exception.MemberErrorCode;
-import com.otc.tinyclassroom.member.exception.MemberException;
+import com.otc.tinyclassroom.member.exception.CertificationErrorCode;
+import com.otc.tinyclassroom.member.exception.CertificationException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.member.repository.MentorRoleUpdateRepository;
 import com.otc.tinyclassroom.member.repository.StudentRoleUpdateRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 등업 요청을 관리하기 위한 서비스.
  */
 @AllArgsConstructor
 @Service
+@Transactional
 public class CertificationService {
 
     private final MentorRoleUpdateRepository mentorRoleUpdateRepository;
@@ -37,43 +38,33 @@ public class CertificationService {
     /**
      * 유효성 검사 후 MentorRoleUpdateRequest 저장.
      */
-    @Transactional
     public void saveMentor(List<String> originalFiles, List<String> savedFiles, MentorRoleUpdateRequestDto dto) {
-        // content 가 없다면 exception 터뜨리기
-        if (Objects.requireNonNullElse(dto.content(), "").isEmpty()) {
-            throw new IllegalArgumentException("내용을 입력해야 합니다.");
+        if (dto.belong() == null) {
+            throw new CertificationException(CertificationErrorCode.NO_BELONG);
         }
 
-        // belong 이 없다면 exception 터뜨리기
-        if (Objects.requireNonNullElse(dto.belong(), "").isEmpty()) {
-            throw new IllegalArgumentException("소속을 입력하여야 합니다.");
-        }
         Member member = memberRepository.findById(Long.valueOf(jwtProvider.getCurrentUserId())).orElseThrow(
-            () -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID, "유저 아이디가 존재하지 않습니다.")
+            () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
 
         MentorRoleUpdateRequest mentorRoleUpdateRequest
-            = MentorRoleUpdateRequest.of(member, dto.content(), dto.belong(), originalFiles, savedFiles);
+            = MentorRoleUpdateRequest.of(member, dto.belong(), originalFiles, savedFiles);
         mentorRoleUpdateRepository.save(mentorRoleUpdateRequest);
     }
 
     /**
      * 유효성 검사 후 StudentRoleUpdateRequest 저장.
      */
-    @Transactional
     public void saveStudent(List<String> originalFiles, List<String> savedFiles, StudentRoleUpdateRequestDto dto) {
         if (dto.beforeSchoolType() < 0 || dto.beforeSchoolType() > 3) {
-            throw new IllegalArgumentException("이전 학교 Type이 올바르지 않습니다.");
+            throw new CertificationException(CertificationErrorCode.NOT_SCHOOL_TYPE, "유효한 학교타입이 아닙니다.");
         }
 
-        if (dto.quitReason() < 0 || dto.quitReason() > 7) {
-            throw new IllegalArgumentException("중퇴 사유가 올바르지 않습니다.");
-        }
         Member member = memberRepository.findById(Long.valueOf(jwtProvider.getCurrentUserId())).orElseThrow(
-            () -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID, "유저 아이디가 존재하지 않습니다.")
+            () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
         StudentRoleUpdateRequest studentRoleUpdateRequest
-            = StudentRoleUpdateRequest.of(member, dto.content(), dto.beforeSchoolType(), dto.quitReason(), originalFiles, savedFiles);
+            = StudentRoleUpdateRequest.of(member, dto.beforeSchoolType(), dto.quitReason(), dto.beforeSchool(), originalFiles, savedFiles);
         studentRoleUpdateRepository.save(studentRoleUpdateRequest);
 
     }
@@ -81,14 +72,12 @@ public class CertificationService {
     /**
      * ROLE_ADMIN 을 가진 관리자 계정만 사용가능 memberId로 가져온 뒤 Role 을 update 함.
      */
-    @Transactional
     public RoleUpdateResponseDto updateRole(Long memberId, Role role) {
         Member member = memberRepository.findById(memberId).orElseThrow(
-            () -> new MemberException(MemberErrorCode.INVALID_MEMBER_ID, "ROLE 업데이트 유저를 찾을 수 없습니다.")
+            () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
         if (isAuthorizedForRoleChange()) {
             member.setRole(role);
-            memberRepository.save(member);
         }
         return RoleUpdateResponseDto.of(memberId, role);
     }
@@ -96,6 +85,7 @@ public class CertificationService {
     /**
      * 학생 등업 리스트 전체 조회.
      */
+    @Transactional(readOnly = true)
     public List<StudentRoleUpdateRequest> findStudentAll() {
         return studentRoleUpdateRepository.findAll();
     }
@@ -103,6 +93,7 @@ public class CertificationService {
     /**
      * 멘토 등업 리스트 전체 조회.
      */
+    @Transactional(readOnly = true)
     public List<MentorRoleUpdateRequest> findMentorAll() {
         return mentorRoleUpdateRepository.findAll();
     }
@@ -110,37 +101,46 @@ public class CertificationService {
     /**
      * 학생 등업 요청 상세 조회.
      */
-    public StudentRoleUpdateRequest findStudentUpdateRequestById(Long articleId) {
-        return studentRoleUpdateRepository.findById(articleId).orElseThrow(
-            EntityNotFoundException::new
+    @Transactional(readOnly = true)
+    public StudentRoleUpdateDetailResponseDto findStudentUpdateRequestDto(Long articleId) {
+        StudentRoleUpdateRequest request = studentRoleUpdateRepository.findById(articleId).orElseThrow(
+            () -> new CertificationException(CertificationErrorCode.NO_ARTICLE)
         );
+        return StudentRoleUpdateDetailResponseDto.of(articleId, request.getMember().getName(), request.getMember().getBirthday(),
+                request.getBeforeSchoolType(), request.getQuitReason(),
+                request.getBeforeSchool(), request.getQuitConfirmationPaths());
+
     }
 
     /**
      * 멘토 등업 요청 상세 조회.
      */
-    public MentorRoleUpdateRequest findMentorUpdateRequestById(Long articleId) {
-        return mentorRoleUpdateRepository.findById(articleId).orElseThrow(
-            EntityNotFoundException::new
+    @Transactional(readOnly = true)
+    public MentorRoleUpdateDetailResponseDto findMentorUpdateRequestDto(Long articleId) {
+        MentorRoleUpdateRequest request = mentorRoleUpdateRepository.findById(articleId).orElseThrow(
+            () -> new CertificationException(CertificationErrorCode.NO_ARTICLE)
         );
+        return MentorRoleUpdateDetailResponseDto.of(articleId, request.getMember().getName(), request.getMember().getBirthday(), request.getBelong(), request.getBelongDocumentPaths());
     }
 
     /**
-     * 학생 등업 글로부터 유저 아이디를 가져옴.
+     * 학생 등업 글로부터 유저 아이디를 가져온다.
      */
+    @Transactional(readOnly = true)
     public Long findStudentIdByArticleId(Long articleId) {
         StudentRoleUpdateRequest studentRoleUpdateRequest = studentRoleUpdateRepository.findById(articleId).orElseThrow(
-            EntityNotFoundException::new
+            () -> new CertificationException(CertificationErrorCode.NO_ARTICLE)
         );
         return studentRoleUpdateRequest.getMember().getId();
     }
 
     /**
-     * 멘토 등업 글로부터 유저 아이디를 가져옴.
+     * 멘토 등업 글로부터 유저 아이디를 가져온다.
      */
+    @Transactional(readOnly = true)
     public Long findMentorIdByArticleId(Long articleId) {
         MentorRoleUpdateRequest mentorRoleUpdateRequest = mentorRoleUpdateRepository.findById(articleId).orElseThrow(
-            EntityNotFoundException::new
+            () -> new CertificationException(CertificationErrorCode.NO_ARTICLE)
         );
         return mentorRoleUpdateRequest.getMember().getId();
     }
@@ -160,7 +160,7 @@ public class CertificationService {
     }
 
     /**
-     * ADMIN 유저만 role 을 변경할 수 있음.
+     * ADMIN 유저만 role을 변경할 수 있음.
      */
     private boolean isAuthorizedForRoleChange() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,6 +168,4 @@ public class CertificationService {
         return authentication != null && authentication.getAuthorities().stream()
             .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
-
-
 }

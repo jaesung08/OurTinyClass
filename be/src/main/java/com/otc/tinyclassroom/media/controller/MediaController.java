@@ -25,11 +25,22 @@ public class MediaController {
     /**
      * 다중 파일 업로드.
      * 업로드 시 UUID로 파일명 변경.
-     * 본래 파일명 또한 리턴해줌.
      */
     @PostMapping("/images")
-    public BaseResponse<?> uploadImages(@RequestPart(name = "image") List<MultipartFile> multipartFiles) {
-        Map<String, List<String>> result = mediaService.storeImages(multipartFiles);
+    public BaseResponse<?> uploadImages(@RequestPart("image") List<MultipartFile> multipartFiles) {
+        List<String> imageList = mediaService.storeImages(multipartFiles);
+        return BaseResponse.success(HttpStatus.CREATED.value(), "이미지 링크가 생성되었습니다.", imageList);
+    }
+
+    /**
+     * 다중 파일 업로드.
+     * 업로드 시 UUID로 파일명 변경.
+     * 본래 파일명 또한 리턴해줌.
+     */
+    @PostMapping("/imagesWithOriginName")
+    public BaseResponse<?> uploadImagesWithOriginalName(@RequestPart(name =
+        "image") List<MultipartFile> multipartFiles) {
+        Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(multipartFiles);
         List<String> originalName = result.get("originalName");
         return BaseResponse.success(HttpStatus.CREATED.value(), "이미지 링크가 생성되었습니다.", originalName);
     }

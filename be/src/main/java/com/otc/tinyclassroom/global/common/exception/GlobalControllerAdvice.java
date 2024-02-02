@@ -2,7 +2,9 @@ package com.otc.tinyclassroom.global.common.exception;
 
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.refreshtoken.exception.RefreshTokenException;
 import com.otc.tinyclassroom.media.exception.MediaException;
+import com.otc.tinyclassroom.member.exception.CertificationException;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -47,4 +49,23 @@ public class GlobalControllerAdvice {
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
+    /**
+     * Certification Exception Handler.
+     */
+    @ExceptionHandler(CertificationException.class)
+    public ResponseEntity<?> certificationExceptionHandler(CertificationException e) {
+        log.error("CertificationException Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
+
+    /**
+     * RefreshTokenException Exception Handler.
+     */
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<?> refreshTokenExceptionHandler(RefreshTokenException e) {
+        log.error("RefreshTokenException Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
 }

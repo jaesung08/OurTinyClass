@@ -1,10 +1,11 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.member.dto.response.MentorRoleUpdateDetailResponseDto;
+import com.otc.tinyclassroom.member.dto.response.RoleUpdateListResponseDto;
 import com.otc.tinyclassroom.member.dto.response.RoleUpdateResponseDto;
-import com.otc.tinyclassroom.member.entity.MentorRoleUpdateRequest;
+import com.otc.tinyclassroom.member.dto.response.StudentRoleUpdateDetailResponseDto;
 import com.otc.tinyclassroom.member.entity.Role;
-import com.otc.tinyclassroom.member.entity.StudentRoleUpdateRequest;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,40 +26,51 @@ public class CertificationController {
 
     private final CertificationService certificationService;
 
+    //TODO: 권한이 없을때 보여줄 페이지를 구현해야 함.
     /**
      * 학생 등업 리스트 조회.
      */
     @GetMapping("/student")
-    public BaseResponse<List<StudentRoleUpdateRequest>> getStudentUpdateRequestList() {
-        List<StudentRoleUpdateRequest> studentAll = certificationService.findStudentAll();
-        return BaseResponse.success(HttpStatus.OK.value(), "학생 등업 리스트 조회성공", studentAll);
+    public BaseResponse<List<RoleUpdateListResponseDto>> getStudentUpdateRequestList() {
+
+        List<RoleUpdateListResponseDto> listResult =
+            certificationService.findStudentAll().stream()
+                .map(request ->
+                    RoleUpdateListResponseDto.of(request.getId(), request.getMember().getName(), request.getMember().getBirthday()))
+                .toList();
+
+        return BaseResponse.success(HttpStatus.OK.value(), "학생 등업 리스트 조회성공", listResult);
     }
 
     /**
      * 멘토 등업 리스트 조회.
      */
     @GetMapping("/mentor")
-    public BaseResponse<List<MentorRoleUpdateRequest>> getMentorUpdateRequestList() {
-        List<MentorRoleUpdateRequest> mentorAll = certificationService.findMentorAll();
-        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업 리스트 조회성공", mentorAll);
+    public BaseResponse<List<RoleUpdateListResponseDto>> getMentorUpdateRequestList() {
+        List<RoleUpdateListResponseDto> listResult =
+            certificationService.findMentorAll().stream()
+                .map(request ->
+                    RoleUpdateListResponseDto.of(request.getId(), request.getMember().getName(), request.getMember().getBirthday()))
+                .toList();
+        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업 리스트 조회성공", listResult);
     }
 
     /**
      * 학생 등업글 상세 조회.
      */
     @GetMapping("/student/{articleId}")
-    public BaseResponse<StudentRoleUpdateRequest> getStudentUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
-        StudentRoleUpdateRequest studentUpdateRequestById = certificationService.findStudentUpdateRequestById(articleId);
-        return BaseResponse.success(HttpStatus.OK.value(), "학생 등업글 상세조회 성공", studentUpdateRequestById);
+    public BaseResponse<StudentRoleUpdateDetailResponseDto> getStudentUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
+        StudentRoleUpdateDetailResponseDto dto = certificationService.findStudentUpdateRequestDto(articleId);
+        return BaseResponse.success(HttpStatus.OK.value(), "학생 등업글 상세조회 성공", dto);
     }
 
     /**
      * 멘토 등업글 상세 조회.
      */
     @GetMapping("/mentor/{articleId}")
-    public BaseResponse<MentorRoleUpdateRequest> getMentorUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
-        MentorRoleUpdateRequest mentorUpdateRequestById = certificationService.findMentorUpdateRequestById(articleId);
-        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업글 리스트 조회성공", mentorUpdateRequestById);
+    public BaseResponse<MentorRoleUpdateDetailResponseDto> getMentorUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
+        MentorRoleUpdateDetailResponseDto dto = certificationService.findMentorUpdateRequestDto(articleId);
+        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업글 리스트 조회성공", dto);
     }
 
     /**
