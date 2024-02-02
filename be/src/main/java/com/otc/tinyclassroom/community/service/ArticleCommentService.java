@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 댓글 service.
+ * 댓글 Service.
  */
 @Service
 @Transactional
@@ -29,8 +29,13 @@ public class ArticleCommentService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
 
+
     /**
-     * 댓글 생성 메서드.
+     * 댓글을 작성한다.
+     *
+     * @param memberId 회원 아이디 (Long)
+     * @param request  댓글 작성정보
+     * @return 댓글 아이디
      */
     public Long createArticleComment(Long memberId, ArticleCommentRequestDto request) {
         //멤버 찾기
@@ -46,7 +51,10 @@ public class ArticleCommentService {
     }
 
     /**
-     * 댓글 업데이트 메서드.
+     * 댓글을 수정한다.
+     *
+     * @param articleCommentId 댓글 아이디
+     * @param request          댓글 수정정보
      */
     public void updateArticleComment(Long articleCommentId, ArticleCommentUpdateRequestDto request) {
         ArticleComment articleComment = articleCommentRepository.findById(articleCommentId).orElseThrow(
@@ -58,17 +66,22 @@ public class ArticleCommentService {
     }
 
     /**
-     * 댓글 삭제 메서드.
+     * 댓글을 삭제한다.
+     *
+     * @param articleCommentId 댓글 아이디
      */
-    public void removeArticleComment(Long articleCommentId) {
+    public void deleteArticleComment(Long articleCommentId) {
         articleCommentRepository.deleteById(articleCommentId);
     }
 
 
     /**
-     * 댓글의 작성자를 조회하는 메서드.
+     * 댓글 작성자의 아이디를 가져온다.
+     *
+     * @param articleCommentId 댓글 아이디
+     * @return 댓글 작성자 아이디(Long)
      */
-    public Long getArticleCommentUserId(Long articleCommentId) {
+    public Long getMemberIdFromArticleCommentId(Long articleCommentId) {
         ArticleComment articleComment = articleCommentRepository.findById(articleCommentId)
             .orElseThrow(() -> new CommunityException(CommunityErrorCode.ARTICLE_NOT_FOUND));
 
@@ -78,21 +91,24 @@ public class ArticleCommentService {
     }
 
     /**
-     * 댓글 권한이 있는지 확인한다.
+     * 댓글 수정/삭제에 대한 권한이 있는지 확인한다.`
+     *
+     * @param articleCommentId 댓글 아이디
      */
     public void validateAuthority(Long articleCommentId) {
-        Long loginUserId = Long.valueOf(jwtProvider.getCurrentUserId());
-        Long articleCommentUserId = this.getArticleCommentUserId(articleCommentId);
-        if (!loginUserId.equals(articleCommentUserId)) {
+        Long loginMemberId = jwtProvider.getCurrentMemberId();
+        Long articleCommentMemberId = getMemberIdFromArticleCommentId(articleCommentId);
+        if (!loginMemberId.equals(articleCommentMemberId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
         }
     }
 
     /**
-     * 현재 로그인 중인 사용자의 아이디를 리턴한다.
+     * 현재 사용자의 아이디를 반환한다.
+     *
+     * @return 사용자 아이디
      */
-    public Long getCurrentUserId() {
-        return Long.valueOf(jwtProvider.getCurrentUserId());
+    public Long getCurrentMemberId() {
+        return jwtProvider.getCurrentMemberId();
     }
-
 }

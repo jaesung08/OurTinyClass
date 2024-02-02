@@ -11,10 +11,11 @@ import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,26 +32,26 @@ public class AttendanceController {
     /**
      * 등교시간 기록.
      */
-    @PostMapping("/check-in")
+    @PostMapping("")
     public BaseResponse<AttendanceCheckInResponseDto> checkIn() {
-        AttendanceCheckInResponseDto result = attendanceService.checkIn(LocalDateTime.now());
+        AttendanceCheckInResponseDto result = attendanceService.checkIn();
         return BaseResponse.success(HttpStatus.OK.value(), "등교에 성공하였습니다!", result);
     }
 
     /**
      * 하교시간 기록.
      */
-    @PutMapping("/check-out")
+    @PatchMapping("/checkout")
     public BaseResponse<AttendanceCheckOutResponseDto> checkOut() {
-        AttendanceCheckOutResponseDto result = attendanceService.checkOut(LocalDateTime.now());
+        AttendanceCheckOutResponseDto result = attendanceService.checkOut();
         return BaseResponse.success(HttpStatus.OK.value(), "하교에 성공하였습니다!", result);
     }
 
     /**
      * 오늘 출석기록 조회.
      */
-    @GetMapping("/today-attendance/{memberId}")
-    public BaseResponse<DailyAttendanceResponseDto> getDailyAttendanceTime(
+    @GetMapping("/daily/{memberId}")
+    public BaseResponse<DailyAttendanceResponseDto> getDailyAttendanceRecord(
         @PathVariable("memberId") String memberId
     ) {
         LocalDateTime today = LocalDateTime.now();
@@ -62,11 +63,11 @@ public class AttendanceController {
     /**
      * 한달치 출석기록 조회.
      */
-    @GetMapping("/monthly-total/{memberId}/{year}/{month}")
-    public BaseResponse<MonthlyAttendanceResponseDto> getMonthlyTotalAttendanceTime(
+    @GetMapping("/monthly/{memberId}")
+    public BaseResponse<MonthlyAttendanceResponseDto> getMonthlyTotalAttendanceRecord(
         @PathVariable("memberId") String memberId,
-        @PathVariable("year") int year,
-        @PathVariable("month") int month
+        @RequestParam int year,
+        @RequestParam int month
     ) {
         MonthlyAttendanceResponseDto result = attendanceService.getAttendanceTimeOnMonth(memberId, year, month);
         String message = String.format("%d년 %d월 출석 조회에 성공하였습니다.", year, month);

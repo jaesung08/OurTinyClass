@@ -1,7 +1,7 @@
 package com.otc.tinyclassroom.attendance.repository;
 
 import com.otc.tinyclassroom.attendance.entity.Attendance;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,15 +18,15 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     /**
      * 해당 회원이 특정 시간 사이에 등교한 이력이 있는지 확인.
      */
-    boolean existsByMemberIdAndCheckInBetween(Long memberId, Timestamp checkIn, Timestamp checkIn2);
+    boolean existsByMemberIdAndCheckInBetween(Long memberId, LocalDateTime checkIn, LocalDateTime checkIn2);
 
     /**
      * 멤버 ID를 통해 조회하고 범위 내 시간 확인.
      */
     Optional<Attendance> findByMemberIdAndCheckInBetween(
         Long memberId,
-        Timestamp startTime,
-        Timestamp endTime
+        LocalDateTime startTime,
+        LocalDateTime endTime
     );
 
     /**
@@ -36,15 +36,15 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     @Query("SELECT a FROM Attendance a WHERE a.member.memberId = :memberId AND a.checkIn BETWEEN :startOfMonth AND :endOfMonth")
     List<Attendance> findByMemberIdAndCheckInBetweenMonth(
         @Param("memberId") String memberId,
-        @Param("startOfMonth") Timestamp startOfMonth,
-        @Param("endOfMonth") Timestamp endOfMonth
+        @Param("startOfMonth") LocalDateTime startOfMonth,
+        @Param("endOfMonth") LocalDateTime endOfMonth
     );
 
     @Query("SELECT a FROM Attendance a WHERE a.member.memberId = :memberId AND a.checkIn BETWEEN :startOfDay AND :endOfDay")
     List<Attendance> findByMemberIdAndCheckInBetweenDay(
         @Param("memberId") String memberId,
-        @Param("startOfDay") Timestamp startOfDay,
-        @Param("endOfDay") Timestamp endOfDay
+        @Param("startOfDay") LocalDateTime startOfDay,
+        @Param("endOfDay") LocalDateTime endOfDay
     );
 
 }

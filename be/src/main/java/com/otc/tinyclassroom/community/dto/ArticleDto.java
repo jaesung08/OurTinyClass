@@ -4,18 +4,16 @@ import com.otc.tinyclassroom.community.entity.Article;
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.MemberDto;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 게시글 DTO. DTO for {@link com.otc.tinyclassroom.community.entity.Article}
+ * 게시글 DTO. DTO for {@link com.otc.tinyclassroom.community.entity.Article}.
  */
-public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType,
-                         LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy, int hit) implements Serializable {
+public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, String title, String content, ArticleType articleType, LocalDateTime createdAt, LocalDateTime modifiedAt, int hit) {
 
-    public static ArticleDto of(MemberDto member, ClassRoomDto classRoom, Long id, String title, String content, ArticleType articleType, LocalDateTime createdAt, String createdBy,
-        LocalDateTime modifiedAt, String modifiedBy, int hit) {
-        return new ArticleDto(id, member, classRoom, title, content, articleType, createdAt, createdBy, modifiedAt, modifiedBy, hit);
+    public static ArticleDto of(MemberDto member, ClassRoomDto classRoom, Long id, String title, String content, ArticleType articleType, LocalDateTime createdAt,
+        LocalDateTime modifiedAt, int hit) {
+        return new ArticleDto(id, member, classRoom, title, content, articleType, createdAt, modifiedAt, hit);
     }
 
     /**
@@ -34,23 +32,8 @@ public record ArticleDto(Long id, MemberDto member, ClassRoomDto classRoom, Stri
             entity.getContent(),
             entity.getArticleType(),
             entity.getCreatedAt(),
-            entity.getCreatedBy(),
             entity.getModifiedAt(),
-            entity.getModifiedBy(),
             entity.getHit()
-        );
-    }
-
-    /**
-     * ArticleDto를 Article로 변환해주는 메소드.
-     */
-    public static Article toEntity(ArticleDto dto) {
-        return Article.of(
-            MemberDto.toEntity(dto.member),
-            ClassRoomDto.toEntity(dto.classRoom),
-            dto.title,
-            dto.content,
-            dto.articleType
         );
     }
 }

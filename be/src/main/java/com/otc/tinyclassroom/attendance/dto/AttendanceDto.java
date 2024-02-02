@@ -4,14 +4,15 @@ import com.otc.tinyclassroom.attendance.entity.Attendance;
 import com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus;
 import com.otc.tinyclassroom.member.dto.MemberDto;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
+ * 출석 DTO.
  * DTO for {@link Attendance}.
  */
-public record AttendanceDto(MemberDto member, Timestamp checkIn, Timestamp checkOut, com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus status) implements Serializable {
+public record AttendanceDto(MemberDto member, LocalDateTime checkIn, LocalDateTime checkOut, com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus status) implements Serializable {
 
-    public static AttendanceDto of(MemberDto member, Timestamp checkIn, Timestamp checkOut, AttendanceStatus status) {
+    public static AttendanceDto of(MemberDto member, LocalDateTime checkIn, LocalDateTime checkOut, AttendanceStatus status) {
         return new AttendanceDto(member, checkIn, checkOut, status);
     }
 

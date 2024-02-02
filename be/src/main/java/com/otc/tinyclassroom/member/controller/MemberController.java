@@ -6,14 +6,13 @@ import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 멤버 컨트롤러 정의. 로그인, 회원가입.
+ * 멤버 Controller.
  */
 @RequestMapping("/api/members")
 @RestController
@@ -24,7 +23,10 @@ public class MemberController {
     private final RefreshTokenService refreshTokenService;
 
     /**
-     * 회원가입 메소드.
+     * 회원가입 요청을 처리한다.
+     *
+     * @param request 회원가입 정보
+     * @return 응답 코드, 메세지
      */
     @PostMapping("/join")
     public BaseResponse<Void> join(@RequestBody MemberJoinRequestDto request) {
@@ -32,24 +34,16 @@ public class MemberController {
         return BaseResponse.success(HttpStatus.OK.value(), "회원가입에 성공하였습니다!", null);
     }
 
-    /**
-     * 현재 로그인한 사용자의 memberId 조회 메서드.
-     */
-    @GetMapping("/currentMember")
-    public BaseResponse<String> currentMember() {
-        String currentUserId = String.valueOf(refreshTokenService.getCurrentUserId());
-        return BaseResponse.success(HttpStatus.OK.value(), "현재 로그인한 사용자의 `memberId`입니다.", currentUserId);
-    }
 
     /**
-     *  로그아웃 메서드.
-     *  Refresh Token 을 무효화 함.
+     * 로그아웃 요청을 처리한다.
+     *
+     * @return 응답코드, 메세지
      */
     @PostMapping("/logout")
-    public BaseResponse<String> logoutMember() {
-        Long currentUserId = refreshTokenService.getCurrentUserId();
+    public BaseResponse<Void> logoutMember() {
+        Long currentUserId = refreshTokenService.getCurrentMemberId();
         refreshTokenService.deleteRefreshToken(currentUserId);
-
-        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(currentUserId));
+        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", null);
     }
 }

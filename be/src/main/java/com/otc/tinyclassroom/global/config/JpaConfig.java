@@ -31,5 +31,4 @@ public class JpaConfig {
             return Optional.of(username);
         };
     }
-
 }
