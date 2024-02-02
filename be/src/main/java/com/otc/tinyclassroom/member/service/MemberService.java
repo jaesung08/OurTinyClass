@@ -10,6 +10,7 @@ import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,8 +46,8 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_ID);
         }
         // 아이디 중복 확인
-        int existingMembers = memberRepository.countByMemberIdAndNotDeleted(dto.memberId());
-        if (existingMembers > 0) {
+        Optional<Member> existingMember = memberRepository.findByMemberIdAndDeletedAtIsNotNull(dto.memberId());
+        if (existingMember.isPresent()) {
             throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
         }
         // 비밀번호 형식 확인
@@ -88,7 +89,7 @@ public class MemberService {
      * 멤버 전체 목록 조회 메서드.
      */
     @Transactional
-    public List<MemberDto> getAllMemberList() {
+    public List<MemberDto> getMemberList() {
         List<Member> members = memberRepository.findAll();
         return members.stream()
             .map(MemberDto::from)

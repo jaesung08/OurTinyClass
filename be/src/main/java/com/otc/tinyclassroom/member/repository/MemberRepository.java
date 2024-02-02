@@ -17,7 +17,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByMemberId(String memberId);
 
     // 삭제된 유저까지도 아이디 겹치는지 확인
-    @Query(value = "SELECT COUNT(*) FROM member WHERE member_id = :memberId AND deleted_at IS NULL", nativeQuery = true)
-    int countByMemberIdAndNotDeleted(@Param("memberId") String memberId);
+    Optional<Member> findByMemberIdAndDeletedAtIsNotNull(String memberId);
 
 }

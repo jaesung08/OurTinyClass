@@ -149,7 +149,7 @@ public class ArticleService {
     /**
      * 전체 게시판 목록을 불러온다.
      */
-    public List<ArticleDto> getAllArticleList() {
+    public List<ArticleDto> getArticleList() {
         List<Article> articles = articleRepository.findAll();
         return articles.stream()
             .map(ArticleDto::from)
