@@ -26,6 +26,10 @@ function SideBar() {
     navigate("/communities");
   };
 
+  const goChat = () => {
+    navigate("/chats");
+  };
+
   const onClickLogoutBtn = useCallback(async () => {
     try {
       await logout();
@@ -80,7 +84,12 @@ function SideBar() {
             placement="right"
             className="capitalize"
           >
-            <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+            <Button
+              isIconOnly
+              className="p-2 bg-lime-500"
+              size="lg"
+              onClick={goChat}
+            >
               <ComunityIcon />
             </Button>
           </Tooltip>

@@ -1,0 +1,43 @@
+$teal-50: #f0fdfa;
+$teal-100: #ccfbf1;
+$teal-200: #99f6e4;
+$teal-300: #5eead4;
+
+.cs-conversation.cs-conversation--active {
+  background-color: $teal-50;
+}
+
+.cs-conversation__unread-dot {
+  background: radial-gradient(circle at 3px 3px, $teal-100, $teal-300);
+}
+
+.cs-conversation-header {
+  background-color: $teal-50;
+}
+
+.cs-conversation-header__content .cs-conversation-header__user-name {
+  background-color: $teal-50;
+}
+.cs-conversation-header__content .cs-conversation-header__info {
+  background-color: $teal-50;
+}
+
+.cs-message--incoming .cs-message__content {
+  background-color: $teal-100;
+}
+
+.cs-message--outgoing .cs-message__content {
+  background-color: $teal-100;
+}
+
+.cs-button--attachment {
+  color: $teal-300;
+}
+
+.cs-message-input__content-editor-wrapper {
+  background-color: $teal-100;
+}
+
+.cs-message-input__content-editor {
+  background-color: $teal-100;
+}
