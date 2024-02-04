@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @AllArgsConstructor
-public enum ClassFormationErrorCode {
+public enum ClassAssignmentErrorCode {
     NO_AUTHORITY(HttpStatus.BAD_REQUEST, "권한이 없습니다."),
     CLASSROOM_NOT_FOUND(HttpStatus.BAD_REQUEST, "반이 없습니다."),
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "학생이 없습니다.");

@@ -8,15 +8,15 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class ClassFormationException extends RuntimeException {
+public class ClassAssignmentException extends RuntimeException {
 
-    private ClassFormationErrorCode errorCode;
+    private ClassAssignmentErrorCode errorCode;
     private String message;
 
     /**
      * 메세지가 없는 생성자.
      */
-    public ClassFormationException(ClassFormationErrorCode errorCode) {
+    public ClassAssignmentException(ClassAssignmentErrorCode errorCode) {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
     }

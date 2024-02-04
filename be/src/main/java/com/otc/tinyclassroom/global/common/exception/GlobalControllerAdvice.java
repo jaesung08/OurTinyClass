@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.global.common.exception;
 
-import com.otc.tinyclassroom.classformation.exception.ClassFormationException;
+import com.otc.tinyclassroom.classformation.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;
@@ -51,8 +51,8 @@ public class GlobalControllerAdvice {
     /**
      * ClassFormation Exception Handler.
      */
-    @ExceptionHandler(ClassFormationException.class)
-    public ResponseEntity<?> classForamtionExceptionHandler(ClassFormationException e) {
+    @ExceptionHandler(ClassAssignmentException.class)
+    public ResponseEntity<?> classAssignmentExceptionHandler(ClassAssignmentException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
             .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
