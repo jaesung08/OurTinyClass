@@ -38,7 +38,8 @@ public class MemberService {
     @Transactional
     public void join(MemberJoinRequestDto dto) {
         // 빈 필드 확인
-        if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
+        if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name()
+            .isBlank() || dto.email() == null || dto.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);
         }
         // 아이디 형식 확인
@@ -46,10 +47,12 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_ID);
         }
         // 아이디 중복 확인
-        Optional<Member> existingMember = memberRepository.findByMemberIdAndDeletedAtIsNotNull(dto.memberId());
-        if (existingMember.isPresent()) {
-            throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
-        }
+        memberRepository.findByMemberIdAndDeletedAtIsNotNull(dto.memberId()).ifPresent(
+            member -> {
+                throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
+            }
+        );
+
         // 비밀번호 형식 확인
         if (!isValidPassword(dto.password())) {
             throw new MemberException(MemberErrorCode.PASSWORD_VALIDATION_FAILED);
@@ -59,7 +62,8 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
 
-        Member member = Member.of(dto.memberId(), null, passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+        Member member = Member.of(dto.memberId(), null, passwordEncoder.encode(dto.password()),
+            dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
 
         memberRepository.save(member);
     }
@@ -127,7 +131,8 @@ public class MemberService {
             .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         // 엔티티의 필드를 갱신
-        member.updateMemberAdmin(updatedMemberDto.name(), updatedMemberDto.email(), updatedMemberDto.role());
+        member.updateMemberAdmin(updatedMemberDto.name(), updatedMemberDto.email(),
+            updatedMemberDto.role());
 
         // 갱신된 엔티티를 저장
         memberRepository.save(member);
@@ -141,7 +146,8 @@ public class MemberService {
      */
     public void checkAdmin() {
         Long currentMemberId = Long.valueOf(jwtProvider.getCurrentUserId());
-        Member currentMember = memberRepository.findById(currentMemberId).orElseThrow(() -> new MemberException(MemberErrorCode.NO_AUTHORITY));
+        Member currentMember = memberRepository.findById(currentMemberId)
+            .orElseThrow(() -> new MemberException(MemberErrorCode.NO_AUTHORITY));
         Role userRole = currentMember.getRole();
         if (userRole != Role.ROLE_ADMIN) {
             throw new MemberException(MemberErrorCode.NO_AUTHORITY);
