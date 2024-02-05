@@ -69,10 +69,16 @@ function StudentDocumentForm({
       selectedSchoolType.length
     ) {
       const formData = new FormData();
-      formData.append("quitReason", inputQuitReason);
-      formData.append("beforeSchool", inputBeforeSchool);
-      formData.append("beforeSchoolType ", selectedSchoolType);
-      formData.append("quitconfirmation ", files[0]);
+      const request = JSON.stringify({
+        quitReason: inputQuitReason,
+        beforeSchool: inputBeforeSchool,
+        beforeSchoolType: selectedSchoolType,
+      });
+      formData.append(
+        "request",
+        new Blob([request], { type: "application/json" })
+      );
+      formData.append("image", files[0]);
       onSubmit(formData);
     } else {
       Swal.fire("실패", "양식에 값을 모두 채워주세요", "warning");

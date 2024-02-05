@@ -5,6 +5,7 @@ import { Spinner } from "@/components/Elements";
 import MainDashboard from "@/feature/users/routes/MainDashboard";
 import JoinRoom from "@/feature/classroom/pages/JoinRoom";
 import Video from "@/feature/classroom/pages/meeting";
+import Certification from "@/feature/auth/routes/Certification";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ export const protectedRoutes = [
       { path: "/join-classroom", element: <JoinRoom /> },
       { path: "/video", element: <Video /> },
       { path: "*", element: <Navigate to="." /> },
+      { path: "/certificate", element: <Certification /> },
     ],
   },
 ];

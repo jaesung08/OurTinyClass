@@ -35,8 +35,12 @@ function MentorDocumentForm({
   const onSubmitForm = () => {
     if (inputBelong.trim().length && files.length) {
       const formData = new FormData();
-      formData.append("belong", inputBelong);
-      formData.append("belongDocument", files[0]);
+      const request = JSON.stringify({ belong: inputBelong });
+      formData.append(
+        "request",
+        new Blob([request], { type: "application/json" })
+      );
+      formData.append("image", files[0]);
       onSubmit(formData);
     } else {
       Swal.fire("실패", "양식에 값을 모두 채워주세요", "warning");
@@ -62,6 +66,7 @@ function MentorDocumentForm({
         maxFiles={1}
         name="files"
         onupdatefiles={onUpdateFiles}
+        labelIdle=" 끌어놓거나, 클릭해서 찾아보세요."
       />{" "}
       <Button onClick={onClickBeforeBtn} className="text-xl">
         이전
