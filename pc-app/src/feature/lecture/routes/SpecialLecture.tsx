@@ -2,8 +2,10 @@ import AppLayout from "@/components/Layout/AppLayout";
 import { LectureCard } from "../components/LectureCard";
 import { Avatar, Input } from "@nextui-org/react";
 import EditIcon from "@/assets/img/EditIcon";
+import { useNavigate } from "react-router";
 
 export function SpecialLecture() {
+  const navigator = useNavigate();
   return (
     <AppLayout>
       <section className="w-lvw h-full">
@@ -101,6 +103,7 @@ export function SpecialLecture() {
       <button
         className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
         aria-label="특강 등록"
+        onClick={() => navigator("./create")}
       >
         <EditIcon />
       </button>
