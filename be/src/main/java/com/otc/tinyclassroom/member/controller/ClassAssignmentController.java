@@ -1,12 +1,12 @@
-package com.otc.tinyclassroom.classformation.controller;
+package com.otc.tinyclassroom.member.controller;
 
-import com.otc.tinyclassroom.classformation.dto.request.AssignmentMembersRequestDto;
-import com.otc.tinyclassroom.classformation.dto.request.RandomAssignmentMemberRequestDto;
-import com.otc.tinyclassroom.classformation.dto.request.UpdateMemberClassRequestDto;
-import com.otc.tinyclassroom.classformation.service.ClassAssignmentService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.MemberDto;
+import com.otc.tinyclassroom.member.dto.request.AssignmentMembersRequestDto;
+import com.otc.tinyclassroom.member.dto.request.RandomAssignmentMemberRequestDto;
+import com.otc.tinyclassroom.member.dto.request.UpdateMemberClassRequestDto;
+import com.otc.tinyclassroom.member.service.ClassAssignmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

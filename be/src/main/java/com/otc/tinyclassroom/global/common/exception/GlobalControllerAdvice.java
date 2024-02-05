@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.global.common.exception;
 
-import com.otc.tinyclassroom.classformation.exception.ClassAssignmentException;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;

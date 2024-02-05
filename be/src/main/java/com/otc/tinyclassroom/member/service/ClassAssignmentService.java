@@ -1,13 +1,13 @@
-package com.otc.tinyclassroom.classformation.service;
+package com.otc.tinyclassroom.member.service;
 
-import com.otc.tinyclassroom.classformation.exception.ClassAssignmentErrorCode;
-import com.otc.tinyclassroom.classformation.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentErrorCode;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.ArrayList;
@@ -51,20 +51,17 @@ public class ClassAssignmentService {
     public List<MemberDto> placeMembers(List<Long> memberIds, Long classRoomId) {
         ClassRoom classRoom = getClassRoomById(classRoomId);
         List<MemberDto> placedMembers = new ArrayList<>();
-        System.out.println("classRoom = " + classRoom);
-        System.out.println("placedMembers = " + placedMembers);
+
         for (Long memberId : memberIds) {
             Member existingMember = getMemberById(memberId);
-            System.out.println("existingMember = " + existingMember);
-            // 만약 멤버가 이미 해당 반에 속해 있지 않다면, 추가합니다.
+
+            // 멤버의 classRoom 컬럼에 추가
             existingMember.getClassRooms().add(classRoom);
-            System.out.println("existingMember2 = " + existingMember);
             Member placedMember = memberRepository.save(existingMember);
-            System.out.println("placedMember = " + placedMember);
             placedMembers.add(MemberDto.from(placedMember));
-            System.out.println("placedMembers = " + placedMembers);
+
         }
-        System.out.println("placedMembers2 = " + placedMembers);
+
         return placedMembers;
     }
 

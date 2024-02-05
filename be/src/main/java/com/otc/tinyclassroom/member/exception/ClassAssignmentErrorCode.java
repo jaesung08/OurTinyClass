@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.classformation.exception;
+package com.otc.tinyclassroom.member.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
