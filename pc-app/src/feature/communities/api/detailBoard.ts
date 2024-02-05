@@ -1,5 +1,5 @@
 import { commonAxios } from "@/lib/commonAxios";
-import { FetchArticleDetailResponse } from "../types/board";
+import { FetchArticleDetailResponse } from "..";
 
 export const getDetail = async (
   article_id: string
