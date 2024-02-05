@@ -3,7 +3,8 @@ import {
   CommunityHeaderContents,
   SearchArticlesOptions,
 } from "../assets/textContent";
-import { Board, TYPE } from "../types";
+import { Board } from "../types";
+import { CODE } from "@/types/Code";
 import {
   Button,
   Divider,
@@ -190,7 +191,7 @@ function Community() {
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [boardCategory, setBoardCategory] = useState(
-    TYPE.BOARD_CATEGORY.NOTICE
+    CODE.BOARD_CATEGORY.NOTICE
   );
   const location = useLocation();
   useEffect(() => {

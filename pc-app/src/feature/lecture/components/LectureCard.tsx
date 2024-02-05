@@ -5,11 +5,9 @@ import {
   CardFooter,
   Avatar,
   Button,
-} from '@nextui-org/react';
-import { useState } from 'react';
+} from "@nextui-org/react";
 
 export function LectureCard() {
-  const [isFollowed, setIsFollowed] = useState(false);
   return (
     <Card className="max-w-96">
       <div className="flex">
