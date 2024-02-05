@@ -15,11 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 회원 엔티티 정의 (memberId, password, name, email, point, birthday).
- *
- * @author ParkJaeseon
+ * 회원 Entity.
  */
-
 @Getter
 @Table(name = "member")
 @Entity
@@ -48,7 +45,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Setter
     @Column
-    private Role role;
+    private Role role; // 권환 ( 유저, 학생, 멘토, 선생님, 관리자)
 
     protected Member() {
     }

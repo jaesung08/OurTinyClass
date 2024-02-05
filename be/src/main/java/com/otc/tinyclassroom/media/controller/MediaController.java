@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 미디어 업로드를 컨트롤러.
+ * 미디어 Controller.
  */
 @RestController
 @RequestMapping("/api/media")

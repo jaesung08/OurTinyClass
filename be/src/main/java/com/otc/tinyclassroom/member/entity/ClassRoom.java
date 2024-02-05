@@ -10,7 +10,7 @@ import java.util.Objects;
 import lombok.Getter;
 
 /**
- * 게시판 의반, 학생의 반을 구분하기 위한 엔티티.
+ *  반 Entity.
  */
 @Getter
 @Entity
@@ -22,11 +22,11 @@ public class ClassRoom {
     private Long id;
 
     @Column(nullable = false)
-    private int year;
+    private int year; // 해당 년도
     @Column(nullable = false)
-    private int grade;
+    private int grade; // 학년
     @Column(nullable = false)
-    private int number;
+    private int number; // 반
 
     protected ClassRoom() {
     }

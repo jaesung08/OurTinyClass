@@ -36,16 +36,31 @@ public class ArticleService {
     private final JwtProvider jwtProvider;
 
     /**
-     * 게시물 조회.
+     * 검색을 통해 게시글을 조회한다.
+     *
+     * @param classRoomId   반 아이디
+     * @param articleType   게시글 타입
+     * @param searchType    검색타입
+     * @param searchKeyword 검색어
+     * @param pageable      페이지
      */
     @Transactional(readOnly = true)
     public Page<ArticleDto> searchArticles(Long classRoomId, ArticleType articleType, SearchType searchType, String searchKeyword, Pageable pageable) {
+        // 검색 키워드가 비어있는 경우
         if (searchKeyword == null || searchKeyword.isBlank()) {
-            if (classRoomId == null) {
-                return articleRepository.findByClassRoomIsNullAndArticleType(articleType, pageable).map(ArticleDto::from);
-            }
-            return articleRepository.findByClassRoom_IdAndArticleType(classRoomId, articleType, pageable).map(ArticleDto::from);
+            return searchWithoutKeyword(classRoomId, articleType, pageable);
         }
+        return searchWithKeyword(classRoomId, articleType, searchType, searchKeyword, pageable);
+    }
+
+    private Page<ArticleDto> searchWithoutKeyword(Long classRoomId, ArticleType articleType, Pageable pageable) {
+        if (classRoomId == null) {
+            return articleRepository.findByClassRoomIsNullAndArticleType(articleType, pageable).map(ArticleDto::from);
+        }
+        return articleRepository.findByClassRoom_IdAndArticleType(classRoomId, articleType, pageable).map(ArticleDto::from);
+    }
+
+    private Page<ArticleDto> searchWithKeyword(Long classRoomId, ArticleType articleType, SearchType searchType, String searchKeyword, Pageable pageable) {
         if (classRoomId == null) {
             return switch (searchType) {
                 case TITLE -> articleRepository.findByClassRoomIsNullAndArticleTypeAndTitleContaining(articleType, searchKeyword, pageable).map(ArticleDto::from);
@@ -65,7 +80,10 @@ public class ArticleService {
     }
 
     /**
-     * 게시글과 댓글을 함께 조회하는 메서드.
+     * 게시글 상세조회하기.
+     *
+     * @param articleId 게시글 Id
+     * @return 댓글을 포함한 게시글 상세정보
      */
     public ArticleWithCommentDto getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId).orElseThrow(
@@ -73,15 +91,17 @@ public class ArticleService {
         );
         article.increaseHit();
         return ArticleWithCommentDto.from(article);
-
     }
 
     /**
-     * 게시글 생성 메서드.
+     * 게시글은 생성한다.
+     *
+     * @param memberId 회원 아이디 (Long)
+     * @param request  게시글 작성 정보
      */
-    public void createArticle(Long id, ArticleCreateRequestDto request) {
+    public void createArticle(Long memberId, ArticleCreateRequestDto request) {
         // member id 찾기
-        Member member = memberRepository.findById(id).orElseThrow(
+        Member member = memberRepository.findById(memberId).orElseThrow(
             () -> new CommunityException(CommunityErrorCode.MEMBER_NOT_FOUND)
         );
         // classRoom id 찾기, 존재하지 않는 경우 null 처리
@@ -93,14 +113,19 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 삭제 메서드.
+     * 게시글 삭제한다.
+     *
+     * @param articleId 게시글 아이디
      */
-    public void removeArticle(Long articleId) {
+    public void deleteArticle(Long articleId) {
         articleRepository.deleteById(articleId);
     }
 
     /**
-     * 게시글 업데이트 메서드.
+     * 게시글 수정정보를 통해 수정한다.
+     *
+     * @param articleId 게시글 아이디
+     * @param request   게시글 수정정보
      */
     public void updateArticle(Long articleId, ArticleUpdateRequestDto request) {
         Article article = articleRepository.findById(articleId).orElseThrow(
@@ -115,7 +140,10 @@ public class ArticleService {
     }
 
     /**
-     * 게시글의 작성자를 조회하는 메서드.
+     * 게시글 아이디로부터 작성자의 Id(Long)을 가져온다.
+     *
+     * @param articleId 게시글 아이디
+     * @return 작성자 아이디 (Long)
      */
     public Long getArticleUserId(Long articleId) {
         Article article = articleRepository.findById(articleId)
@@ -127,20 +155,24 @@ public class ArticleService {
     }
 
     /**
-     * 게시글 권한이 있는지 확인한다.
+     * 게시글 아이디와 현재 유저 아이디를 비교하여 권환을 확인한다.
+     *
+     * @param articleId 게시글 아이디
      */
     public void validateAuthority(Long articleId) {
-        Long loginUserId = jwtProvider.getCurrentUserId();
-        Long articleUserId = this.getArticleUserId(articleId);
+        Long loginUserId = jwtProvider.getCurrentMemberId();
+        Long articleUserId = getArticleUserId(articleId);
         if (!loginUserId.equals(articleUserId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
         }
     }
 
     /**
-     * 현재 로그인 중인 사용자의 아이디를 리턴한다.
+     * 현재 로그인 중인 사용자의 아이디를 반환한다.
+     *
+     * @return 사용자 아이디
      */
-    public Long getCurrentUserId() {
-        return jwtProvider.getCurrentUserId();
+    public Long getCurrentMemberId() {
+        return jwtProvider.getCurrentMemberId();
     }
 }

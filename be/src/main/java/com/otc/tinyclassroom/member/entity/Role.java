@@ -3,7 +3,7 @@ package com.otc.tinyclassroom.member.entity;
 import lombok.Getter;
 
 /**
- * 사용자 ROLE 을 정의한 Enum 타입.
+ * 사용자 ROLE 을 정의한 Enum.
  */
 @Getter
 public enum Role {

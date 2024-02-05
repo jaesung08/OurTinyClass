@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 회원 관련 exception.
+ * 회원 관련 Exception.
  */
 @Getter
 @AllArgsConstructor
@@ -20,10 +20,4 @@ public class MemberException extends RuntimeException {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
     }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
 }

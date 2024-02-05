@@ -64,9 +64,6 @@ public class PrincipalDetails implements UserDetails {
         return true;
     }
 
-
-    // 계정이 활성화 상태인지
-
     /**
      * 계정이 활상화 상태인지 검증.
      */

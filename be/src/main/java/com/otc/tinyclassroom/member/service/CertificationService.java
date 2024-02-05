@@ -160,7 +160,7 @@ public class CertificationService {
     }
 
     /**
-     * ADMIN 유저만 role을 변경할 수 있음.
+     * ADMIN 유저만 role을 변경할 수 있다.
      */
     private boolean isAuthorizedForRoleChange() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

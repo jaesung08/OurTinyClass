@@ -19,5 +19,4 @@ public class CommunityException extends RuntimeException {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
     }
-
 }

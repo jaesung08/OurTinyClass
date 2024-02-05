@@ -2,13 +2,12 @@ package com.otc.tinyclassroom.global.config;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -16,17 +15,20 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @RequiredArgsConstructor
 @Configuration
-@EnableRedisRepositories
 public class RedisConfiguration {
 
-    private final RedisProperties redisProperties;
+    @Value("${jwt.token.redis.port}")
+    private int port;
+
+    @Value("${jwt.token.redis.host}")
+    private String host;
 
     /**
-     * Redis 에 연결하기 위한 RedisConnectionFactory 빈을 구성합니다.
+     * Redis 에 연결하기 위한 RedisConnectionFactory 빈을 구성.
      */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
+        return new LettuceConnectionFactory(host, port);
     }
 
     /**

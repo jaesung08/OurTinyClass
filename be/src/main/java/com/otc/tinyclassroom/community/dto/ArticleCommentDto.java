@@ -2,22 +2,19 @@ package com.otc.tinyclassroom.community.dto;
 
 import com.otc.tinyclassroom.community.entity.ArticleComment;
 import com.otc.tinyclassroom.member.dto.MemberDto;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for ArticleComment.
+ * 댓글 DTO. DTO for {@link com.otc.tinyclassroom.community.entity.ArticleComment}.
  */
-public record ArticleCommentDto(Long id, MemberDto member, ArticleDto article, String content,
-                                LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) implements Serializable {
+public record ArticleCommentDto(Long id, MemberDto member, ArticleDto article, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
 
-    public static ArticleCommentDto of(Long id, MemberDto member, ArticleDto article, String content, LocalDateTime createdAt, String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        return new ArticleCommentDto(id, member, article, content, createdAt, createdBy, modifiedAt, modifiedBy);
+    public static ArticleCommentDto of(Long id, MemberDto member, ArticleDto article, String content, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+        return new ArticleCommentDto(id, member, article, content, createdAt, modifiedAt);
     }
 
-
     /**
-     * Article Comment Dto로 변환하는 메소드.
+     * Article Comment DTO로 변환하는 메소드.
      */
     public static ArticleCommentDto from(ArticleComment entity) {
         return new ArticleCommentDto(
@@ -26,20 +23,7 @@ public record ArticleCommentDto(Long id, MemberDto member, ArticleDto article, S
             ArticleDto.from(entity.getArticle()),
             entity.getContent(),
             entity.getCreatedAt(),
-            entity.getCreatedBy(),
-            entity.getModifiedAt(),
-            entity.getModifiedBy()
-        );
-    }
-
-    /**
-     * 게시글 Dto를 게시글 Entity로 변환하는 메소드.
-     */
-    public static ArticleComment toEntity(ArticleCommentDto dto) {
-        return ArticleComment.of(
-            MemberDto.toEntity(dto.member()),
-            ArticleDto.toEntity(dto.article()),
-            dto.content()
+            entity.getModifiedAt()
         );
     }
 

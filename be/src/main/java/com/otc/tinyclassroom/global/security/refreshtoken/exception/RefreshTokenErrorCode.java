@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 등업 관련 exception.
+ * RefreshToken 에러 코드.
  */
 @Getter
 @AllArgsConstructor

@@ -13,6 +13,9 @@ public class RefreshTokenException extends RuntimeException {
     private RefreshTokenErrorCode errorCode;
     private String message;
 
+    /**
+     * 메세지가 없는 생성자.
+     */
     public RefreshTokenException(RefreshTokenErrorCode errorCode) {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();

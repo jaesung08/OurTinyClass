@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 멤버 컨트롤러 정의. 로그인, 회원가입.
+ * 멤버 Controller.
  */
 @RequestMapping("/api/members")
 @RestController
@@ -34,7 +34,10 @@ public class MemberController {
     private final CertificationService certificationService;
 
     /**
-     * 회원가입 메소드.
+     * 회원가입 요청을 처리한다.
+     *
+     * @param request 회원가입 정보
+     * @return 응답 코드, 메세지
      */
     @PostMapping("/join")
     public BaseResponse<Void> join(@RequestBody MemberJoinRequestDto request) {
