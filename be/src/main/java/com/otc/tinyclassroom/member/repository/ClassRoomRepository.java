@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * 교실 repository.
+ * 반 Repository.
  */
 @Repository
 public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long> {
-
 }

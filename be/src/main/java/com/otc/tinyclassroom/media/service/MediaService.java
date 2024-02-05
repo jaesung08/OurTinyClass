@@ -4,18 +4,18 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.otc.tinyclassroom.media.exception.MediaErrorCode;
 import com.otc.tinyclassroom.media.exception.MediaException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
- * 미디어 서비스 로직.
+ * 미디어 service.
  */
 @Service
 @RequiredArgsConstructor
@@ -27,15 +27,17 @@ public class MediaService {
     private String bucket;
 
     /**
-     * 파일 확장자 검증 리스트
+     * 파일 확장자 검증 리스트.
      */
     private final List<String> fileValidateList = List
-            .of(".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG");
+        .of(".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG");
 
     /**
      * MultipartFile 형식 데이터를 받아 S3에 저장한다.
-     *
      * 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
+     *
+     * @param files MultipartFile 형태 데이터
+     * @return S3에 저장된 MultipartFile의 url 리스트
      */
     public List<String> storeImages(List<MultipartFile> files) {
 
@@ -74,11 +76,9 @@ public class MediaService {
     }
 
     /**
-     * 파일 유효성 검사.
+     * 파일 유효성 검사. 파일의 확장자가 검증 리스트(fileValidateList)에 포함되었는지 검증
      *
-     * 파일의 확장자가 검증 리스트(fileValidateList)에 포함되었는지 검증
-     *
-     * @return ".xxx" 형태의 파일 확장자 문자열
+     * @return ".xxx" 형태의 파일 확장자 문자열.
      * @throws MediaException 파일명이 존재하지 않거나 파일의 확장자가 검증 리스트에 포함되지 않았을 경우
      */
     private String getFileNameExtension(String fileName) {

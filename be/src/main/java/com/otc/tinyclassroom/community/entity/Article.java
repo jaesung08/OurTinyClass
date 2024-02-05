@@ -45,10 +45,10 @@ public class Article extends AuditingFields {
 
     @Setter
     @Column(nullable = false, length = 1000)
-    private String title;
+    private String title; // 제목
     @Setter
     @Column(nullable = false, length = 10000)
-    private String content;
+    private String content; // 내용
     @Column
     private int hit;
     @Column(nullable = false)

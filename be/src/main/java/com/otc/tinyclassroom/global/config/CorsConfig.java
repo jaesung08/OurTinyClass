@@ -13,7 +13,7 @@ import org.springframework.web.filter.CorsFilter;
 public class CorsConfig {
 
     /**
-     * cors filter 추가.
+     * cors filter.
      */
     @Bean
     public CorsFilter corsFilter() {

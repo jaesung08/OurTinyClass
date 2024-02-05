@@ -1,7 +1,6 @@
 package com.otc.tinyclassroom.global.security.refreshtoken.repository;
 
 import com.otc.tinyclassroom.global.security.refreshtoken.entity.RefreshToken;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 /**
- * Redis 를 사용하여 Refresh Token 을 저장하고 조회하는 리포지토리.
+ * Redis 를 사용하여 Refresh Token 을 저장하고 조회하는 Repository.
  */
 @Repository
 public class RefreshTokenRepository {
@@ -24,10 +23,11 @@ public class RefreshTokenRepository {
     }
 
     /**
-     * Redis 에 저장된 Refresh Token 정보를 저장소에 저장합.
+     * Redis에 리프레쉬토큰을 {토큰: 회원 아이디} 형태로 저장한다.
+     *
+     * @param refreshToken 리프레쉬 토큰
      */
     public void save(RefreshToken refreshToken) {
-
         redisTemplate.opsForValue().set(
             refreshToken.getRefreshToken(),
             refreshToken.getMemberId(),
@@ -37,17 +37,14 @@ public class RefreshTokenRepository {
     }
 
     /**
-     *  Refresh Token 에 해당하는 memberId 조회.
+     * 리프레쉬토큰에 해당하는 회원 아이디를 반환한다.
+     *
+     * @param refreshToken 리프레쉬 토큰
+     * @return 리프레쉬 토큰에 해당하는 회원 아이디를 반환한다.
      */
-    public Optional<String> findByRefreshToken(final String refreshToken) {
-
-        String result = Optional.ofNullable(redisTemplate.opsForValue().get(refreshToken))
+    public Optional<String> findMemberIdByRefreshToken(final String refreshToken) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(refreshToken))
             .map(Object::toString)
-            .orElseThrow(() -> new NoSuchElementException("Refresh token 이 존재하지 않습니다."));
-
-        if (result.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(result);
+            .filter(s -> !s.isEmpty());
     }
 }

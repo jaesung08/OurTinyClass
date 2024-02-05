@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 회원 서비스 로직 .
+ * 회원 Service.
  */
 @Service
 @AllArgsConstructor
@@ -25,35 +25,36 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
-     * 회원 가입 메소드.
+     * 회원가입을 수행한다.
+     *
+     * @param request 회원가입정보
      */
     @Transactional
-    public void join(MemberJoinRequestDto dto) {
+    public void join(MemberJoinRequestDto request) {
         // 빈 필드 확인
-        if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
+        if (request.memberId() == null || request.password() == null || request.name() == null || request.name().isBlank() || request.email() == null || request.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);
         }
         // 아이디 형식 확인
-        if (!isValidMemberId(dto.memberId())) {
+        if (!isValidMemberId(request.memberId())) {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_ID);
         }
         // 아이디 중복 확인
-        memberRepository.findByMemberId(dto.memberId()).ifPresent(
+        memberRepository.findByMemberId(request.memberId()).ifPresent(
             member -> {
                 throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
             }
         );
         // 비밀번호 형식 확인
-        if (!isValidPassword(dto.password())) {
+        if (!isValidPassword(request.password())) {
             throw new MemberException(MemberErrorCode.PASSWORD_VALIDATION_FAILED);
         }
         // 이메일 확인
-        if (!isValidEmail(dto.email())) {
+        if (!isValidEmail(request.email())) {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
-
         Member member = Member
-                .of(dto.memberId(), null, passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+            .of(request.memberId(), null, passwordEncoder.encode(request.password()), request.name(), request.email(), request.birthday(), INITIAL_POINT);
 
         memberRepository.save(member);
     }

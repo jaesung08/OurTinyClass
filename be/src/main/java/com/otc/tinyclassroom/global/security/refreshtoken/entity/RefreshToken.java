@@ -5,7 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 /**
- * RefreshToken 은 Redis 로 따로 관리하기 위해 분리.
+ * Redis에서 관리할 RefreshToken Entity.
  */
 @Getter
 @RedisHash(value = "refreshToken")

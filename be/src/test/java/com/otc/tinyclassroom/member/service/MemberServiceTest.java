@@ -1,10 +1,12 @@
 package com.otc.tinyclassroom.member.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.otc.tinyclassroom.global.config.WebSecurityConfig;
+import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberException;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @DisplayName("member service 테스트")
 @Import(WebSecurityConfig.class)
@@ -28,6 +31,8 @@ class MemberServiceTest {
     private MemberService sut;
     @Mock
     private MemberRepository memberRepository;
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
 
     @DisplayName("회원가입 성공")
     @Test
@@ -35,7 +40,8 @@ class MemberServiceTest {
         // Given
         // TODO: fixture로 변경
         Member member = Member.of("test123", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
-        MemberJoinRequestDto request = MemberJoinRequestDto.from(member);
+        MemberDto dto = MemberDto.from(member);
+        MemberJoinRequestDto request = MemberJoinRequestDto.from(dto);
         given(memberRepository.findByMemberId("test123")).willReturn(Optional.empty());
         given(memberRepository.save(member)).willReturn(member);
 
@@ -67,7 +73,8 @@ class MemberServiceTest {
     void givenDuplicatedMemberId_whenRequestJoin_thenThrowDuplicatedException() {
         // Given
         Member exist = Member.of("test1", null, "test1!Qa", "test", "test@gmail.com", LocalDate.now(), 0);
-        MemberJoinRequestDto request = MemberJoinRequestDto.from(exist);
+        MemberDto dto = MemberDto.from(exist);
+        MemberJoinRequestDto request = MemberJoinRequestDto.from(dto);
         given(memberRepository.findByMemberId(request.memberId())).willReturn(Optional.of(exist));
 
         // When
