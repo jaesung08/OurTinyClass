@@ -1,13 +1,17 @@
-import AppLayout from '@/components/Layout/AppLayout';
-import { Input, Select, SelectItem, Textarea, Button } from '@nextui-org/react';
-import { LectureCategory } from '../assets/textContent';
-import EditIcon from '@/assets/img/EditIcon';
+import AppLayout from "@/components/Layout/AppLayout";
+import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
+import { ClassTime, LectureCategory } from "../assets/textContent";
+import { useState } from "react";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "../assets/datepicker.scss";
 
 export const SpecialLectureCreate = () => {
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
   return (
     <AppLayout>
       <section className="w-full">
-        <p className="text-3xl ml-12 my-5">특강 생성</p>
+        <p className="text-2xl ml-12 my-5">특강 생성</p>
         <div className="flex flex-col ml-12 my-5 gap-5">
           <p className="text-lg">특강 분류</p>
           <Select
@@ -43,33 +47,29 @@ export const SpecialLectureCreate = () => {
             cacheMeasurements={true}
           />
         </div>
-        <div className="flex ml-12 my-5 gap-5">
-          <div className="flex flex-col w-2/6 gap-5">
+        <div className="flex ml-12 my-5 gap-40">
+          <div className="flex flex-col w-2/6 gap-5 relative">
             <p>특강 날짜</p>
-            <Select
-              color="default"
-              aria-label="특강 분류 선택"
-              defaultSelectedKeys={[LectureCategory[0].name]}
-              className="max-w-xs"
-            >
-              {LectureCategory.map((category) => (
-                <SelectItem key={category.name} value={category.name}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </Select>
+            <ReactDatePicker
+              className="relative px-3 w-full inline-flex shadow-sm tap-highlight-transparent bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 rounded-medium flex-col items-start justify-center gap-0 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 h-14 min-h-unit-14 py-2 cursor-pointer"
+              dateFormat="yyyy년 MM월 dd일"
+              dateFormatCalendar="yyyy년 MM월"
+              selected={startDate}
+              popperPlacement="bottom"
+              onChange={(date) => setStartDate(date)}
+            />
           </div>
           <div className="flex flex-col w-2/6 gap-5">
             <p>특강 교시</p>
             <Select
               color="default"
               aria-label="특강 분류 선택"
-              defaultSelectedKeys={[LectureCategory[0].name]}
-              className="max-w-xs"
+              defaultSelectedKeys={[ClassTime[0].name]}
+              className="max-w-full"
             >
-              {LectureCategory.map((category) => (
-                <SelectItem key={category.name} value={category.name}>
-                  {category.name}
+              {ClassTime.map((time) => (
+                <SelectItem key={time.name} value={time.value}>
+                  {time.name}
                 </SelectItem>
               ))}
             </Select>
