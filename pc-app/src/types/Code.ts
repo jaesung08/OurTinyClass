@@ -1,4 +1,27 @@
 export const CODE = {
+  // 커뮤니티 카테고리
+  BOARD_TYPE: {
+    SCHOOL: 0, // 학교 게시판
+    CLASS: 1, // 학급 게시판
+  },
+  BOARD_CATEGORY: {
+    NOTICE: 0, // 공지사항 게시판
+    FREE: 1, // 자유게시판
+    COUNSELING: 2, // 고민나눔 게시판
+    HOBBY: 3, // 취미 공유 게시판
+  },
+  // LECTURE 카테고리
+  LECTURE_CATEGORY: {
+    MATH: 0,
+    SCIENCE: 1,
+    ART: 2,
+    HEALTH: 3,
+    READING: 4,
+    FUTURE: 5,
+    COMMUNICATION: 6,
+    ETC: 7,
+  },
+  // STATUE 코드
   HTTP_STATUS_CODE: {
     // 정보 응답
     CONTINUE: 100,
