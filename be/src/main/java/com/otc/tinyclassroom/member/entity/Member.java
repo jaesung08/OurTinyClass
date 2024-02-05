@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -21,6 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
  */
 
 @Getter
+@Setter
 @Table(name = "member")
 @SQLDelete(sql = "UPDATE member m SET m.deleted_at = current_timestamp WHERE m.id = ?")
 @SQLRestriction("deleted_at is NULL")
@@ -91,16 +93,6 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(memberId);
-    }
-
-    /**
-     * 관리자의 멤버 정보 수정 메서드.
-     */
-    // 관리자가 멤버의 정보를 업데이트하는 메서드 추가
-    public void updateMemberAdmin(String name, String email, Role role) {
-        this.name = name;
-        this.email = email;
-        this.role = role;
     }
 }
 

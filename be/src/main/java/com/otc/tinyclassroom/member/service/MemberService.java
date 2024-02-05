@@ -10,7 +10,6 @@ import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,8 +37,7 @@ public class MemberService {
     @Transactional
     public void join(MemberJoinRequestDto dto) {
         // 빈 필드 확인
-        if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name()
-            .isBlank() || dto.email() == null || dto.birthday() == null) {
+        if (dto.memberId() == null || dto.password() == null || dto.name() == null || dto.name().isBlank() || dto.email() == null || dto.birthday() == null) {
             throw new MemberException(MemberErrorCode.INVALID_FIELD_VALUE);
         }
         // 아이디 형식 확인
@@ -47,11 +45,9 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_ID);
         }
         // 아이디 중복 확인
-        memberRepository.findByMemberIdAndDeletedAtIsNotNull(dto.memberId()).ifPresent(
-            member -> {
-                throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
-            }
-        );
+        memberRepository.findByMemberIdAndDeletedAtIsNotNull(dto.memberId()).ifPresent(member -> {
+            throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
+        });
 
         // 비밀번호 형식 확인
         if (!isValidPassword(dto.password())) {
@@ -62,8 +58,7 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
 
-        Member member = Member.of(dto.memberId(), null, passwordEncoder.encode(dto.password()),
-            dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
+        Member member = Member.of(dto.memberId(), null, passwordEncoder.encode(dto.password()), dto.name(), dto.email(), dto.birthday(), INITIAL_POINT);
 
         memberRepository.save(member);
     }
@@ -76,9 +71,7 @@ public class MemberService {
     }
 
     protected boolean isValidEmail(String email) {
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."
-            + "[a-zA-Z0-9_+&*-]+)*@"
-            + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
@@ -95,9 +88,7 @@ public class MemberService {
     @Transactional
     public List<MemberDto> getMemberList() {
         List<Member> members = memberRepository.findAll();
-        return members.stream()
-            .map(MemberDto::from)
-            .collect(Collectors.toList());
+        return members.stream().map(MemberDto::from).collect(Collectors.toList());
     }
 
     /**
@@ -114,8 +105,7 @@ public class MemberService {
      */
     @Transactional
     public MemberDto getMember(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         return MemberDto.from(member);
     }
 
@@ -127,15 +117,18 @@ public class MemberService {
         checkAdmin();
 
         // 해당 memberId로 멤버 엔티티를 찾아옴
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        // 엔티티의 필드를 갱신
-        member.updateMemberAdmin(updatedMemberDto.name(), updatedMemberDto.email(),
-            updatedMemberDto.role());
-
-        // 갱신된 엔티티를 저장
-        memberRepository.save(member);
+        // 업데이트할 필드가 null이 아닌 경우에만 Setter를 사용하여 엔티티의 필드를 갱신
+        if (updatedMemberDto.name() != null) {
+            member.setName(updatedMemberDto.name());
+        }
+        if (updatedMemberDto.email() != null) {
+            member.setEmail(updatedMemberDto.email());
+        }
+        if (updatedMemberDto.role() != null) {
+            member.setRole(updatedMemberDto.role());
+        }
 
         return MemberDto.from(member);
     }
@@ -146,8 +139,7 @@ public class MemberService {
      */
     public void checkAdmin() {
         Long currentMemberId = Long.valueOf(jwtProvider.getCurrentUserId());
-        Member currentMember = memberRepository.findById(currentMemberId)
-            .orElseThrow(() -> new MemberException(MemberErrorCode.NO_AUTHORITY));
+        Member currentMember = memberRepository.findById(currentMemberId).orElseThrow(() -> new MemberException(MemberErrorCode.NO_AUTHORITY));
         Role userRole = currentMember.getRole();
         if (userRole != Role.ROLE_ADMIN) {
             throw new MemberException(MemberErrorCode.NO_AUTHORITY);
