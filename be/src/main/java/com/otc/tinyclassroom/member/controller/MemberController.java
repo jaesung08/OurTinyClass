@@ -6,17 +6,16 @@ import com.otc.tinyclassroom.media.service.MediaService;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
-import com.otc.tinyclassroom.member.dto.response.RoleUpdateResponseDto;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.MemberService;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,9 +29,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
 
     private final MemberService memberService;
+    private final RefreshTokenService refreshTokenService;
     private final MediaService mediaService;
     private final CertificationService certificationService;
-    private final RefreshTokenService refreshTokenService;
 
     /**
      * 회원가입 메소드.
@@ -44,49 +43,42 @@ public class MemberController {
     }
 
     /**
-     * 현재 로그인한 사용자의 memberId 조회 메서드.
-     */
-    @GetMapping("/currentMember")
-    public BaseResponse<String> currentMember() {
-        String currentUserId = String.valueOf(refreshTokenService.getCurrentUserId());
-        return BaseResponse.success(HttpStatus.OK.value(), "현재 로그인한 사용자의 `memberId`입니다.", currentUserId);
-    }
-
-    /**
      *  로그아웃 메서드.
      *  Refresh Token 을 무효화 함.
      */
     @PostMapping("/logout")
-    public BaseResponse<String> logoutMember() {
-        String refreshTokenByUserId = refreshTokenService.getRefreshTokenByUserId(refreshTokenService.getCurrentUserId());
-        refreshTokenService.deleteRefreshToken(refreshTokenByUserId);
+    public BaseResponse<Long> logoutMember() {
+        Long memberId = refreshTokenService.getCurrentUserId();
+        String refreshToken = refreshTokenService.getRefreshTokenByUserId(memberId);
+        refreshTokenService.deleteRefreshToken(refreshToken);
 
-        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", String.valueOf(refreshTokenByUserId));
+        return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", memberId);
     }
+
 
     /**
      * 사용자 입장에서 학생 ROLE 변경 요청.
      */
     @PostMapping("/certification/student")
-    public BaseResponse<RoleUpdateResponseDto> studentRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "userInfo") StudentRoleUpdateRequestDto requestDto) {
-        // TODO : ROLE_USER 일때만 요청을 보낼 수 있도록 구현
+    public BaseResponse<List<String>> studentRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "request") StudentRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 해야하지 않을까?
         Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(files);
         List<String> urlList = result.get("urlList");
         List<String> originalName = result.get("originalName");
         certificationService.saveStudent(originalName, urlList, requestDto);
-        return BaseResponse.success(HttpStatus.OK.value(), "Student Role 업데이트 요청 성공!", null);
+        return BaseResponse.success(HttpStatus.OK.value(), "Student Role 업데이트 요청 성공!", urlList);
     }
 
     /**
      * 사용자 입장에서 Mentor ROLE 변경 요청.
      */
     @PostMapping("/certification/mentor")
-    public BaseResponse<RoleUpdateResponseDto> mentorRoleUpdate(@RequestPart(name = "image") List<MultipartFile> files, @RequestPart(name = "userInfo") MentorRoleUpdateRequestDto requestDto) {
-        // TODO : ROLE_USER 일때만 요청을 보낼 수 있도록 구현
+    public BaseResponse<?> mentorRoleUpdate(@RequestParam("image") List<MultipartFile> files, @RequestPart(name = "request") MentorRoleUpdateRequestDto requestDto) {
+        // TODO : ROLE_USER 일때만 해야하지 않을까?
         Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(files);
         List<String> urlList = result.get("urlList");
         List<String> originalName = result.get("originalName");
         certificationService.saveMentor(originalName, urlList, requestDto);
-        return BaseResponse.success(HttpStatus.OK.value(), "Mentor Role 업데이트 요청 성공!", null);
+        return BaseResponse.success(HttpStatus.OK.value(), "Mentor Role 업데이트 요청 성공!", urlList);
     }
 }

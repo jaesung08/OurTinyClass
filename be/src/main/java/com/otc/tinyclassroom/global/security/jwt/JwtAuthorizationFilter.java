@@ -96,17 +96,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
 
+            } catch (NullPointerException e) {
+                responseDto = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "해당 객체를 찾을 수 없습니다.", null);
 
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
             } catch (Exception e) {
-
+                log.info("AuthorizationFilter에서 에러 : {} ", e.toString());
                 responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "잘못된 Access Token입니다.", null);
 
                 response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
-
-
             }
         }
     }

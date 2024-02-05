@@ -60,17 +60,17 @@ public class JwtProvider {
     /**
      * 현재 로그인 한 사용자를 확인.
      */
-    public String getCurrentUserId() {
+    public Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
 
             if (principal instanceof UserDetails) {
-                return ((UserDetails) principal).getUsername();
+                return Long.valueOf(((UserDetails) principal).getUsername());
             } else {
                 // 만약 principal이 UserDetails가 아닌 다른 타입이면, 해당 타입에 맞게 처리
-                return principal.toString();
+                return Long.valueOf(principal.toString());
             }
         }
 

@@ -130,7 +130,7 @@ public class ArticleService {
      * 게시글 권한이 있는지 확인한다.
      */
     public void validateAuthority(Long articleId) {
-        Long loginUserId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Long loginUserId = jwtProvider.getCurrentUserId();
         Long articleUserId = this.getArticleUserId(articleId);
         if (!loginUserId.equals(articleUserId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
@@ -141,6 +141,6 @@ public class ArticleService {
      * 현재 로그인 중인 사용자의 아이디를 리턴한다.
      */
     public Long getCurrentUserId() {
-        return Long.valueOf(jwtProvider.getCurrentUserId());
+        return jwtProvider.getCurrentUserId();
     }
 }
