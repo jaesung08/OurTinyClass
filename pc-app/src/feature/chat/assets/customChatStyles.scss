@@ -1,43 +1,56 @@
-$teal-50: #f0fdfa;
-$teal-100: #ccfbf1;
-$teal-200: #99f6e4;
-$teal-300: #5eead4;
-
+$lime-50: #f7fee7;
+$lime-100: #ecfccb;
+$lime-200: #d9f99d;
+$lime-300: #bef264;
+$lime-400: #a3e635;
+$lime-900: #365314;
+$lime-950: #1a2e05;
+$green-200: #bbf7d0;
+$green-600: #16a34a;
+$indego-200: #c7d2fe;
 .cs-conversation.cs-conversation--active {
-  background-color: $teal-50;
+  background-color: $lime-50;
 }
 
 .cs-conversation__unread-dot {
-  background: radial-gradient(circle at 3px 3px, $teal-100, $teal-300);
+  background: radial-gradient(circle at 3px 3px, $lime-100, $lime-300);
 }
 
 .cs-conversation-header {
-  background-color: $teal-50;
+  background-color: $lime-50;
 }
 
 .cs-conversation-header__content .cs-conversation-header__user-name {
-  background-color: $teal-50;
+  background-color: $lime-50;
 }
 .cs-conversation-header__content .cs-conversation-header__info {
-  background-color: $teal-50;
+  background-color: $lime-50;
 }
 
 .cs-message--incoming .cs-message__content {
-  background-color: $teal-100;
+  background-color: $lime-100;
 }
 
 .cs-message--outgoing .cs-message__content {
-  background-color: $teal-100;
+  background-color: $green-200;
 }
 
 .cs-button--attachment {
-  color: $teal-300;
+  color: $lime-300;
 }
 
 .cs-message-input__content-editor-wrapper {
-  background-color: $teal-100;
+  background-color: $lime-100;
 }
 
 .cs-message-input__content-editor {
-  background-color: $teal-100;
+  background-color: $lime-100;
+}
+
+.cs-conversation.cs-conversation--active .cs-conversation__name {
+  color: $lime-900;
+}
+
+.cs-button--send {
+  color: $lime-400;
 }

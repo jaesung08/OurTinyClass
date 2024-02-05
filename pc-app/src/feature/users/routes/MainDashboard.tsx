@@ -18,39 +18,8 @@ import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import ScheduleBoard from "@/feature/schedule/components/ScheduleBoard";
-
-const dummyNotices = [
-  {
-    id: 1,
-    writer: "전용빈",
-    title:
-      "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-  {
-    id: 2,
-    writer: "전용빈",
-    title:
-      "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-  {
-    id: 3,
-    writer: "전용빈",
-    title:
-      "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-  {
-    id: 4,
-    writer: "전용빈",
-    title:
-      "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-  {
-    id: 5,
-    writer: "전용빈",
-    title:
-      "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-];
+import { searchBoard } from "@/feature/communities/api/freeBoard";
+import { Board } from "@/feature/communities";
 
 interface AttendanceCardProps {
   todayDate: dayjs.Dayjs;
@@ -129,24 +98,29 @@ function AttendanceCard({
 }
 
 function NoticeListCard() {
+  const [notices, setNotices] = useState([] as Board[]);
+  const getNotices = async () => {
+    const response = await searchBoard({
+      boardType: "notice",
+      boardSize: 3,
+    });
+    setNotices(response.data.content);
+  };
+
+  useEffect(() => {
+    getNotices();
+  }, []);
   return (
-    <div className="flex-1">
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-4">공지사항 4</h2>
-        <ul className="space-y-2">
-          {dummyNotices.slice(0, 3).map((notice) => (
-            <li id={notice.id.toString()} key={notice.id} className="flex">
-              <span className="text-sm mr-4 text-green-500">
-                {notice.writer}
-              </span>
-              <span className="text-sm truncate w-4/5">
-                09:00 시작하는 일과를 위한 준비를 하여봅씨다람쥐 아라비아 어쩌구
-                저쩌구
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className=" flex flex-grow bg-white p-4 rounded-lg shadow flex-col w-1/2">
+      <h2 className="text-lg font-semibold mb-4">공지사항</h2>
+      <ul className="space-y-2">
+        {notices.slice(0, 3).map((notice) => (
+          <li id={notice.id.toString()} key={notice.id} className="flex">
+            <span className="text-sm mr-4 text-green-500 ">{notice.name}</span>
+            <span className="text-sm truncate w-4/5">{notice.title}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -260,12 +234,12 @@ export default function MainDashBoard() {
 
   return (
     <div className="flex w-full">
-      <div className="bg-white min-h-screen w-5/6 ">
+      <div className="bg-white min-h-screen  w-3/4">
         <header className="flex justify-between items-center mb-6 shadow w-full py-5 pl-24 pr-10">
           <h1 className="text-2xl font-bold">나만의 작은 코너</h1>
           <div className="flex space-x-2"></div>
         </header>
-        <section className="flex gap-6 px-24">
+        <section className="flex flex-grow w-full gap-6 px-24">
           <AttendanceCard
             todayDate={todayDate}
             checkIn={attendanceState?.checkIn}

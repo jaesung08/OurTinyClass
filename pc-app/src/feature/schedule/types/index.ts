@@ -8,7 +8,8 @@ export interface Plan {
 }
 
 export interface Schedule {
-  id: number;
+  lectureId: number;
+  scheduleId: number;
   title: string;
   scheduleDate: string;
   dayOfWeek: 0 | 1 | 2 | 3 | 4;

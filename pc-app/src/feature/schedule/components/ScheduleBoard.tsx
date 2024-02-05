@@ -7,7 +7,8 @@ import { Plan, Schedule } from "..";
 import { getWeekSchedules } from "../api/getSchedule";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
-
+import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface CalenderHeaderProps {
   planStartDate: dayjs.Dayjs;
   onClickChangePlanDate: (isBefore: boolean) => void;
@@ -19,7 +20,7 @@ function CalenderHeader({
 }: CalenderHeaderProps) {
   return (
     <div className="flex justify-between">
-      <h3 className="text-2xl">나의 계획</h3>
+      <div></div>
       <div className="flex gap-3">
         <span>
           {`${planStartDate.format("MM월 DD일")} - ${planStartDate
@@ -28,15 +29,15 @@ function CalenderHeader({
         </span>
         <span
           onClick={() => onClickChangePlanDate(true)}
-          className=" cursor-pointer"
+          className=" cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
         >
-          ^
+          <FontAwesomeIcon icon={faCaretUp} />
         </span>
         <span
           onClick={() => onClickChangePlanDate(false)}
-          className=" cursor-pointer"
+          className=" cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
         >
-          V
+          <FontAwesomeIcon icon={faCaretDown} />
         </span>
       </div>
     </div>
@@ -49,7 +50,21 @@ function ScheduleBoard() {
   const [planStartDate, setPlanStartDate] = useState(
     dayjs().subtract(dayjs().day() - 1, "day")
   );
-  const [planList, setPlanList] = useState([] as Plan[]);
+  const [planList, setPlanList] = useState(makeDefaultPlanList());
+
+  function makeDefaultPlanList() {
+    const newPlanList = [] as Plan[];
+    for (let planIndex = 0; planIndex < 5; planIndex++) {
+      const newScheduleList = Array(6).fill(null) as Array<Schedule | null>;
+      newPlanList.push({
+        id: planIndex,
+        date: planStartDate.add(planIndex, "day").startOf("day"),
+        scheduleList: newScheduleList,
+        dayOfWeek: planIndex,
+      });
+    }
+    return newPlanList;
+  }
 
   useEffect(() => {
     const fetchScheduleList = async () => {
@@ -59,15 +74,7 @@ function ScheduleBoard() {
           planStartDate.format("YYYY-MM-DD")
         );
         if (res.data.monday == planStartDate.format("YYYY-MM-DD")) {
-          const newPlanList = [] as Plan[];
-          for (let planIndex = 0; planIndex < 5; planIndex++) {
-            newPlanList.push({
-              id: planIndex,
-              date: planStartDate.add(planIndex, "day"),
-              scheduleList: [] as Schedule[],
-              dayOfWeek: planIndex,
-            });
-          }
+          const newPlanList = makeDefaultPlanList();
           let scheduleIndex = 0;
           res.data.scheduleList.forEach((schedule) => {
             if (scheduleIndex != schedule.timeTable) {
@@ -89,7 +96,8 @@ function ScheduleBoard() {
       }
     };
     fetchScheduleList();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onClickChangePlanDate = (isBefore: boolean) => {
     if (isBefore) {
@@ -124,7 +132,6 @@ function ScheduleBoard() {
           <Divider />
           {/*가장 앞 목차 번호 끝 */}
         </ul>
-        <Divider orientation="vertical" />
         <div className="flex w-full">
           {/*시간표 부분 */}
           {planList.map((plan) => (
@@ -133,8 +140,8 @@ function ScheduleBoard() {
               {/*하루치 시간표 세로로 한줄씩 렌더링 */}
               <ul
                 className={`flex flex-col h-full w-full ${
-                  todayDate.diff(plan.date, "D") == 0
-                    ? "bg-green-50 font-bold"
+                  +todayDate.format("YYYYMMDD") == +plan.date.format("YYYYMMDD")
+                    ? "bg-green-50 font-semibold"
                     : ""
                 }`}
               >
@@ -145,9 +152,9 @@ function ScheduleBoard() {
                     getCurrentDayName(plan.date.day())?.shortKr
                   })`}
                 </li>
-                <Divider />
                 {plan.scheduleList.map((schedule, index) => (
                   <li key={index} className="h-1/6 w-full ">
+                    <Divider />
                     {schedule === null ? null : (
                       <p className=" h-full w-full text-center flex items-center justify-center">
                         {schedule.lectureType == "mentoring" ? (
@@ -159,9 +166,9 @@ function ScheduleBoard() {
                         {schedule.title}
                       </p>
                     )}
-                    <Divider />
                   </li>
                 ))}
+                <Divider />
               </ul>
             </div>
           ))}

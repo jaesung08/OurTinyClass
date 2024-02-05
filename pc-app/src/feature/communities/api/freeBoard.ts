@@ -19,6 +19,7 @@ interface SearchBoardProps {
   searchValue?: string;
   page?: number;
   isClass?: boolean;
+  boardSize?: number;
 }
 export const searchBoard = async ({
   boardType,
@@ -26,6 +27,7 @@ export const searchBoard = async ({
   searchValue,
   page,
   isClass,
+  boardSize,
 }: SearchBoardProps): Promise<FetchArticleListResponse> => {
   return await commonAxios.get(`/community/articles`, {
     params: {
@@ -34,7 +36,7 @@ export const searchBoard = async ({
       searchValue,
       searchType,
       isClass,
-      boardSize: 15,
+      boardSize: boardSize ? boardSize : 15,
     },
   });
 };

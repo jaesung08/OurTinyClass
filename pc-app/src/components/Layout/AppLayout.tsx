@@ -44,104 +44,102 @@ function SideBar() {
   }, [goLogin]);
 
   return (
-    <>
-      <article className=" bg-lime-100 min-h-screen h-full flex flex-col items-center justify-between py-10 px-5 gap-5">
-        <div className="flex flex-col items-center gap-5">
-          <Tooltip
-            color="success"
-            content={"메인 대시보드"}
-            placement="right"
-            className="capitalize"
+    <div className=" bg-lime-100 min-h-screen h-full flex flex-col items-center justify-between py-10 px-5 gap-5 ">
+      <div className="flex flex-col items-center gap-5">
+        <Tooltip
+          color="success"
+          content={"메인 대시보드"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button
+            onClick={goHome}
+            isIconOnly
+            className="p-2 bg-lime-500"
+            size="lg"
           >
-            <Button
-              onClick={goHome}
-              isIconOnly
-              className="p-2 bg-lime-500"
-              size="lg"
-            >
-              <HomeIcon />
-            </Button>
-          </Tooltip>
-          <Tooltip
-            color="success"
-            content={"커뮤니티"}
-            placement="right"
-            className="capitalize"
+            <HomeIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip
+          color="success"
+          content={"커뮤니티"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button
+            isIconOnly
+            className="p-2 bg-lime-500"
+            onClick={goComunity}
+            size="lg"
           >
-            <Button
-              isIconOnly
-              className="p-2 bg-lime-500"
-              onClick={goComunity}
-              size="lg"
-            >
-              <BoardIcon />
-            </Button>
-          </Tooltip>
+            <BoardIcon />
+          </Button>
+        </Tooltip>
 
-          <Tooltip
-            color="success"
-            content={"채팅"}
-            placement="right"
-            className="capitalize"
+        <Tooltip
+          color="success"
+          content={"채팅"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button
+            isIconOnly
+            className="p-2 bg-lime-500"
+            size="lg"
+            onClick={goChat}
           >
-            <Button
-              isIconOnly
-              className="p-2 bg-lime-500"
-              size="lg"
-              onClick={goChat}
-            >
-              <ComunityIcon />
-            </Button>
-          </Tooltip>
+            <ComunityIcon />
+          </Button>
+        </Tooltip>
 
-          <Tooltip
-            color="success"
-            content={"일정 관리"}
-            placement="right"
-            className="capitalize"
+        <Tooltip
+          color="success"
+          content={"일정 관리"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+            <CalendarIcon />
+          </Button>
+        </Tooltip>
+      </div>
+      <div className="flex flex-col items-center gap-5">
+        <Tooltip
+          color="success"
+          content={"마이 페이지"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+            <PersonIcon />
+          </Button>
+        </Tooltip>
+        <Tooltip
+          color="success"
+          content={"로그아웃"}
+          placement="right"
+          className="capitalize"
+        >
+          <Button
+            onClick={onClickLogoutBtn}
+            isIconOnly
+            className="p-2 bg-lime-500"
+            size="lg"
           >
-            <Button isIconOnly className="p-2 bg-lime-500" size="lg">
-              <CalendarIcon />
-            </Button>
-          </Tooltip>
-        </div>
-        <div className="flex flex-col items-center gap-5">
-          <Tooltip
-            color="success"
-            content={"마이 페이지"}
-            placement="right"
-            className="capitalize"
-          >
-            <Button isIconOnly className="p-2 bg-lime-500" size="lg">
-              <PersonIcon />
-            </Button>
-          </Tooltip>
-          <Tooltip
-            color="success"
-            content={"로그아웃"}
-            placement="right"
-            className="capitalize"
-          >
-            <Button
-              onClick={onClickLogoutBtn}
-              isIconOnly
-              className="p-2 bg-lime-500"
-              size="lg"
-            >
-              <LogoutIcon />
-            </Button>
-          </Tooltip>
-        </div>
-      </article>
-    </>
+            <LogoutIcon />
+          </Button>
+        </Tooltip>
+      </div>
+    </div>
   );
 }
 
 function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="flex">
+    <div className="flex w-screen ">
       <SideBar />
-      {children}
+      <div className=" flex-grow w-[92%]">{children}</div>
     </div>
   );
 }

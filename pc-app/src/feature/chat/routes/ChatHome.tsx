@@ -13,7 +13,7 @@ import "../assets/customChatStyles.scss";
 
 const ChatHome = () => {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full h-full">
       <MainContainer>
         <ConversationList>
           <Conversation
