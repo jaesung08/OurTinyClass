@@ -7,12 +7,11 @@ import lombok.Getter;
  */
 @Getter
 public enum Role {
+    ROLE_USER("USER"), ROLE_STUDENT("STUDENT"), ROLE_TEACHER("TEACHER"), ROLE_MENTOR("MENTOR"), ROLE_ADMIN("ADMIN");
 
-    ROLE_STUDENT(1), ROLE_TEACHER(2), ROLE_MENTOR(3), ROLE_ADMIN(4);
+    private final String value;
 
-    private final int value;
-
-    Role(int value) {
+    Role(String value) {
         this.value = value;
     }
 }

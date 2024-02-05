@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Refresh Token 관련 exception.
+ * RefreshToken 관련 Exception.
  */
 @Getter
 @AllArgsConstructor

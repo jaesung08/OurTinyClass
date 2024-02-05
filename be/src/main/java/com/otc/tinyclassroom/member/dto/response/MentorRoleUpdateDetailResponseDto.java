@@ -12,3 +12,4 @@ public record MentorRoleUpdateDetailResponseDto(Long articleId, String memberNam
         return new MentorRoleUpdateDetailResponseDto(articleId, memberName, birthday, belong, belongDocumentPaths);
     }
 }
+

@@ -2,6 +2,8 @@ package com.otc.tinyclassroom.member.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,6 +12,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 회원 Entity.
@@ -39,6 +42,8 @@ public class Member {
     private LocalDate birthday; // 생일
     @Column
     private int point; // 포인트
+    @Enumerated(EnumType.STRING)
+    @Setter
     @Column
     private Role role; // 권환 ( 유저, 학생, 멘토, 선생님, 관리자)
 
@@ -56,6 +61,7 @@ public class Member {
         this.email = email;
         this.birthday = birthday;
         this.point = point;
+        // TODO : 실제 배포시에는 Role.ROLE_USER 로 바꿀것!
         this.role = Role.ROLE_ADMIN;
     }
 
@@ -81,5 +87,6 @@ public class Member {
     public int hashCode() {
         return Objects.hash(memberId);
     }
+
 }
 

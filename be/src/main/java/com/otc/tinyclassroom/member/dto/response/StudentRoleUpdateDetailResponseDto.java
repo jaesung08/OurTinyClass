@@ -14,3 +14,4 @@ public record StudentRoleUpdateDetailResponseDto(Long articleId, String memberNa
         return new StudentRoleUpdateDetailResponseDto(articleId, memberName, birthday, beforeSchoolType, quitReason, beforeSchool, quitConfirmationPaths);
     }
 }
+

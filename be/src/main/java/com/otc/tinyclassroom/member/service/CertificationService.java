@@ -43,7 +43,7 @@ public class CertificationService {
             throw new CertificationException(CertificationErrorCode.NO_BELONG);
         }
 
-        Member member = memberRepository.findById(Long.valueOf(jwtProvider.getCurrentUserId())).orElseThrow(
+        Member member = memberRepository.findById(jwtProvider.getCurrentUserId()).orElseThrow(
             () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
 
@@ -60,7 +60,7 @@ public class CertificationService {
             throw new CertificationException(CertificationErrorCode.NOT_SCHOOL_TYPE, "유효한 학교타입이 아닙니다.");
         }
 
-        Member member = memberRepository.findById(Long.valueOf(jwtProvider.getCurrentUserId())).orElseThrow(
+        Member member = memberRepository.findById(jwtProvider.getCurrentUserId()).orElseThrow(
             () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
         StudentRoleUpdateRequest studentRoleUpdateRequest
@@ -107,8 +107,8 @@ public class CertificationService {
             () -> new CertificationException(CertificationErrorCode.NO_ARTICLE)
         );
         return StudentRoleUpdateDetailResponseDto.of(articleId, request.getMember().getName(), request.getMember().getBirthday(),
-            request.getBeforeSchoolType(), request.getQuitReason(),
-            request.getBeforeSchool(), request.getQuitConfirmationPaths());
+                request.getBeforeSchoolType(), request.getQuitReason(),
+                request.getBeforeSchool(), request.getQuitConfirmationPaths());
 
     }
 

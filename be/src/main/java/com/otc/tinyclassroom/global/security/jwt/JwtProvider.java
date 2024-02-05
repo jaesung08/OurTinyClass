@@ -64,7 +64,7 @@ public class JwtProvider {
      */
     public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-            .getClaim("memberId").asLong();
+            .getClaim("id").asLong();
     }
 
     /**
@@ -90,12 +90,10 @@ public class JwtProvider {
             Object principal = authentication.getPrincipal();
 
             if (principal instanceof UserDetails) {
-                String memberId = ((UserDetails) principal).getUsername();
-                return Long.valueOf(memberId);
+                return Long.valueOf(((UserDetails) principal).getUsername());
             } else {
-                // 만약 principal UserDetails 아닌 다른 타입이면, 해당 타입에 맞게 처리
-                String objId = principal.toString();
-                return Long.valueOf(objId);
+                // 만약 principal이 UserDetails가 아닌 다른 타입이면, 해당 타입에 맞게 처리
+                return Long.valueOf(principal.toString());
             }
         }
         return null; // 인증된 사용자가 없는 경우
