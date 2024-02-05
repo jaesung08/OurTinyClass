@@ -1,4 +1,3 @@
-import { Plan } from "@/feature/schedule";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import {
   Button,
@@ -6,20 +5,19 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Divider,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { checkIn } from "../../attendance/api/checkIn";
 import { Attendance } from "@/feature/attendance";
 import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
 import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import { checkOut } from "@/feature/attendance/api/checkOut";
-import { Tag } from "@/components/Elements/Tag/Tag";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import ScheduleBoard from "@/feature/schedule/components/ScheduleBoard";
 
 const dummyNotices = [
   {
@@ -51,249 +49,6 @@ const dummyNotices = [
     writer: "전용빈",
     title:
       "어제 발비, 발하에서 누웠던 것은 오랜만에 해서 그랬던 것입니다. 쿠크는 현역이에요",
-  },
-];
-
-const planList: Plan[] = [
-  {
-    id: 1,
-    date: "2024-01-23",
-    scheduleList: [
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: true,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: true,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 72,
-        isRegular: true,
-        title: "수학",
-        lectureId: 2,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "HTML + CSS",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "독서",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 3,
-      },
-    ],
-  },
-  {
-    id: 2,
-    date: "2022-01-02",
-    scheduleList: [
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 72,
-        isRegular: true,
-        title: "수학",
-        lectureId: 2,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "HTML + CSS",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "독서",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 3,
-      },
-    ],
-  },
-  {
-    id: 3,
-    date: "2022-01-03",
-    scheduleList: [
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 72,
-        isRegular: true,
-        title: "수학",
-        lectureId: 2,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "HTML + CSS",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "독서",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 3,
-      },
-    ],
-  },
-  {
-    id: 4,
-    date: "2024-01-22",
-    scheduleList: [
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 72,
-        isRegular: true,
-        title: "수학",
-        lectureId: 2,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "HTML + CSS",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "독서",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 3,
-      },
-    ],
-  },
-  {
-    id: 5,
-    date: "2022-01-05",
-    scheduleList: [
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 1,
-      },
-      {
-        isMentoring: false,
-        addUserId: 72,
-        isRegular: true,
-        title: "수학",
-        lectureId: 2,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "HTML + CSS",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "독서",
-        lectureId: 3,
-      },
-      {
-        isMentoring: false,
-        addUserId: 232,
-        isRegular: false,
-        title: "노래연습",
-        lectureId: 3,
-      },
-    ],
   },
 ];
 
@@ -396,108 +151,6 @@ function NoticeListCard() {
   );
 }
 
-interface CalenderHeaderProps {
-  planStartDate: dayjs.Dayjs;
-  onClickChangePlanDate: (isBefore: boolean) => void;
-}
-
-function CalenderHeader({
-  planStartDate,
-  onClickChangePlanDate,
-}: CalenderHeaderProps) {
-  return (
-    <div className="flex justify-between">
-      <h3 className="text-2xl">나의 계획</h3>
-      <div className="flex gap-3">
-        <span>
-          {`${planStartDate.format("MM월 DD일")} - ${planStartDate
-            .add(5, "D")
-            .format("MM월 DD일")}`}
-        </span>
-        <span
-          onClick={() => onClickChangePlanDate(true)}
-          className=" cursor-pointer"
-        >
-          ^
-        </span>
-        <span
-          onClick={() => onClickChangePlanDate(false)}
-          className=" cursor-pointer"
-        >
-          V
-        </span>
-      </div>
-    </div>
-  );
-}
-
-interface CalenderProps {
-  todayDate: dayjs.Dayjs;
-  planList: Plan[];
-}
-
-function Calender({ planList, todayDate }: CalenderProps) {
-  return (
-    <div className="flex w-full h-full">
-      <Divider orientation="vertical" />
-
-      <ul className="flex flex-col">
-        {/*가장 앞 목차 번호 */}
-        <Divider />
-        <li className=" h-10 w-10">{/* 왼쪽 맨 위 빈칸 */}</li>
-        {Array.from({ length: 6 }, (_, i) => (
-          <li key={i} className=" w-10 h-1/6 ">
-            <Divider />
-            <p className=" text-center flex justify-center items-center h-full">
-              {i + 1}
-            </p>
-          </li>
-        ))}
-        <Divider />
-        {/*가장 앞 목차 번호 끝 */}
-      </ul>
-      <Divider orientation="vertical" />
-      <div className="flex w-full">
-        {/*시간표 부분 */}
-        {planList.map((plan) => (
-          <div key={plan.id} className="flex w-1/5 h-full">
-            <Divider orientation="vertical" />
-            {/*하루치 시간표 세로로 한줄씩 렌더링 */}
-            <ul
-              className={`flex flex-col h-full w-full ${
-                todayDate.diff(dayjs(plan.date), "D") == 0
-                  ? "bg-green-50 font-bold"
-                  : ""
-              }`}
-            >
-              <Divider />
-              {/* 시간표에서 날짜 보여주는 맨 윗칸 */}
-              <li className=" w-full text-center h-10 flex items-center justify-center">
-                {`${dayjs(plan.date).format("YYYY-MM-DD")} (${
-                  getCurrentDayName(dayjs(plan.date).day())?.shortKr
-                })`}
-              </li>
-              <Divider />
-              {plan.scheduleList.map((schedule, index) => (
-                <li key={index} className="h-1/6 w-full ">
-                  <p className=" h-full w-full text-center flex items-center justify-center">
-                    {schedule.isMentoring ? (
-                      <Tag color="red">멘토링</Tag>
-                    ) : null}
-                    {schedule.isRegular ? <Tag color="blue"> 정규 </Tag> : null}
-                    {schedule.title}
-                  </p>
-                  <Divider />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <Divider orientation="vertical" />
-      </div>
-    </div>
-  );
-}
 interface CurrentLectureCardProps {
   navigator: NavigateFunction;
 }
@@ -537,23 +190,25 @@ function CurrentLectureCard({ navigator }: CurrentLectureCardProps) {
 }
 export default function MainDashBoard() {
   const todayDate = dayjs().startOf("day");
-  const [planStartDate, setPlanStartDate] = useState(todayDate);
+
   const [attendanceState, setAttendanceState] = useState<
     Attendance | undefined
   >();
   const userInfo = useRecoilValue(userState);
   const navigator = useNavigate();
 
+  const getAttendanceState = useCallback(async () => {
+    try {
+      const res = await getTodayAttendance(userInfo.memberId);
+      setAttendanceState(res.data.attendanceOnDate);
+    } catch (e) {
+      console.log(e);
+    }
+  }, [userInfo.memberId]);
+
   useEffect(() => {
     getAttendanceState();
-  }, []);
-  const onClickChangePlanDate = (isBefore: boolean) => {
-    if (isBefore) {
-      setPlanStartDate(planStartDate.subtract(7, "day")); // 일주일 빼기
-    } else {
-      setPlanStartDate(planStartDate.add(7, "day")); // 일주일 더하기
-    }
-  };
+  }, [getAttendanceState]);
 
   const checkInMutation = useMutation({
     mutationFn: checkIn,
@@ -568,9 +223,9 @@ export default function MainDashBoard() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (e: any) => {
       Swal.fire(
-        "에러 발생!",
+        "주의",
         e?.response.data.message ?? "등교에 실패하였습니다. 다시 시도해주세요.",
-        "error"
+        "warning"
       );
     },
   });
@@ -603,14 +258,6 @@ export default function MainDashBoard() {
     checkOutMutation.mutate();
   };
 
-  const getAttendanceState = async () => {
-    try {
-      const res = await getTodayAttendance(userInfo.memberId);
-      setAttendanceState(res.data.attendanceOnDate);
-    } catch (e) {
-      console.log(e);
-    }
-  };
   return (
     <div className="flex w-full">
       <div className="bg-white min-h-screen w-5/6 ">
@@ -631,11 +278,7 @@ export default function MainDashBoard() {
         </section>
         <div className="px-24 h-1/2 mt-5">
           <div className="flex flex-col gap-5 h-full">
-            <CalenderHeader
-              planStartDate={planStartDate}
-              onClickChangePlanDate={onClickChangePlanDate}
-            />
-            <Calender planList={planList} todayDate={todayDate} />
+            <ScheduleBoard />
           </div>
         </div>
       </div>
