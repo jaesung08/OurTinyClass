@@ -1,4 +1,5 @@
 import { LecturesRoutes } from "@/feature/lecture/routes/index";
+import { SocketTest } from "@/feature/socket/SocketTest";
 import { lazyImport } from "@/utils/lazyImport";
 import { Navigate } from "react-router-dom";
 
@@ -12,6 +13,10 @@ export const publicRoutes = [
   {
     path: "/lecture/*",
     element: <LecturesRoutes />,
+  },
+  {
+    path: "/test/",
+    element: <SocketTest />,
   },
 
   { path: "*", element: <Navigate to="/auth/login" /> },
