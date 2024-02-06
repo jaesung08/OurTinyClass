@@ -1,18 +1,23 @@
 package com.otc.tinyclassroom.global.config;
 
+import com.otc.tinyclassroom.chat.handler.ChatPreHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * 채팅 socket 활성화를 위한 config
+ * 채팅 socket 활성화를 위한 config.
  */
 @Configuration
 @EnableWebSocketMessageBroker
+@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private final ChatPreHandler chatPreHandler;
 
     /**
      * 메세지를 중간에서 라우팅할 메세지 브로커를 구성.
@@ -25,14 +30,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.enableSimpleBroker("/sub");
     }
 
+    /**
+     * 채팅 소켓 연결을 위한 endpoint 설정.
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
-            // websocket 연결 시 요청을 보낼 엔드포인트 설정. ex) localhost:8080/stomp/chat
-            .addEndpoint("/stomp/chat")
-            .setAllowedOriginPatterns("*");
-            // 버전이 낮은 브라우저에세도 적용 가능하게 하는 옵션.
-//            .withSockJS();
+                // websocket 연결 시 요청을 보낼 엔드포인트 설정. ex) localhost:8080/stomp/chat
+                .addEndpoint("/stomp/chat").setAllowedOriginPatterns("*");
+        //         .withSockJS(); // 버전이 낮은 브라우저에세도 적용 가능하게 하는 옵션.
+    }
 
+    /**
+     * 소켓 메세지 처리를 위한 handler.
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(chatPreHandler);
     }
 }
