@@ -75,7 +75,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         // Access Token이 재발급되었으므로 사용자 정보를 업데이트
                         PrincipalDetails principalDetails = new PrincipalDetails(member);
                         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            memberId,
+                            principalDetails,
                             null,
                             principalDetails.getAuthorities()
                         );
