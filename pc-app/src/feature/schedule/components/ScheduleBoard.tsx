@@ -1,14 +1,20 @@
 import dayjs from "dayjs";
-import { Divider } from "@nextui-org/react";
+import { Button, Divider } from "@nextui-org/react";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import { Tag } from "@/components/Elements/Tag/Tag";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Plan, Schedule } from "..";
 import { getWeekSchedules } from "../api/getSchedule";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
-import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretDown,
+  faCaretUp,
+  faSquarePlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { deleteSchedule } from "../api/deleteSchedule";
 interface CalenderHeaderProps {
   planStartDate: dayjs.Dayjs;
   onClickChangePlanDate: (isBefore: boolean) => void;
@@ -44,15 +50,79 @@ function CalenderHeader({
   );
 }
 
-function ScheduleBoard() {
+interface ScheduleContentProp {
+  schedule: Schedule;
+}
+function ScheduleContent({ schedule }: ScheduleContentProp) {
+  return (
+    <p className=" h-full w-full text-center flex items-center justify-center">
+      {schedule.lectureType == "SPECIAL_LECTURE" ? (
+        <Tag color="red">멘토링</Tag>
+      ) : null}
+      {schedule.lectureType == "REGULAR_LECTURE" ? (
+        <Tag color="blue"> 정규 </Tag>
+      ) : null}
+      {schedule.title}
+    </p>
+  );
+}
+
+interface ScheduleItemProp {
+  schedule: Schedule | null;
+  editMode: boolean;
+  onDelete: (scheduleId: number) => void;
+}
+function ScheduleItem({ schedule, editMode, onDelete }: ScheduleItemProp) {
+  if (editMode) {
+    return (
+      <div className="h-full p-2">
+        {schedule == null ? (
+          <div className="flex justify-center items-center h-full">
+            <Button isIconOnly color="success">
+              <FontAwesomeIcon icon={faSquarePlus} />
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center">
+            <div className="flex justify-end">
+              <Button
+                className="flex"
+                isIconOnly
+                onClick={() => onDelete(schedule.scheduleId)}
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  size="lg"
+                  onClick={() => onDelete(schedule.scheduleId)}
+                />
+              </Button>
+            </div>
+            <ScheduleContent schedule={schedule} />
+          </div>
+        )}
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex justify-center items-center h-full">
+        {schedule === null ? null : <ScheduleContent schedule={schedule} />}
+      </div>
+    );
+  }
+}
+interface ScheduleBoardProps {
+  editMode: boolean;
+}
+
+function ScheduleBoard({ editMode }: ScheduleBoardProps) {
   const userInfo = useRecoilValue(userState);
   const todayDate = dayjs().startOf("day");
   const [planStartDate, setPlanStartDate] = useState(
     dayjs().subtract(dayjs().day() - 1, "day")
   );
-  const [planList, setPlanList] = useState(makeDefaultPlanList());
+  const [planList, setPlanList] = useState([] as Plan[]);
 
-  function makeDefaultPlanList() {
+  const makeDefaultPlanList = useCallback(() => {
     const newPlanList = [] as Plan[];
     for (let planIndex = 0; planIndex < 5; planIndex++) {
       const newScheduleList = Array(6).fill(null) as Array<Schedule | null>;
@@ -64,40 +134,38 @@ function ScheduleBoard() {
       });
     }
     return newPlanList;
-  }
+  }, [planStartDate]);
 
-  useEffect(() => {
-    const fetchScheduleList = async () => {
-      try {
-        const res = await getWeekSchedules(
-          userInfo.memberId,
-          planStartDate.format("YYYY-MM-DD")
-        );
-        if (res.data.monday == planStartDate.format("YYYY-MM-DD")) {
-          const newPlanList = makeDefaultPlanList();
-          let scheduleIndex = 0;
-          res.data.scheduleList.forEach((schedule) => {
-            if (scheduleIndex != schedule.timeTable) {
-              for (let i = scheduleIndex; i < schedule.timeTable; i++) {
-                newPlanList[schedule.dayOfWeek].scheduleList[scheduleIndex] =
-                  null;
-              }
+  const fetchScheduleList = useCallback(async () => {
+    const newPlanList = makeDefaultPlanList();
+
+    try {
+      const res = await getWeekSchedules(
+        userInfo.memberId,
+        planStartDate.format("YYYY-MM-DD")
+      );
+      if (res.data.monday == planStartDate.format("YYYY-MM-DD")) {
+        let scheduleIndex = 0;
+        res.data.scheduleList.forEach((schedule) => {
+          if (scheduleIndex != schedule.timeTable) {
+            for (let i = scheduleIndex; i < schedule.timeTable; i++) {
+              newPlanList[schedule.dayOfWeek].scheduleList[scheduleIndex] =
+                null;
             }
-            newPlanList[schedule.dayOfWeek].scheduleList[schedule.timeTable] =
-              schedule;
-            scheduleIndex++;
-          });
-          setPlanList(newPlanList);
-        } else {
-          // 지금 화면에 보여야 할 스케줄 기간과 서버가 준 기간이 다르므로 아무 처리도 하지 않습니다.
-        }
-      } catch (e) {
-        console.error(e);
+          }
+          newPlanList[schedule.dayOfWeek].scheduleList[schedule.timeTable] =
+            schedule;
+          scheduleIndex++;
+        });
+      } else {
+        // 지금 화면에 보여야 할 스케줄 기간과 서버가 준 기간이 다르므로 아무 처리도 하지 않습니다.
       }
-    };
-    fetchScheduleList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setPlanList(newPlanList);
+    }
+  }, [makeDefaultPlanList, planStartDate, userInfo.memberId]);
 
   const onClickChangePlanDate = (isBefore: boolean) => {
     if (isBefore) {
@@ -106,6 +174,19 @@ function ScheduleBoard() {
       setPlanStartDate(planStartDate.add(7, "day")); // 일주일 더하기
     }
   };
+
+  const onDeleteSchedule = (ScheduleId: number) => {
+    try {
+      const res = deleteSchedule(ScheduleId);
+      console.log(res);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    fetchScheduleList();
+  }, [fetchScheduleList]);
 
   return (
     <div className="flex flex-col gap-5 h-full">
@@ -155,17 +236,11 @@ function ScheduleBoard() {
                 {plan.scheduleList.map((schedule, index) => (
                   <li key={index} className="h-1/6 w-full ">
                     <Divider />
-                    {schedule === null ? null : (
-                      <p className=" h-full w-full text-center flex items-center justify-center">
-                        {schedule.lectureType == "mentoring" ? (
-                          <Tag color="red">멘토링</Tag>
-                        ) : null}
-                        {!schedule.deletable ? (
-                          <Tag color="blue"> 정규 </Tag>
-                        ) : null}
-                        {schedule.title}
-                      </p>
-                    )}
+                    <ScheduleItem
+                      schedule={schedule}
+                      editMode={editMode}
+                      onDelete={onDeleteSchedule}
+                    />
                   </li>
                 ))}
                 <Divider />

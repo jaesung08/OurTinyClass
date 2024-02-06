@@ -252,7 +252,7 @@ export default function MainDashBoard() {
         </section>
         <div className="px-24 h-1/2 mt-5">
           <div className="flex flex-col gap-5 h-full">
-            <ScheduleBoard />
+            <ScheduleBoard editMode={false} />
           </div>
         </div>
       </div>

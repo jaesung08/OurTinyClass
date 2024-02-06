@@ -30,6 +30,10 @@ function SideBar() {
     navigate("/chats");
   };
 
+  const goSchedule = () => {
+    navigate("/schedule");
+  };
+
   const onClickLogoutBtn = useCallback(async () => {
     try {
       await logout();
@@ -99,7 +103,12 @@ function SideBar() {
           placement="right"
           className="capitalize"
         >
-          <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+          <Button
+            onClick={goSchedule}
+            isIconOnly
+            className="p-2 bg-lime-500"
+            size="lg"
+          >
             <CalendarIcon />
           </Button>
         </Tooltip>
