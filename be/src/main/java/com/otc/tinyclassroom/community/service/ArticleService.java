@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.community.dto.ArticleDto;
 import com.otc.tinyclassroom.community.dto.ArticleWithCommentDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleUpdateRequestDto;
+import com.otc.tinyclassroom.community.dto.response.ArticleListResponseDto;
 import com.otc.tinyclassroom.community.entity.Article;
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
@@ -149,10 +150,10 @@ public class ArticleService {
     /**
      * 전체 게시판 목록을 불러온다.
      */
-    public List<ArticleDto> getArticleList() {
+    public List<ArticleListResponseDto> getArticleList() {
         List<Article> articles = articleRepository.findAll();
         return articles.stream()
-            .map(ArticleDto::from)
+            .map(ArticleListResponseDto::from)
             .collect(Collectors.toList());
     }
 

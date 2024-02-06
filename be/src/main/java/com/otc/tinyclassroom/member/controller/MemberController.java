@@ -2,9 +2,9 @@ package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
-import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
 import com.otc.tinyclassroom.member.service.MemberService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +62,7 @@ public class MemberController {
      * 전체 멤버 목록을 반환하는 메서드.
      */
     @GetMapping("")
-    public BaseResponse<List<MemberDto>> getAllMemberList() {
+    public BaseResponse<List<AdminMemberResponseDto>> getAllMemberList() {
         return BaseResponse.success(HttpStatus.OK.value(), "멤버 전체 목록을 불러왔습니다.", memberService.getMemberList());
     }
 
@@ -70,7 +70,7 @@ public class MemberController {
      * 제공받은 멤버 삭제하는 메서드.
      */
     @DeleteMapping("/{memberId}")
-    public BaseResponse<Void> deleteMember(@PathVariable Long memberId) {
+    public BaseResponse<AdminMemberResponseDto> deleteMember(@PathVariable Long memberId) {
         memberService.deleteMember(memberId);
         return BaseResponse.success(HttpStatus.OK.value(), "멤버를 삭제하였습니다.", null);
     }
@@ -79,8 +79,8 @@ public class MemberController {
      * 멤버 정보 조회(불러오기).
      */
     @GetMapping("/{memberId}")
-    public BaseResponse<MemberDto> getMember(@PathVariable Long memberId) {
-        MemberDto member = memberService.getMember(memberId);
+    public BaseResponse<AdminMemberResponseDto> getMember(@PathVariable Long memberId) {
+        AdminMemberResponseDto member = memberService.getMember(memberId);
         return BaseResponse.success(HttpStatus.OK.value(), "멤버 조회에 성공하였습니다.", member);
     }
 
@@ -88,8 +88,8 @@ public class MemberController {
      * 멤버 정보 수정 메서드(관리자).
      */
     @PatchMapping("/{memberId}")
-    public BaseResponse<MemberDto> updateMember(@PathVariable Long memberId, @RequestBody MemberUpdateRequestDto updatedMemberDto) {
-        MemberDto updatedMember = memberService.updateMember(memberId, updatedMemberDto);
+    public BaseResponse<AdminMemberResponseDto> updateMember(@PathVariable Long memberId, @RequestBody MemberUpdateRequestDto updatedMemberDto) {
+        AdminMemberResponseDto updatedMember = memberService.updateMember(memberId, updatedMemberDto);
         return BaseResponse.success(HttpStatus.OK.value(), "멤버 수정에 성공하였습니다.", updatedMember);
     }
 }

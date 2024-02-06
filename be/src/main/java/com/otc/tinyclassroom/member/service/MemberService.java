@@ -1,9 +1,9 @@
 package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
-import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
@@ -86,9 +86,9 @@ public class MemberService {
      * 멤버 전체 목록 조회 메서드.
      */
     @Transactional
-    public List<MemberDto> getMemberList() {
+    public List<AdminMemberResponseDto> getMemberList() {
         List<Member> members = memberRepository.findAll();
-        return members.stream().map(MemberDto::from).collect(Collectors.toList());
+        return members.stream().map(AdminMemberResponseDto::from).collect(Collectors.toList());
     }
 
     /**
@@ -104,16 +104,16 @@ public class MemberService {
      * 멤버 조회 메서드.
      */
     @Transactional
-    public MemberDto getMember(Long memberId) {
+    public AdminMemberResponseDto getMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
-        return MemberDto.from(member);
+        return AdminMemberResponseDto.from(member);
     }
 
     /**
      * 멤버 정보 수정 메서드(관리자).
      */
     @Transactional
-    public MemberDto updateMember(Long memberId, MemberUpdateRequestDto updatedMemberDto) {
+    public AdminMemberResponseDto updateMember(Long memberId, MemberUpdateRequestDto updatedMemberDto) {
         checkAdmin();
 
         // 해당 memberId로 멤버 엔티티를 찾아옴
@@ -130,7 +130,7 @@ public class MemberService {
             member.setRole(updatedMemberDto.role());
         }
 
-        return MemberDto.from(member);
+        return AdminMemberResponseDto.from(member);
     }
 
 
