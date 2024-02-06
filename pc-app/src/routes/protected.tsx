@@ -6,6 +6,7 @@ import JoinRoom from "@/feature/classroom/pages/JoinRoom";
 import { CommunitiesRoutes } from "@/feature/communities/routes";
 import AppLayout from "@/components/Layout/AppLayout";
 import ChatHome from "@/feature/chat/routes/ChatHome";
+import Certification from "@/feature/auth/routes/Certification";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ export const protectedRoutes = [
       { path: "main-dashboard", element: <MainDashboard /> },
       { path: "communities/*", element: <CommunitiesRoutes /> },
       { path: "chats", element: <ChatHome /> },
+      { path: "certificates", element: <Certification /> },
     ],
   },
 ];
