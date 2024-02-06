@@ -50,4 +50,16 @@ export const CODE = {
     NOT_EXTENDED: 510,
     NETWORK_AUTHENTICATION_REQUIRED: 511,
   },
+  ROLE: {
+    UNLOGIN: 0,
+    NOMAL_MEMBER: 1,
+    STUDENT_SELECT: 2,
+    MENTOR_SELECT: 3,
+    STUDENT_READY: 4,
+    MENTOR_READY: 5,
+    STUDENT: 6,
+    MENTOR: 7,
+    TEACHER: 8,
+    MANAGER: 9,
+  },
 };

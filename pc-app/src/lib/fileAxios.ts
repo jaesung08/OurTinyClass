@@ -16,16 +16,6 @@ fileAxios.interceptors.request.use(function (config): any {
     return;
   }
 
-  if (!Cookies.get("accessToken")) {
-    const controller = new AbortController();
-
-    const cfg = {
-      ...config,
-      signal: controller.signal,
-    };
-
-    return cfg;
-  }
   config.headers = Object.assign({}, config.headers, {
     "Content-Type": "multipart/form-data",
     Authorization: Cookies.get("accessToken"),
