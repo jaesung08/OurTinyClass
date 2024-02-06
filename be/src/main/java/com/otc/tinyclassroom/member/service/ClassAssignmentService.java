@@ -2,7 +2,7 @@ package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
-import com.otc.tinyclassroom.member.dto.MemberDto;
+import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
@@ -48,18 +48,21 @@ public class ClassAssignmentService {
     /**
      * 반 편성 메서드.
      */
-    public List<MemberDto> placeMembers(List<Long> memberIds, Long classRoomId) {
+    public List<MemberClassRoomResponseDto> placeMembers(List<Long> memberIds, Long classRoomId) {
         ClassRoom classRoom = getClassRoomById(classRoomId);
-        List<MemberDto> placedMembers = new ArrayList<>();
+        List<MemberClassRoomResponseDto> placedMembers = new ArrayList<>();
 
         for (Long memberId : memberIds) {
             Member existingMember = getMemberById(memberId);
 
             // 멤버의 classRoom 컬럼에 추가
             existingMember.getClassRooms().add(classRoom);
-            Member placedMember = memberRepository.save(existingMember);
-            placedMembers.add(MemberDto.from(placedMember));
 
+            // 멤버 업데이트
+            Member placedMember = memberRepository.save(existingMember);
+
+            // 업데이트된 멤버 정보를 DTO로 변환하여 리스트에 추가
+            placedMembers.add(MemberClassRoomResponseDto.from(placedMember));
         }
 
         return placedMembers;
@@ -68,7 +71,7 @@ public class ClassAssignmentService {
     /**
      * 반 수정 메서드.
      */
-    public MemberDto updateMemberClass(Long memberId, Long classRoomId) {
+    public MemberClassRoomResponseDto updateMemberClass(Long memberId, Long classRoomId) {
         ClassRoom classRoom = getClassRoomById(classRoomId);
 
         Member existingMember = getMemberById(memberId);
@@ -80,16 +83,16 @@ public class ClassAssignmentService {
 
         Member updatedMember = memberRepository.save(existingMember);
 
-        return MemberDto.from(updatedMember);
+        return MemberClassRoomResponseDto.from(updatedMember);
     }
 
     /**
      * 반 인원 목록 조회.
      */
-    public List<MemberDto> getMembersByClassRoom(Long classRoomId) {
+    public List<MemberClassRoomResponseDto> getMembersByClassRoom(Long classRoomId) {
         List<Member> members = memberRepository.findAllByClassRoomsId(classRoomId);
 
-        return members.stream().map(MemberDto::from).collect(Collectors.toList());
+        return members.stream().map(MemberClassRoomResponseDto::from).collect(Collectors.toList());
     }
 
     /**
@@ -121,7 +124,7 @@ public class ClassAssignmentService {
     /**
      * 랜덤으로 반 편성하기.
      */
-    public List<MemberDto> randomAssignmentClassRooms(Long targetGrade, Long targetYear,
+    public List<MemberClassRoomResponseDto> randomAssignmentClassRooms(Long targetGrade, Long targetYear,
         Long targetClassRoomId) {
         // 모든 멤버 및 반 정보 조회
         List<Member> allMembers = memberRepository.findAll();
@@ -166,7 +169,7 @@ public class ClassAssignmentService {
 
         // 저장된 멤버 엔터티들을 DTO로 변환하여 반환
         return filteredMembers.stream()
-            .map(MemberDto::from)
+            .map(MemberClassRoomResponseDto::from)
             .collect(Collectors.toList());
     }
 }

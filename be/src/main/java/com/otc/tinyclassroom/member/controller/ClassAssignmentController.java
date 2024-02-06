@@ -2,10 +2,10 @@ package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
-import com.otc.tinyclassroom.member.dto.MemberDto;
 import com.otc.tinyclassroom.member.dto.request.AssignmentMembersRequestDto;
 import com.otc.tinyclassroom.member.dto.request.RandomAssignmentMemberRequestDto;
 import com.otc.tinyclassroom.member.dto.request.UpdateMemberClassRequestDto;
+import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.service.ClassAssignmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +42,9 @@ public class ClassAssignmentController {
      * 학생들 반 편성.
      */
     @PatchMapping("/members/place")
-    public BaseResponse<List<MemberDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request) {
+    public BaseResponse<List<MemberClassRoomResponseDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request) {
         classFormationService.checkTeacherOrAdmin();
-        List<MemberDto> placedMembers = classFormationService.placeMembers(request.memberIds(), request.classRoomId());
+        List<MemberClassRoomResponseDto> placedMembers = classFormationService.placeMembers(request.memberIds(), request.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "멤버들을 배치하였습니다!", placedMembers);
     }
 
@@ -52,9 +52,9 @@ public class ClassAssignmentController {
      * 학생(하나) 반 편성.
      */
     @PatchMapping("/member/updateClass")
-    public BaseResponse<MemberDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto) {
+    public BaseResponse<MemberClassRoomResponseDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto) {
         classFormationService.checkTeacherOrAdmin();
-        MemberDto updatedMember = classFormationService.updateMemberClass(dto.memberId(), dto.classRoomId());
+        MemberClassRoomResponseDto updatedMember = classFormationService.updateMemberClass(dto.memberId(), dto.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "멤버 반 변경에 성공하였습니다!", updatedMember);
     }
 
@@ -62,8 +62,8 @@ public class ClassAssignmentController {
      * 반 편성된 아이들 조회.
      */
     @GetMapping("/{classRoomId}/members")
-    public BaseResponse<List<MemberDto>> getMembersByClassRoom(@PathVariable Long classRoomId) {
-        List<MemberDto> members = classFormationService.getMembersByClassRoom(classRoomId);
+    public BaseResponse<List<MemberClassRoomResponseDto>> getMembersByClassRoom(@PathVariable Long classRoomId) {
+        List<MemberClassRoomResponseDto> members = classFormationService.getMembersByClassRoom(classRoomId);
         return BaseResponse.success(HttpStatus.OK.value(), "반의 멤버 조회에 성공하였습니다!", members);
     }
 
@@ -71,8 +71,8 @@ public class ClassAssignmentController {
      * 랜덤으로 반 편성하기.
      */
     @PatchMapping("/randomAssignment")
-    public BaseResponse<List<MemberDto>> randomAssignmentClassRooms(@RequestBody RandomAssignmentMemberRequestDto dto) {
-        List<MemberDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.targetGrade(), dto.targetYear(), dto.targetClassRoomId());
+    public BaseResponse<List<MemberClassRoomResponseDto>> randomAssignmentClassRooms(@RequestBody RandomAssignmentMemberRequestDto dto) {
+        List<MemberClassRoomResponseDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.targetGrade(), dto.targetYear(), dto.targetClassRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "랜덤으로 반을 부여하였습니다!", updatedMembers);
     }
 }
