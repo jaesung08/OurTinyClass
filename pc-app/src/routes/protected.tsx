@@ -7,6 +7,7 @@ import { CommunitiesRoutes } from "@/feature/communities/routes";
 import AppLayout from "@/components/Layout/AppLayout";
 import ChatHome from "@/feature/chat/routes/ChatHome";
 import Certification from "@/feature/auth/routes/Certification";
+import EditSchedules from "@/feature/schedule/routes/EditSchedules";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ export const protectedRoutes = [
       { path: "communities/*", element: <CommunitiesRoutes /> },
       { path: "chats", element: <ChatHome /> },
       { path: "certificates", element: <Certification /> },
+      { path: "schedule", element: <EditSchedules /> },
     ],
   },
 ];

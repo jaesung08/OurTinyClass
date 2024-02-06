@@ -257,7 +257,7 @@ function Community() {
   return (
     <div className="flex flex-col w-10/12">
       <CommunityHeader boardCategory={boardCategory} />
-      <div className="lg:w-11/12 xl:w-10/12 mx-auto flex flex-col gap-5 pt-5 items-center">
+      <div className="lg:w-11/12 xl:w-10/12 mx-auto flex flex-col gap-10 pt-10 items-center">
         <SearchBar
           searchType={searchType}
           searchKeyword={searchKeyword}
