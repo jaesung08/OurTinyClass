@@ -9,9 +9,5 @@ export const publicRoutes = [
     path: "/auth/*",
     element: <AuthRoutes />,
   },
-  {
-    path: "/admins/*",
-    element: <AdminPage />,
-  },
   { path: "*", element: <Navigate to="/auth/login" /> },
 ];

@@ -16,19 +16,15 @@ const AdminNavBar = () => {
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            <p className="text-white">유저 목록</p>
-          </Link>
+          <p className="text-white cursor-pointer">유저 목록</p>
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            <p className="text-white">게시판 관리</p>
-          </Link>
+          <p className="text-white cursor-pointer" aria-current="page">
+            게시판 관리
+          </p>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            <p className="text-white">등업 관리</p>
-          </Link>
+          <p className="text-white cursor-pointer">등업 관리</p>
         </NavbarItem>
       </NavbarContent>
     </Navbar>

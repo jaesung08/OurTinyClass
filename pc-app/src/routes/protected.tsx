@@ -5,7 +5,7 @@ import MainDashboard from "@/feature/users/routes/MainDashboard";
 import JoinRoom from "@/feature/classroom/pages/JoinRoom";
 import { CommunitiesRoutes } from "@/feature/communities/routes";
 import AppLayout from "@/components/Layout/AppLayout";
-
+import AdminPage from "@/feature/admin/routes/AdminPage";
 const App = () => {
   return (
     <AppLayout>
@@ -30,5 +30,9 @@ export const protectedRoutes = [
       { path: "main-dashboard", element: <MainDashboard /> },
       { path: "communities/*", element: <CommunitiesRoutes /> },
     ],
+  },
+  {
+    path: "/admins/*",
+    element: <AdminPage />,
   },
 ];

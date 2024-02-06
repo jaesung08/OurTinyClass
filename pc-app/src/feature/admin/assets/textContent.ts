@@ -1,0 +1,141 @@
+let COUNT = 0;
+
+export const DUMMY_DATA = [
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+  {
+    id: COUNT++,
+    name: "cola",
+    email: "hello.com",
+    birthday: "1996.06.12",
+    role: 0,
+  },
+];
+
+export const SearchUserOptions = [
+  {
+    name: "이름",
+    value: "name",
+  },
+  {
+    name: "이메일",
+    value: "email",
+  },
+];
