@@ -2,17 +2,19 @@ import { LectureCard } from "../components/LectureCard";
 import { Avatar, Input } from "@nextui-org/react";
 import EditIcon from "@/assets/img/EditIcon";
 import { useNavigate } from "react-router";
-import { deleteLecture, getLecture } from "../api/createLecture";
+import { deleteLecture, getLecture } from "../api/lecture";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "@/atoms/user";
-import { LectureType } from "../types";
+import { Lecture } from "../types";
 import { LectureCategory } from "../assets/textContent";
+
+// TODO : 특강페이지 할일
 
 export function SpecialLecture() {
   const userInfo = useRecoilState(userState);
   // TODO : Array type 으로 변경해야함
-  const [lectureLists, setLectureLists] = useState<LectureType[]>();
+  const [lectureLists, setLectureLists] = useState<Lecture[]>();
 
   const navigator = useNavigate();
   // 특강 목록 조회
@@ -40,6 +42,7 @@ export function SpecialLecture() {
       console.error(error);
     }
   };
+
   return (
     <>
       <section className="w-lvw h-full">
@@ -57,7 +60,7 @@ export function SpecialLecture() {
         </div>
         <div className="w-full h-2/6 px-12 py-5">
           <p className="text-lg">주요 특강 주제</p>
-          <div className="w-full h-52 py-8 flex gap-x-32 gap-y-16 flex-wrap overflow-y-scroll scrollbar-hide">
+          <div className="w-full h-52 py-8 flex gap-x-32 gap-y-8 flex-wrap overflow-y-scroll scrollbar-hide">
             {/* todo : 추후 데이터 map 돌려서 작성 예정 */}
             {LectureCategory.map((category) => {
               return (
@@ -79,7 +82,7 @@ export function SpecialLecture() {
         <p className="text-lg px-12 py-5">모집중인 특강 목록</p>
         <div className="w-full h-[450px] px-12 py-5 flex flex-wrap gap-10 overflow-y-scroll scrollbar-hide">
           {lectureLists &&
-            lectureLists.map((lectures: LectureType, index: number) => {
+            lectureLists.map((lectures: Lecture, index: number) => {
               return (
                 <LectureCard
                   lecture={lectures}

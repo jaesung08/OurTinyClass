@@ -1,21 +1,22 @@
-export interface LectureType {
+export interface Lecture {
   id: number;
-  approved: string | null;
-  date: string | null;
-  memberId: string | null;
-  title: string | null;
-  description: string | null;
-  dayOfWeek: number | null;
-  timeTable: number | null;
-  lectureType: number | null;
-  lectureCategory: number | null;
+  approved: string;
+  date: string;
+  memberId: string;
+  title: string;
+  description: string;
+  dayOfWeek: number;
+  timeTable: number;
+  lectureType: number;
+  lectureCategory: number;
   member: {
-    name: string | null;
-    role: number | string | null;
+    name: string;
+    role: number | string;
   };
+  lectureId?: number;
 }
 
 export interface LectureCardProps {
-  lecture: LectureType;
-  deleteHandler: (lectureId: number) => Promise<object>;
+  lecture: Lecture;
+  deleteHandler: (lectureId: number) => Promise<void>;
 }
