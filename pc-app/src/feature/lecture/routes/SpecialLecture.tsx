@@ -1,11 +1,26 @@
-import AppLayout from "@/components/Layout/AppLayout";
 import { LectureCard } from "../components/LectureCard";
 import { Avatar, Input } from "@nextui-org/react";
 import EditIcon from "@/assets/img/EditIcon";
 import { useNavigate } from "react-router";
+import { getLecture } from "../api/createLecture";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userState } from "@/atoms/user";
 
 export function SpecialLecture() {
+  const userInfo = useRecoilState(userState);
+
   const navigator = useNavigate();
+  useEffect(() => {
+    try {
+      getLecture()
+        .then((res) => console.log(res))
+        .catch((err) => console.error(err));
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   return (
     <>
       <section className="w-lvw h-full">
@@ -18,7 +33,7 @@ export function SpecialLecture() {
           />
           <div className="w-3/12 flex items-center justify-end gap-5 cursor-pointer mr-12">
             <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-            <p>Hello There!</p>
+            <p>Hello {userInfo[0].memberId}</p>
           </div>
         </div>
         <div className="w-full h-2/6 px-12 py-5">

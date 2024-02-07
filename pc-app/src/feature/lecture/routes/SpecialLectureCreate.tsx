@@ -1,4 +1,3 @@
-import AppLayout from "@/components/Layout/AppLayout";
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { ClassTime, LectureCategory } from "../assets/textContent";
 import { useEffect, useState } from "react";
@@ -8,19 +7,23 @@ import "../assets/datepicker.scss";
 // import { useRecoilState } from "recoil";
 // import { userState } from "@/atoms/user";
 import { createLecture } from "../api/createLecture";
+import { useNavigate } from "react-router-dom";
 
 export const SpecialLectureCreate = () => {
-  // user ID 가 아닌 id 값이필요함
-  // const userInfo = useRecoilState(userState);
+  // TODO : user ID 가 아닌 id 값이필요함
+  // TODO : const userInfo = useRecoilState(userState);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  // 요일은 추후 파싱처리 필요
+  // TODO : 요일은 추후 파싱처리 필요
   const [dayOfWeek, setDayOfWeek] = useState<number>(0);
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [lectureCategoryType, setLectureCategoryType] = useState<number>(0);
-  // 강의 타입 특강은 2로 고정
+  // TODO : 강의 타입 특강은 2로 고정
   const [lectureType, setLectureType] = useState<number>(2);
   const [timeTalbe, setTimeTable] = useState<number>(0);
+
+  const navigator = useNavigate();
+
   useEffect(() => {
     console.log(startDate);
   }, [startDate]);
@@ -33,7 +36,7 @@ export const SpecialLectureCreate = () => {
 
   const LectureCreate = async () => {
     try {
-      const test = await createLecture(
+      await createLecture(
         21,
         title,
         description,
@@ -41,10 +44,9 @@ export const SpecialLectureCreate = () => {
         timeTalbe,
         lectureType,
         lectureCategoryType,
-        // "2024-02-06"
         startDate
       );
-      console.log(test);
+      navigator("/lecture");
     } catch (error) {
       console.error(error);
     }

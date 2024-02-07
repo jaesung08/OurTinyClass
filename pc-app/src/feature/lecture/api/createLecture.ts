@@ -1,3 +1,4 @@
+import { API_URL } from "@/config";
 import { commonAxios } from "@/lib/commonAxios";
 
 export const createLecture = async (
@@ -8,9 +9,9 @@ export const createLecture = async (
   timeTable: number,
   lectureType: number,
   lectureCategoryType: number,
-  date: Date
+  selectDate: Date
 ) => {
-  return commonAxios.post("http://70.12.247.27:8080/api/lectures", {
+  return commonAxios.post(`${API_URL}/lectures`, {
     memberId,
     title,
     description,
@@ -18,16 +19,9 @@ export const createLecture = async (
     timeTable,
     lectureType,
     lectureCategoryType,
-    date,
+    selectDate,
   });
 };
-export const editDetail = async (
-  title: string,
-  content: string,
-  article_id: string
-) => {
-  return await commonAxios.patch(`/community/articles/${article_id}`, {
-    title,
-    content,
-  });
+export const getLecture = async () => {
+  return commonAxios.get(`${API_URL}/lectures`);
 };
