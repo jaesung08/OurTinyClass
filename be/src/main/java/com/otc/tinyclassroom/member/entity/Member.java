@@ -1,13 +1,18 @@
 package com.otc.tinyclassroom.member.entity;
 
+import com.otc.tinyclassroom.chat.entity.ChatRoomMember;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 
@@ -32,6 +37,10 @@ public class Member {
     @ManyToOne(optional = true)
     private ClassRoom classRoom;
 
+    @OneToMany
+    @JoinColumn(name = "member_id")
+    private List<ChatRoomMember> chatRoomMemberList;
+
     @Column(nullable = false)
     private String password; // 비밀번호
     @Column(nullable = false)
@@ -54,6 +63,7 @@ public class Member {
     private Member(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point) {
         this.memberId = memberId;
         this.classRoom = classRoom;
+        this.chatRoomMemberList = new ArrayList<ChatRoomMember>();
         this.password = password;
         this.name = name;
         this.email = email;
