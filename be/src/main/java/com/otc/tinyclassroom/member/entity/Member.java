@@ -22,7 +22,6 @@ import org.hibernate.annotations.SQLRestriction;
  */
 
 @Getter
-@Setter
 @Table(name = "member")
 @SQLDelete(sql = "UPDATE member m SET m.deleted_at = current_timestamp WHERE m.id = ?")
 @SQLRestriction("deleted_at is NULL")
@@ -41,14 +40,18 @@ public class Member {
 
     @Column(nullable = false)
     private String password; // 비밀번호
+    @Setter
     @Column(nullable = false)
     private String name; // 유저 이름
+    @Setter
     @Column
     private String email; // 이메일
     @Column
     private LocalDate birthday; // 생일
+    @Setter
     @Column
     private int point; // 포인트
+    @Setter
     @Column
     private Role role; // 신분
     @Column

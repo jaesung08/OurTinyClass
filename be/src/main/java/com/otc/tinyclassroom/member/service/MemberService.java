@@ -129,7 +129,6 @@ public class MemberService {
         if (updatedMemberDto.role() != null) {
             member.setRole(updatedMemberDto.role());
         }
-
         return AdminMemberResponseDto.from(member);
     }
 
