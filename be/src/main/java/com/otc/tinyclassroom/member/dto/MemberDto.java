@@ -35,9 +35,13 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
      * MemberDto를 Member로 변환하는 메소드.
      */
     public static Member toEntity(MemberDto dto) {
+        ClassRoom classRoom = null;
+        if (dto.classRoomDto() != null) {
+            classRoom = ClassRoomDto.toEntity(dto.classRoomDto());
+        }
         return Member.of(
             dto.memberId(),
-            ClassRoomDto.toEntity(dto.classRoomDto()),
+            classRoom,
             dto.password(),
             dto.name(),
             dto.email(),

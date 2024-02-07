@@ -73,18 +73,19 @@ public class WebSecurityConfig {
             )
 
             // 로그인 이전에 access token을 처리할 jwt 인가 필터 추가.
-            .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)
-
+            .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider),
+                UsernamePasswordAuthenticationFilter.class)
 
             // jwt 인증 필터 추가.
             .addFilter(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository, jwtProvider))
             .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
-                    .requestMatchers(("/api/members/join")).permitAll()
-                    .requestMatchers("/api/members/login").permitAll()
-                    .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
-                    //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
-                    //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                    .anyRequest().permitAll()
+                .requestMatchers(("/api/members/join")).permitAll()
+                .requestMatchers("/api/members/login").permitAll()
+                .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
+                .requestMatchers("/api/lectures/**").permitAll()
+                //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
+                //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .anyRequest().permitAll()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
