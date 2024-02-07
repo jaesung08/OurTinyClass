@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 export function SpecialLecture() {
   const navigator = useNavigate();
   return (
-    <AppLayout>
+    <>
       <section className="w-lvw h-full">
         <div className="flex w-full justify-between py-5 h-1/6">
           <Input
@@ -107,6 +107,6 @@ export function SpecialLecture() {
       >
         <EditIcon />
       </button>
-    </AppLayout>
+    </>
   );
 }
