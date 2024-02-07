@@ -7,18 +7,19 @@ import {
   Button,
 } from "@nextui-org/react";
 import { LectureCardProps } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export function LectureCard({
   lecture,
   deleteHandler,
 }: LectureCardProps): JSX.Element {
+  const navigator = useNavigate();
   const currentRole =
     lecture.member.role === "ROLE_ADMIN"
       ? "관리자"
       : lecture.member.role === "ROLE_MENTOR"
       ? "멘토"
       : "학생";
-
   return (
     <Card className="w-96 h-[15rem]">
       <div className="flex h-5/6 items-center">
@@ -39,7 +40,7 @@ export function LectureCard({
           </div>
         </CardHeader>
         <CardBody className="flex flex-col h-full px-3 py-0 text-small text-default-400 justify-between w-4/6">
-          <p className="pt-2 h-1/6">제목 : {lecture.title}</p>
+          <p className="pt-2 h-1/6 truncate">제목 : {lecture.title}</p>
           <p className="h-4/6">설명 : {lecture.description}</p>
           <span className="pb-2 h-1/6">수강일 : {lecture.date}</span>
         </CardBody>
@@ -47,7 +48,11 @@ export function LectureCard({
       <CardFooter className="justify-around gap-3 h-1/6">
         {currentRole === "관리자" || currentRole === "멘토" ? (
           <>
-            <Button className="w-3/6 text-white" color="success">
+            <Button
+              className="w-3/6 text-white"
+              color="success"
+              onClick={() => navigator(`./edit/${lecture.id}`)}
+            >
               수정
             </Button>
             <Button

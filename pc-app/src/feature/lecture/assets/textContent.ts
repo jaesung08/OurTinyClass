@@ -2,6 +2,10 @@ import { CODE } from "@/types/Code";
 
 export const LectureCategory = [
   {
+    id: CODE.LECTURE_CATEGORY.ALL,
+    name: "전체",
+  },
+  {
     id: CODE.LECTURE_CATEGORY.MATH,
     name: "수학",
   },
@@ -42,4 +46,11 @@ export const ClassTime = [
   { name: "4교시(13:00 ~ 13:50)", value: 3 },
   { name: "5교시(14:00 ~ 14:50)", value: 4 },
   { name: "6교시(15:00 ~ 15:50)", value: 5 },
+];
+
+export const SearchLecturesOptions = [
+  { name: "제목", value: "title" },
+  { name: "내용", value: "description" },
+  { name: "요일", value: "dayOfWeek" },
+  { name: "시간", value: "timeTable" },
 ];

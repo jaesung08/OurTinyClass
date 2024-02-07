@@ -20,6 +20,7 @@ export const CODE = {
     FUTURE: 5,
     COMMUNICATION: 6,
     ETC: 7,
+    ALL: 8,
   },
   // STATUE 코드
   HTTP_STATUS_CODE: {

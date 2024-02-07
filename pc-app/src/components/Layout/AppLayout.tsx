@@ -26,6 +26,10 @@ function SideBar() {
     navigate("/communities");
   };
 
+  const goLecture = () => {
+    navigate("/lecture");
+  };
+
   const onClickLogoutBtn = useCallback(async () => {
     try {
       await logout();
@@ -92,6 +96,21 @@ function SideBar() {
             className="capitalize"
           >
             <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+              <CalendarIcon />
+            </Button>
+          </Tooltip>
+          <Tooltip
+            color="success"
+            content={"특강 목록"}
+            placement="right"
+            className="capitalize"
+          >
+            <Button
+              isIconOnly
+              className="p-2 bg-lime-500"
+              size="lg"
+              onClick={goLecture}
+            >
               <CalendarIcon />
             </Button>
           </Tooltip>

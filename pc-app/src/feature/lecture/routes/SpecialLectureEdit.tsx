@@ -1,13 +1,17 @@
 import { Input, Select, SelectItem, Textarea, Button } from "@nextui-org/react";
 import { ClassTime, LectureCategory } from "../assets/textContent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../assets/datepicker.scss";
-import { createLecture } from "../api/lecture";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { editLecture, getEditLecture } from "../api/lecture";
 
-export const SpecialLectureCreate = () => {
+export const SpecialLectureEdit = () => {
+  const navigator = useNavigate();
+  const location = useLocation();
+  const locationLength = location.pathname.split("/");
+  const lectureId = locationLength[locationLength.length - 1];
   // TODO : user ID 가 아닌 id 값이필요함
   // TODO : const userInfo = useRecoilState(userState);
   const [title, setTitle] = useState<string>("");
@@ -20,8 +24,6 @@ export const SpecialLectureCreate = () => {
   const [lectureType, setLectureType] = useState<number>(2);
   const [timeTable, setTimeTable] = useState<number>(0);
 
-  const navigator = useNavigate();
-
   const selectTime = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setTimeTable(Number(e.target.value));
   };
@@ -29,18 +31,34 @@ export const SpecialLectureCreate = () => {
     setLectureCategoryType(Number(e.target.value));
   };
 
-  const LectureCreate = async () => {
+  useEffect(() => {
+    const getInfo = async () => {
+      try {
+        const infoDatas = await getEditLecture(Number(lectureId));
+        setStartDate(infoDatas.data.date);
+        setDescription(infoDatas.data.description);
+        setTitle(infoDatas.data.title);
+        setTimeTable(infoDatas.data.timeTable);
+        setLectureCategoryType(infoDatas.data.lectureCategoryType);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getInfo();
+  }, [lectureId]);
+
+  const lectureEdit = async (lectureId: number) => {
     try {
-      await createLecture(
-        // TODO : userId 바꿔줘야함
-        1,
+      await editLecture(
+        21,
         title,
         description,
         dayOfWeek,
         timeTable,
         lectureType,
         lectureCategoryType,
-        startDate
+        startDate,
+        lectureId
       );
       navigator("/lecture");
     } catch (error) {
@@ -120,9 +138,9 @@ export const SpecialLectureCreate = () => {
       </div>
       <Button
         className="ml-12 my-5 w-2/12 bg-lime-500 text-white"
-        onClick={() => LectureCreate()}
+        onClick={() => lectureEdit(Number(lectureId))}
       >
-        생성하기
+        수정하기
       </Button>
     </section>
   );
