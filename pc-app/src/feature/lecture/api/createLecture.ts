@@ -19,9 +19,14 @@ export const createLecture = async (
     timeTable,
     lectureType,
     lectureCategoryType,
-    selectDate,
+    date: selectDate,
   });
 };
+
 export const getLecture = async () => {
   return commonAxios.get(`${API_URL}/lectures`);
+};
+
+export const deleteLecture = async (lectureId: number) => {
+  return commonAxios.delete(`${API_URL}/lectures/${lectureId}`);
 };
