@@ -47,3 +47,9 @@ export interface FetchArticleListResponse extends BaseResponse {
 export interface FetchArticleDetailResponse extends BaseResponse {
   data: BoardDetail;
 }
+
+export interface SendChatData {
+  sender: string;
+  channelId: string;
+  content: string;
+}

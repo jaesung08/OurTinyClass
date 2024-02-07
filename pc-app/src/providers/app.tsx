@@ -5,16 +5,19 @@ import { NextUIProvider } from "@nextui-org/react";
 import { Spinner } from "@/components/Elements";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RecoilRoot } from "recoil";
+import {
+  StompSessionProvider, 
+} from "react-stomp-hooks";
+
 // Import FilePond styles
 import "filepond/dist/filepond.min.css";
 
-// Import the Image EXIF Orientation and Image Preview plugins
-// Note: These need to be installed separately
-// `npm i filepond-plugin-image-preview filepond-plugin-image-exif-orientation --save`
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 import { registerPlugin } from "react-filepond";
+import { SOCKET_URL } from "@/config";
+import Cookies from "js-cookie";
 
 // Register the plugins
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
@@ -25,8 +28,15 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
+
   return (
     <RecoilRoot>
+      <StompSessionProvider
+        url={`ws://${SOCKET_URL}/stomp/chat`}
+          connectHeaders={{
+          Authorization: Cookies.get("accessToken") ?? "", 
+        }}
+      >
       <QueryClientProvider client={queryClient}>
         <React.Suspense
           fallback={
@@ -39,7 +49,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
             <Router>{children}</Router>
           </NextUIProvider>
         </React.Suspense>
-      </QueryClientProvider>
+        </QueryClientProvider>
+        </StompSessionProvider>
     </RecoilRoot>
   );
 };

@@ -8,8 +8,8 @@ import AppLayout from "@/components/Layout/AppLayout";
 import ChatHome from "@/feature/chat/routes/ChatHome";
 import Certification from "@/feature/auth/routes/Certification";
 import EditSchedules from "@/feature/schedule/routes/EditSchedules";
-
 const App = () => {
+
   return (
     <AppLayout>
       <Suspense
