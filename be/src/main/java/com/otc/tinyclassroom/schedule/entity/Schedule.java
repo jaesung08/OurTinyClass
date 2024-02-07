@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.schedule.entity;
 
 import com.otc.tinyclassroom.lecture.entity.Lecture;
+import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,8 +26,8 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private Long memberId;
+    @ManyToOne
+    private Member member;
 
     @ManyToOne
     private Lecture lecture;
@@ -46,8 +47,8 @@ public class Schedule {
     /**
      * Schedule 기본 생성자.
      */
-    private Schedule(Long memberId, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
-        this.memberId = memberId;
+    private Schedule(Member member, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
+        this.member = member;
         this.lecture = lecture;
         this.scheduleDate = scheduleDate;
         this.deletable = deletable;
@@ -56,8 +57,8 @@ public class Schedule {
     /**
      * Schedule Entity 생성 메서드.
      */
-    public static Schedule of(Long memberId, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
-        return new Schedule(memberId, lecture, scheduleDate, deletable);
+    public static Schedule of(Member member, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
+        return new Schedule(member, lecture, scheduleDate, deletable);
     }
 
     @Override

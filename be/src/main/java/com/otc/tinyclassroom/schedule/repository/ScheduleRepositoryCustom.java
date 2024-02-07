@@ -1,7 +1,7 @@
 package com.otc.tinyclassroom.schedule.repository;
 
+import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
-import com.otc.tinyclassroom.schedule.dto.response.ScheduleDetailResponseDto;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -11,13 +11,13 @@ import java.util.Optional;
  */
 public interface ScheduleRepositoryCustom {
 
-    List<ScheduleListDto> findScheduleListByMemberId(Long memberId, LocalDate start);
+    List<ScheduleListDto> findScheduleListByMemberId(String memberId, LocalDate start);
 
     long insertSchedule();
 
     long deleteScheduleById(Long id);
 
-    Optional<ScheduleDetailResponseDto> findScheduleById(Long id);
+    Optional<ScheduleCheckDto> findScheduleById(Long id);
 
-    Optional<ScheduleDetailResponseDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTalbe);
+    Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTalbe);
 }

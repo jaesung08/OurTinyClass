@@ -1,10 +1,11 @@
 package com.otc.tinyclassroom.schedule.repository;
 
 import static com.otc.tinyclassroom.lecture.entity.QLecture.lecture;
+import static com.otc.tinyclassroom.member.entity.QMember.member;
 import static com.otc.tinyclassroom.schedule.entity.QSchedule.schedule;
 
+import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
-import com.otc.tinyclassroom.schedule.dto.response.ScheduleDetailResponseDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManagerFactory;
@@ -26,42 +27,44 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     /**
      * 원하는 날짜의 해당 멤버 스케줄을 주 단위로 반환.
      *
-     * @param memberId member pk.
+     * @param memberId memberId 멤버 아이디.
      * @param start    주의 시작일인 월요일의 날짜.
      * @return 스케줄 리스트. 날짜 오름차, 교시 오름차 순으로 정렬.
      */
     @Override
-    public List<ScheduleListDto> findScheduleListByMemberId(Long memberId, LocalDate start) {
+    public List<ScheduleListDto> findScheduleListByMemberId(String memberId, LocalDate start) {
         // 주의 종료일. 월요일 + 4 = 금요일
         LocalDate end = start.plusDays(4);
 
         List<ScheduleListDto> execute = jpaQueryFactory
-                // 생성자를 이용해 퀴리 반환값 tuple을 scheduleResponseDto 리스트로 바로 매핑.
-                .select(Projections.constructor(ScheduleListDto.class,
-                        lecture.id,
-                        lecture.title,
-                        lecture.lectureType,
-                        lecture.lectureCategoryType,
-                        schedule.scheduleDate,
-                        lecture.dayOfWeek,
-                        lecture.timeTable,
-                        schedule.deletable
-                ))
-                .from(schedule)
-                .join(schedule.lecture, lecture)
-                .where(
-                        // 스케줄 memberId와 현재 유저의 id 값이 같고
-                        schedule.memberId.eq(memberId),
-                        // scheduleDate가 start와 end 사이 안에 있고
-                        schedule.scheduleDate.between(start, end),
-                        // 소프트 딜리트 되지 않은 경우
-                        schedule.deletedAt.isNull()
-                )
-                .orderBy(
-                        schedule.scheduleDate.asc(),
-                        lecture.timeTable.asc()
-                )
-                .fetch();
+            // 생성자를 이용해 퀴리 반환값 tuple을 scheduleResponseDto 리스트로 바로 매핑.
+            .select(Projections.constructor(ScheduleListDto.class,
+                lecture.id,
+                schedule.id,
+                lecture.title,
+                lecture.lectureType,
+                lecture.lectureCategoryType,
+                schedule.scheduleDate,
+                lecture.dayOfWeek,
+                lecture.timeTable,
+                schedule.deletable
+            ))
+            .from(schedule)
+            .join(schedule.lecture, lecture)
+            .join(schedule.member, member)
+            .where(
+                // 스케줄 memberId와 현재 유저의 id 값이 같고
+                member.memberId.eq(memberId),
+                // scheduleDate가 start와 end 사이 안에 있고
+                schedule.scheduleDate.between(start, end),
+                // 소프트 딜리트 되지 않은 경우
+                schedule.deletedAt.isNull()
+            )
+            .orderBy(
+                schedule.scheduleDate.asc(),
+                lecture.timeTable.asc()
+            )
+            .fetch();
 
         return execute;
     }
@@ -105,16 +108,12 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @return 스케줄 dto 반환.
      */
     @Override
-    public Optional<ScheduleDetailResponseDto> findScheduleById(Long id) {
+    public Optional<ScheduleCheckDto> findScheduleById(Long id) {
         return Optional.ofNullable(
             jpaQueryFactory
-                .select(Projections.constructor(ScheduleDetailResponseDto.class,
+                .select(Projections.constructor(ScheduleCheckDto.class,
                     schedule.id,
-                    schedule.memberId,
-                    lecture.title,
-                    lecture.description,
-                    lecture.lectureType,
-                    lecture.lectureCategoryType,
+                    member.id,
                     schedule.scheduleDate,
                     lecture.dayOfWeek,
                     lecture.timeTable,
@@ -122,6 +121,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 ))
                 .from(schedule)
                 .join(schedule.lecture, lecture)
+                .join(schedule.member, member)
                 .where(
                     schedule.id.eq(id),
                     schedule.deletedAt.isNull()
@@ -140,26 +140,27 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @return 스케줄 Dto.
      */
     @Override
-    public Optional<ScheduleDetailResponseDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTable) {
+    public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
-                jpaQueryFactory
-                        .select(Projections.constructor(ScheduleDetailResponseDto.class,
-                                schedule.id,
-                                schedule.memberId,
-                                schedule.scheduleDate,
-                                lecture.dayOfWeek,
-                                lecture.timeTable,
-                                schedule.deletable
-                        ))
-                        .from(schedule)
-                        .join(schedule.lecture, lecture)
-                        .where(
-                                schedule.memberId.eq(memberId),
-                                schedule.scheduleDate.eq(scheduleDate),
-                                lecture.timeTable.eq(timeTable),
-                                schedule.deletedAt.isNull()
-                        )
-                        .fetchOne()
+            jpaQueryFactory
+                .select(Projections.constructor(ScheduleCheckDto.class,
+                    schedule.id,
+                    member.id,
+                    schedule.scheduleDate,
+                    lecture.dayOfWeek,
+                    lecture.timeTable,
+                    schedule.deletable
+                ))
+                .from(schedule)
+                .join(schedule.lecture, lecture)
+                .join(schedule.member, member)
+                .where(
+                    member.id.eq(memberId),
+                    schedule.scheduleDate.eq(scheduleDate),
+                    lecture.timeTable.eq(timeTable),
+                    schedule.deletedAt.isNull()
+                )
+                .fetchOne()
         );
     }
 }

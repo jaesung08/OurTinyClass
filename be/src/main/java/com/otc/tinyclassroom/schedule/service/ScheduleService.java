@@ -4,9 +4,9 @@ import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
-import com.otc.tinyclassroom.schedule.dto.response.ScheduleDetailResponseDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
 import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
 import com.otc.tinyclassroom.schedule.exception.ScheduleException;
@@ -42,7 +42,7 @@ public class ScheduleService {
      * @return 스케줄 리스트 반환.
      */
     @Transactional(readOnly = true)
-    public ScheduleListResponseDto getScheduleList(Long memberId, LocalDate scheduleDate) {
+    public ScheduleListResponseDto getScheduleList(String memberId, LocalDate scheduleDate) {
         List<ScheduleListDto> scheduleList = scheduleRepository.findScheduleListByMemberId(memberId, scheduleDate);
         return ScheduleListResponseDto.of(scheduleDate, scheduleList);
     }
@@ -69,7 +69,7 @@ public class ScheduleService {
     public void deleteSchedule(Long id) {
 
         // 삭제하려는 스케줄이 존재하지 않는 경우 exception 발생.
-        ScheduleDetailResponseDto schedule = scheduleRepository.findScheduleById(id)
+        ScheduleCheckDto schedule = scheduleRepository.findScheduleById(id)
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_LECTURE)
             );
 

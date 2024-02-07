@@ -16,11 +16,13 @@ import java.time.LocalDate;
  * @param timeTable           강의 교시.
  * @param deletable           해당 스케줄이 관리자에 의해 추가되었는지. 관리자가 추가하였으면 false.
  */
-public record ScheduleListDto(Long lectureId, String title, LectureType lectureType, LectureCategoryType lectureCategoryType, LocalDate scheduleDate, int dayOfWeek, int timeTable,
-                              Boolean deletable) {
+public record ScheduleListDto(Long lectureId, Long scheduleId, String title, LectureType lectureType,
+                              LectureCategoryType lectureCategoryType, LocalDate scheduleDate, int dayOfWeek,
+                              int timeTable, Boolean deletable) {
 
-    public static ScheduleListDto of(Long lectureId, String title, LectureType lectureType, LectureCategoryType lectureCategoryType, LocalDate scheduleDate, int dayOfWeek, int timeTable,
-        Boolean deletable) {
-        return new ScheduleListDto(lectureId, title, lectureType, lectureCategoryType, scheduleDate, dayOfWeek, timeTable, deletable);
+    public static ScheduleListDto of(Long lectureId, Long scheduleId, String title, LectureType lectureType,
+        LectureCategoryType lectureCategoryType, LocalDate scheduleDate, int dayOfWeek,
+        int timeTable, Boolean deletable) {
+        return new ScheduleListDto(lectureId, scheduleId, title, lectureType, lectureCategoryType, scheduleDate, dayOfWeek, timeTable, deletable);
     }
 }

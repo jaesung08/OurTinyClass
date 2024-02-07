@@ -31,7 +31,7 @@ public class ScheduleController {
      * 스케줄을 조회하여 해당 주의 스케줄 리스트 반환하는 메서드.
      */
     @GetMapping("/{memberId}")
-    public BaseResponse<?> findScheduleList(@PathVariable("memberId") Long memberId, @RequestParam("scheduleDate") LocalDate scheduleDate) {
+    public BaseResponse<?> findScheduleList(@PathVariable("memberId") String memberId, @RequestParam("scheduleDate") LocalDate scheduleDate) {
         ScheduleListResponseDto scheduleList = scheduleService.getScheduleList(memberId, scheduleDate);
 
         return BaseResponse.success(HttpStatus.OK.value(), "스케줄 테이블이 반환되었습니다.", scheduleList);
