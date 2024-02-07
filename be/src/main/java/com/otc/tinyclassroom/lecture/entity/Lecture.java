@@ -1,9 +1,10 @@
-<<<<<<< PATCH SET (3b3d53 feat: #122 - 시간표 서비스 구현)
 package com.otc.tinyclassroom.lecture.entity;
 
+import com.otc.tinyclassroom.lecture.entity.type.LectureApprovalStatusType;
 import com.otc.tinyclassroom.lecture.entity.type.LectureCategoryType;
 import com.otc.tinyclassroom.lecture.entity.type.LectureType;
 import com.otc.tinyclassroom.member.entity.Member;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,8 +14,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Objects;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 강의 엔티티 정의.
@@ -28,30 +31,45 @@ public class Lecture {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @Setter
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Member member;
 
+    @Setter
     @NotNull
     private String title;
 
+    @Setter
     @NotNull
     private String description;
 
+    @Setter
     @NotNull
     private int dayOfWeek;
 
+    @Setter
     @NotNull
     private int timeTable;
 
+    @Setter
     @NotNull
     @Enumerated(EnumType.STRING)
     private LectureType lectureType;
 
+    @Setter
     @NotNull
     @Enumerated(EnumType.STRING)
     private LectureCategoryType lectureCategoryType;
 
+    @Setter
     private String lectureUrl;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private LectureApprovalStatusType approved; // 특강 승인 여부
+
+    @Setter
+    private LocalDate date;
 
     protected Lecture() {
 
@@ -60,22 +78,26 @@ public class Lecture {
     /**
      * Lecture 기본 생성자.
      */
-    private Lecture(Member member, String title, String description, int dayOfWeek, int timeTable, LectureType lectureType, LectureCategoryType lectureCategoryType, String lectureUrl) {
+    private Lecture(Member member, String title, String description, int dayOfWeek, int timeTable, LectureType lectureType, LectureCategoryType lectureCategoryType, String lectureUrl,
+        LectureApprovalStatusType approved, LocalDate date) {
         this.member = member;
         this.title = title;
         this.description = description;
         this.dayOfWeek = dayOfWeek;
         this.timeTable = timeTable;
-        this.lectureType = LectureType.SPECIAL_LECTURE;
+        this.lectureType = lectureType;
         this.lectureCategoryType = lectureCategoryType;
         this.lectureUrl = lectureUrl;
+        this.approved = approved;
+        this.date = date;
     }
 
     /**
      * Lecture Entity 생성 메서드.
      */
-    public static Lecture of(Member member, String title, String description, int dayOfWeek, int timeTable, LectureType lectureType, LectureCategoryType lectureCategoryType, String lectureUrl) {
-        return new Lecture(member, title, description, dayOfWeek, timeTable, lectureType, lectureCategoryType, lectureUrl);
+    public static Lecture of(Member member, String title, String description, int dayOfWeek, int timeTable, LectureType lectureType, LectureCategoryType lectureCategoryType, String lectureUrl,
+        LectureApprovalStatusType approved, LocalDate date) {
+        return new Lecture(member, title, description, dayOfWeek, timeTable, lectureType, lectureCategoryType, lectureUrl, approved, date);
     }
 
     @Override
@@ -94,5 +116,3 @@ public class Lecture {
         return Objects.hash(id);
     }
 }
-=======
->>>>>>> BASE      (731819 Merge branch 'backend/feature/#102-image-server' into 'be')

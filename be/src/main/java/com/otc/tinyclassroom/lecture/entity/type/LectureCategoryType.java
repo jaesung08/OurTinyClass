@@ -7,5 +7,5 @@ import lombok.Getter;
  */
 @Getter
 public enum LectureCategoryType {
-    NO_CATEGORY, MATH;
+    NO_CATEGORY, KOREAN, MATH, SCIENCE, ENGLISH, MUSIC, ART, ETHICS, HOME_ECONOMICS, CAREER, HOBBY;
 }

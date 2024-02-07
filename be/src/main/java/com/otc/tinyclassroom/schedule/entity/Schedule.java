@@ -1,4 +1,3 @@
-<<<<<<< PATCH SET (3b3d53 feat: #122 - 시간표 서비스 구현)
 package com.otc.tinyclassroom.schedule.entity;
 
 import com.otc.tinyclassroom.lecture.entity.Lecture;
@@ -77,5 +76,3 @@ public class Schedule {
         return Objects.hash(id);
     }
 }
-=======
->>>>>>> BASE      (731819 Merge branch 'backend/feature/#102-image-server' into 'be')
