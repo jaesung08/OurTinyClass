@@ -2,7 +2,6 @@
 import Axios from "axios";
 
 import { API_URL } from "@/config";
-import Cookies from "js-cookie";
 import { CODE } from "@/types/Code";
 import { commonAxios } from "./commonAxios";
 
@@ -18,7 +17,7 @@ fileAxios.interceptors.request.use(function (config): any {
 
   config.headers = Object.assign({}, config.headers, {
     "Content-Type": "multipart/form-data",
-    Authorization: Cookies.get("accessToken"),
+    Authorization: localStorage.getItem("accessToken"),
   });
   return config;
 });
@@ -32,7 +31,7 @@ fileAxios.interceptors.response.use(
       response.config.url?.includes("/token/refresh")
     ) {
       const accessToken = response.headers.authorization;
-      Cookies.set("accessToken", accessToken);
+      localStorage.setItem("accessToken", accessToken);
     }
     return response.data;
   },
@@ -56,12 +55,12 @@ fileAxios.interceptors.response.use(
           const refreshTokenResult = await commonAxios.post<{
             refreshToken: string;
           }>("/members/token/refresh", {
-            refreshToken: Cookies.get("refreshToken"),
+            refreshToken: localStorage.getItem("refreshToken"),
           });
           const newRefreshToken = refreshTokenResult.data.refreshToken;
-          Cookies.set("refreshToken", newRefreshToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
           fileAxios.defaults.headers.common["Authorization"] =
-            Cookies.get("accessToken");
+            localStorage.getItem("accessToken");
           return await fileAxios(originalRequest);
         } catch (e) {
           console.log(e);

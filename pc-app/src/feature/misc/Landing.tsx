@@ -1,20 +1,20 @@
 import { Button } from "@nextui-org/react";
-import Cookies from "js-cookie";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../auth/api/logout";
 import Swal from "sweetalert2";
 import { commonAxios } from "@/lib/commonAxios";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 function Landing() {
-  const isLogined = Cookies.get("accessToken") ? true : false;
+  const userInfo = useRecoilValue(userState);
+  const isLogined = userInfo.memberId ? true : false;
   const navigate = useNavigate();
   const goLogin = useCallback(() => navigate("/auth/login"), [navigate]);
 
   const onClickLogoutBtn = useCallback(async () => {
     await logout();
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
     localStorage.clear();
     goLogin();
   }, [goLogin]);

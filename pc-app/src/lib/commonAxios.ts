@@ -2,7 +2,6 @@
 import Axios from "axios";
 
 import { API_URL } from "@/config";
-import Cookies from "js-cookie";
 import { CODE } from "@/types/Code";
 
 export const commonAxios = Axios.create({
@@ -15,19 +14,9 @@ commonAxios.interceptors.request.use(function (config): any {
     return;
   }
 
-  if (!Cookies.get("accessToken")) {
-    const controller = new AbortController();
-
-    const cfg = {
-      ...config,
-      signal: controller.signal,
-    };
-
-    return cfg;
-  }
   config.headers = Object.assign({}, config.headers, {
     "Content-Type": "application/json",
-    Authorization: Cookies.get("accessToken"),
+    Authorization: localStorage.getItem("accessToken"),
   });
   return config;
 });
@@ -41,7 +30,7 @@ commonAxios.interceptors.response.use(
       response.config.url?.includes("/token/refresh")
     ) {
       const accessToken = response.headers.authorization;
-      Cookies.set("accessToken", accessToken);
+      localStorage.setItem("accessToken", accessToken);
     }
     return response.data;
   },
@@ -65,12 +54,12 @@ commonAxios.interceptors.response.use(
           const refreshTokenResult = await commonAxios.post<{
             refreshToken: string;
           }>("/members/token/refresh", {
-            refreshToken: Cookies.get("refreshToken"),
+            refreshToken: localStorage.getItem("refreshToken"),
           });
           const newRefreshToken = refreshTokenResult.data.refreshToken;
-          Cookies.set("refreshToken", newRefreshToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
           commonAxios.defaults.headers.common["Authorization"] =
-            Cookies.get("accessToken");
+            localStorage.getItem("accessToken");
           return await commonAxios(originalRequest);
         } catch (e) {
           console.log(e);

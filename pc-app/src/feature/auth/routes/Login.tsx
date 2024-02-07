@@ -6,8 +6,8 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { userState } from "@/atoms/user";
-import Cookies from "js-cookie";
 import { useCallback } from "react";
+import { LoginResponse } from "..";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function Login() {
     mutationFn: (loginData: { id: string; password: string }) => {
       return login(loginData.id, loginData.password);
     },
-    onSuccess: (res) => {
+    onSuccess: (res: LoginResponse) => {
       // 로그인 성공 처리
       if (res.data) {
         // 정상 로그인
@@ -26,7 +26,7 @@ export default function Login() {
           point: res.data.point,
           role: res.data.role,
         });
-        Cookies.set("refreshToken", res.data.refreshToken);
+        localStorage.setItem('refreshToken', res.data.refreshToken);
         Swal.fire("성공!", "로그인에 성공하였습니다.", "success").then(() => {
           navigate("/");
         });

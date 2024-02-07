@@ -8,7 +8,6 @@ import PersonIcon from "@/assets/img/PersonIcon";
 import LogoutIcon from "@/assets/img/LogoutIcon";
 import { useCallback } from "react";
 import { logout } from "@/feature/auth/api/logout";
-import Cookies from "js-cookie";
 
 type AppLayoutProps = {
   children: React.ReactNode;
@@ -40,8 +39,6 @@ function SideBar() {
     } catch (error) {
       console.log(error);
     } finally {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
       localStorage.clear();
       goLogin();
     }
