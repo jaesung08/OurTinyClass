@@ -79,8 +79,10 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
                 .requestMatchers("/api/attendances/**").authenticated()
                 .requestMatchers("/api/classrooms/**").permitAll()
+                .requestMatchers("/api/lectures/**").permitAll()
                 //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
                 //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .anyRequest().permitAll()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 교실 기능관련 예외처리 클래스.
+ * Lecture 관련 exception.
  */
 @Getter
 @AllArgsConstructor
@@ -20,5 +20,4 @@ public class LectureException extends RuntimeException {
         this.errorCode = errorCode;
         this.message = errorCode.getMessage();
     }
-
 }

@@ -1164,3 +1164,20 @@ insert into article_comment (id, member_id, article_id, content, created_at, mod
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (998, 3, 22, 'Cras pellentesque volutpat dui. Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti. Nullam porttitor lacus at turpis.', '2023-08-22 09:00:35', '2023-10-03 18:10:50');
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (999, 2, 49, 'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus. Phasellus in felis. Donec semper sapien a libero. Nam dui. Proin leo odio, porttitor id, consequat in, consequat ut, nulla.', '2023-06-25 01:55:31', '2023-11-30 01:03:34');
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (1000, 3, 31, 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', '2023-05-21 21:46:44', '2023-06-14 12:07:02');
+
+INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`) VALUES ('1', '1', '3', 'lecture1', '수학', 'MATH', 'FREE_LECTURE');
+INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`) VALUES ('2', '4', '3', 'lecture2', '영어', 'ENGLISH', 'REGULAR_LECTURE');
+INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`) VALUES ('3', '5', '3', 'lecture3', '역사', 'NO_CATEGORY', 'SPECIAL_LECTURE');
+
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-11', '1', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-12', '2', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-14', '1', '3', false);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-11', '3', '3', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '2', '2', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-12', '1', '2', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '1', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '3', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-14', '2', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-05', '1', '1', true);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-06', '2', '1', false);
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-07', '3', '1', true);
