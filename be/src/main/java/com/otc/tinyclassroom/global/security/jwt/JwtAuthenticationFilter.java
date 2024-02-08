@@ -8,14 +8,13 @@ import com.otc.tinyclassroom.global.security.refreshtoken.repository.RefreshToke
 import com.otc.tinyclassroom.member.dto.request.MemberLoginRequestDto;
 import com.otc.tinyclassroom.member.dto.response.MemberLoginResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
-import com.otc.tinyclassroom.member.exception.MemberErrorCode;
-import com.otc.tinyclassroom.member.exception.MemberException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -43,8 +42,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
-            throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
         log.info("JwtAuthentication : 진입");
 
@@ -56,7 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.info("try loginDto : {}", loginRequestDto);
 
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginRequestDto.memberId(), loginRequestDto.password());
+                new UsernamePasswordAuthenticationToken(loginRequestDto.memberId(), loginRequestDto.password());
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
@@ -64,11 +62,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             log.info("Authentication : {}", principalDetails.getMember().getMemberId());
 
             return authentication;
-        } catch (MemberException e) {
-            log.info("MemberException: {}", e.toString());
-            throw new MemberException(MemberErrorCode.NOT_FOUND_MEMBER);
+        }  catch (AuthenticationException e) {
+            log.info("AuthenticationException: {}", e.toString());
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND); // Set 400 status code
+
+            // 클라이언트에게 전달할 오류 메시지 설정
+            BaseResponse<String> errorResponse = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "유효하지 않은 로그인 정보입니다.", null);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            try {
+                response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            return null;
+
         } catch (Exception e) {
             log.info("Exception: {}", e.toString());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Set 500 status code
             throw new RuntimeException("서버에서 오류가 발생했습니다.", e);
         }
     }
@@ -76,8 +87,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // jwt 토큰 생성 및 response 로 반환
     @Override
     protected void successfulAuthentication(
-            HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
-            throws IOException {
+        HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
+        throws IOException {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 

@@ -54,8 +54,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
             log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
 
-            responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "access token 이 존재하지 않음.", null);
-
+            responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "access token 이 존재하지 않음.", null);
+            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
@@ -96,16 +96,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
 
+            } catch (NullPointerException e) {
+                responseDto = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "해당 객체를 찾을 수 없습니다.", null);
 
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
             } catch (Exception e) {
-                responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다.", null);
+                log.info("AuthorizationFilter에서 에러 : {} ", e.toString());
+                responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "잘못된 Access Token입니다.", null);
 
                 response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
-
-
             }
         }
     }
