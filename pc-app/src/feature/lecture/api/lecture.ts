@@ -36,6 +36,7 @@ export const getEditLecture = async (lectureId: number) => {
 
 export const editLecture = async (
   userId: string | number,
+
   title: string,
   description: string,
   dayOfWeek: number,

@@ -2,6 +2,7 @@ import { LectureCard } from "../components/LectureCard";
 import { Avatar, Input, Select, SelectItem, Button } from "@nextui-org/react";
 import EditIcon from "@/assets/img/EditIcon";
 import { useNavigate } from "react-router";
+
 import { deleteLecture, getLecture, searchLecture } from "../api/lecture";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -65,6 +66,8 @@ function SearchBar({
     </form>
   );
 }
+
+// TODO : 특강페이지 할일
 
 export function SpecialLecture() {
   const [totalList, setTotalList] = useState<Lecture[]>([]);
