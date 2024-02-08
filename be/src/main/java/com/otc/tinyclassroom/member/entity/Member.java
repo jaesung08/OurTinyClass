@@ -5,10 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
 
 /**
@@ -26,8 +30,13 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String memberId; // 유저 id
 
-    @ManyToOne(optional = true)
-    private ClassRoom classRoom;
+    @ManyToMany
+    @JoinTable(
+        name = "member_classroom",
+        joinColumns = @JoinColumn(name = "member_id"),
+        inverseJoinColumns = @JoinColumn(name = "classRoom_id")
+    )
+    private Set<ClassRoom> classRooms = new HashSet<>();
 
     @Column(nullable = false)
     private String password; // 비밀번호
@@ -48,9 +57,10 @@ public class Member {
     /**
      * 파라미터 생성자.
      */
-    private Member(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point) {
+    private Member(String memberId, Set<ClassRoom> classRooms, String password, String name,
+        String email, LocalDate birthday, int point) {
         this.memberId = memberId;
-        this.classRoom = classRoom;
+        this.classRooms = classRooms;
         this.password = password;
         this.name = name;
         this.email = email;
@@ -60,10 +70,11 @@ public class Member {
     }
 
     /**
-     * 파라미터로 부터 멤버 엔티티 객체를 생성하는 함수.
+     * 파라미터로부터 멤버 엔티티 객체를 생성하는 함수.
      */
-    public static Member of(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point) {
-        return new Member(memberId, classRoom, password, name, email, birthday, point);
+    public static Member of(String memberId, Set<ClassRoom> classRooms, String password,
+        String name, String email, LocalDate birthday, int point) {
+        return new Member(memberId, classRooms, password, name, email, birthday, point);
     }
 
     @Override
@@ -82,4 +93,3 @@ public class Member {
         return Objects.hash(memberId);
     }
 }
-

@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.global.common.exception;
 
 import com.otc.tinyclassroom.attendance.exception.AttendanceException;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.exception.MediaException;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalControllerAdvice {
 
     /**
-     *  Member Exception Handler.
+     * Member Exception Handler.
      */
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<?> applicationHandler(MemberException e) {
@@ -33,7 +34,7 @@ public class GlobalControllerAdvice {
      * Attendance Exception Handler.
      */
     @ExceptionHandler(AttendanceException.class)
-    public ResponseEntity<?> applicationHandler1(AttendanceException e) {
+    public ResponseEntity<?> attendanceExceptionHandler(AttendanceException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
         .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
@@ -46,7 +47,7 @@ public class GlobalControllerAdvice {
     public ResponseEntity<?> mediaExceptionHandler(MediaException e) {
         log.error("Error occurs {}", e.toString());
         return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
     }
 
     /**
@@ -60,10 +61,20 @@ public class GlobalControllerAdvice {
     }
 
     /**
+     * ClassFormation Exception Handler.
+     */
+    @ExceptionHandler(ClassAssignmentException.class)
+    public ResponseEntity<?> classAssignmentExceptionHandler(ClassAssignmentException e) {
+        log.error("Error occurs {}", e.toString());
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+            .body(BaseResponse.error(e.getErrorCode().getHttpStatus().value(), e.getMessage()));
+    }
+
+    /**
      * RuntimeException Handler.
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> boardExceptionHandler(RuntimeException e) {
+    public ResponseEntity<?> runTimeExceptionHandler(RuntimeException e) {
         log.error("Runtime Error occurs {}", e.toString());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(BaseResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error!!"));

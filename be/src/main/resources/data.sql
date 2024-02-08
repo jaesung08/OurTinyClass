@@ -1,28 +1,65 @@
 -- 반 정보
-insert into classroom (id, year, grade, number) values (1, 2023, 3, 4);
-insert into classroom (id, year, grade, number) values (2, 2024, 9, 8);
-insert into classroom (id, year, grade, number) values (3, 2024, 10, 9);
-insert into classroom (id, year, grade, number) values (4, 2023, 2, 5);
-insert into classroom (id, year, grade, number) values (5, 2024, 6, 5);
-insert into classroom (id, year, grade, number) values (6, 2023, 7, 6);
-insert into classroom (id, year, grade, number) values (7, 2023, 6, 10);
-insert into classroom (id, year, grade, number) values (8, 2024, 10, 4);
-insert into classroom (id, year, grade, number) values (9, 2023, 9, 3);
-insert into classroom (id, year, grade, number) values (10, 2023, 7, 5);
-insert into classroom (id, year, grade, number) values (11, 2023, 4, 4);
-insert into classroom (id, year, grade, number) values (12, 2023, 10, 9);
-insert into classroom (id, year, grade, number) values (13, 2023, 7, 4);
-insert into classroom (id, year, grade, number) values (14, 2024, 1, 2);
-insert into classroom (id, year, grade, number) values (15, 2023, 3, 1);
-insert into classroom (id, year, grade, number) values (16, 2023, 3, 4);
-insert into classroom (id, year, grade, number) values (17, 2024, 2, 7);
-insert into classroom (id, year, grade, number) values (18, 2023, 2, 10);
-insert into classroom (id, year, grade, number) values (19, 2023, 8, 5);
-insert into classroom (id, year, grade, number) values (20, 2023, 3, 3);
+insert into classroom (id, year, grade, number)
+values (1, 2023, 1, 1);
+insert into classroom (id, year, grade, number)
+values (2, 2023, 1, 2);
+insert into classroom (id, year, grade, number)
+values (3, 2023, 1, 3);
+insert into classroom (id, year, grade, number)
+values (4, 2023, 1, 4);
+insert into classroom (id, year, grade, number)
+values (5, 2023, 1, 5);
+insert into classroom (id, year, grade, number)
+values (6, 2023, 2, 1);
+insert into classroom (id, year, grade, number)
+values (7, 2023, 2, 2);
+insert into classroom (id, year, grade, number)
+values (8, 2023, 2, 3);
+insert into classroom (id, year, grade, number)
+values (9, 2023, 2, 4);
+insert into classroom (id, year, grade, number)
+values (10, 2023, 2, 5);
+insert into classroom (id, year, grade, number)
+values (11, 2023, 3, 1);
+insert into classroom (id, year, grade, number)
+values (12, 2023, 3, 2);
+insert into classroom (id, year, grade, number)
+values (13, 2023, 3, 3);
+insert into classroom (id, year, grade, number)
+values (14, 2023, 3, 4);
+insert into classroom (id, year, grade, number)
+values (15, 2023, 3, 5);
+insert into classroom (id, year, grade, number)
+values (16, 2023, 3, 6);
+insert into classroom (id, year, grade, number)
+values (17, 2024, 3, 7);
+insert into classroom (id, year, grade, number)
+values (18, 2024, 4, 1);
+insert into classroom (id, year, grade, number)
+values (19, 2024, 4, 2);
+insert into classroom (id, year, grade, number)
+values (20, 2024, 4, 3);
 -- 멤버
-insert into member (id, member_id, class_room_id, password, name, email, birthday, point) values (1, 'park', 10,'lF7`Oeb?e', 'Keogh', 'mkeogh0@topsy.com', '2023-03-30', 27);
-insert into member (id, member_id, class_room_id, password, name, email, birthday, point) values (2,  'kim',null,'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53);
-insert into member (id, member_id ,class_room_id, password, name, email, birthday, point) values (3, 'lee', 8,'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (1, 'park', 10, 'lF7`Oeb?e', 'Keogh', 'mkeogh0@topsy.com', '2023-03-30', 27, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (2, 'kim', null, 'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (3, 'lee', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (4, 'a', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (5, 'b', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (6, 'c', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (7, 'd', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (8, 'e', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (9, 'f', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role)
+values (10, 'g', null, 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 0);
 
 -- 게시글
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (1, 2, null, 'Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.', 'Integer a nibh.', 'NOTICE', '2023-09-17 12:41:20', '2023-03-15 15:38:35', 0);
