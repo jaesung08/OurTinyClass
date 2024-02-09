@@ -69,18 +69,6 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
         return execute;
     }
 
-    /**
-     * 스케줄 삽입 메서드.
-     *
-     * @return 스케줄 삽입 여부. 정상 실행 시 1 반환.
-     */
-    @Override
-    public long insertSchedule() {
-
-        // TODO : 스케줄 삽입 로직.
-
-        return 0;
-    }
 
     /**
      * 스케줄 삭제 메서드.
@@ -92,13 +80,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     @Override
     public long deleteScheduleById(Long id) {
         return jpaQueryFactory
-                .update(schedule)
-                .set(schedule.deletedAt, LocalDateTime.now())
-                .where(
-                        schedule.id.eq(id),
-                        schedule.deletedAt.isNull()
-                )
-                .execute();
+            .update(schedule)
+            .set(schedule.deletedAt, LocalDateTime.now())
+            .where(
+                schedule.id.eq(id),
+                schedule.deletedAt.isNull()
+            )
+            .execute();
     }
 
     /**

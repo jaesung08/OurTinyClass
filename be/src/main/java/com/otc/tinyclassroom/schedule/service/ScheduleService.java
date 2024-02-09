@@ -1,6 +1,8 @@
 package com.otc.tinyclassroom.schedule.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.lecture.entity.Lecture;
+import com.otc.tinyclassroom.lecture.repository.LectureRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
@@ -8,6 +10,7 @@ import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
+import com.otc.tinyclassroom.schedule.entity.Schedule;
 import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
 import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import com.otc.tinyclassroom.schedule.repository.ScheduleRepository;
@@ -28,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class ScheduleService {
+
+    private final LectureRepository lectureRepository;
 
     private final MemberRepository memberRepository;
 
@@ -54,11 +59,31 @@ public class ScheduleService {
      */
     public void insertSchedule(ScheduleInsertRequestDto requestDto) {
 
-        // TODO : 강의가 존재하는지 검증하고 강의 엔티티를 가져오는 부분.
+        // 적용하려는 lecture가 존재하지 않은 경우 에러 발생.
+        Lecture lecture = lectureRepository.findById(requestDto.lectureId())
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_LECTURE));
 
-        // TODO : 강의 엔티티와 reqeustDto를 이용해 스케줄 엔티티를 만드는 부분.
+        // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
+        String currentUserId = jwtProvider.getCurrentUserId();
+        Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_MEMBER)
+            );
 
-        scheduleRepository.insertSchedule();
+        // 사용자 role에 따라 삭제 가능여부를 판단.
+        boolean deletable;
+        deletable = currentMember.getRole() == Role.ROLE_STUDENT;
+
+        // 시간표에 있는지 확인하기.
+        scheduleRepository.findScheduleByMemberIdAndScheduleDateAndTimeTable(Long.valueOf(currentUserId), requestDto.scheduleDate(), lecture.getTimeTable());
+
+        Schedule newschedule = Schedule.of(
+            currentMember,
+            lecture,
+            requestDto.scheduleDate(),
+            deletable
+        );
+
+        scheduleRepository.save(newschedule);
     }
 
     /**
@@ -70,7 +95,7 @@ public class ScheduleService {
 
         // 삭제하려는 스케줄이 존재하지 않는 경우 exception 발생.
         ScheduleCheckDto schedule = scheduleRepository.findScheduleById(id)
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_LECTURE)
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_SCHEDULE)
             );
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
