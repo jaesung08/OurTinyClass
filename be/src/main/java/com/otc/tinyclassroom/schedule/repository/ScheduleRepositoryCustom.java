@@ -13,8 +13,6 @@ public interface ScheduleRepositoryCustom {
 
     List<ScheduleListDto> findScheduleListByMemberId(String memberId, LocalDate start);
 
-    long insertSchedule();
-
     long deleteScheduleById(Long id);
 
     Optional<ScheduleCheckDto> findScheduleById(Long id);
