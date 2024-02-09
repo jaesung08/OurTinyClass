@@ -15,6 +15,7 @@ export type Chat = {
   senderName: string;
   chatId?: number;
   roomId: number;
-  content: string;
+  message: string;
   isSystem: boolean;
+  memberId: string;
 };

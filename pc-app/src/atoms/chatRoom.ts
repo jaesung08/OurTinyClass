@@ -5,10 +5,10 @@ import { recoilPersist } from "recoil-persist";
 const { persistAtom } = recoilPersist(); // atom을 localStorage에 저장하기 위한 라이브러리
 
 export const roomList = atom<Array<ChatRoom>>({
-  key: "ChatRoomState",
+  key: "chatRoomList",
   default: [
     {
-      roomId: 4,
+      roomId: 1,
       roomMemberList: [
         {
           memberId: "aa",
@@ -26,7 +26,7 @@ export const roomList = atom<Array<ChatRoom>>({
       chatList: [],
     },
     {
-      roomId: 6,
+      roomId: 2,
       roomMemberList: [
         {
           memberId: "aa",
