@@ -11,10 +11,9 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import { DUMMY_DATA, SearchUserOptions } from "../assets/textContent";
+import { DUMMY_DATA, SearchUserOptions, UserRole } from "../assets/textContent";
 import { useEffect, useState } from "react";
 import { SearchBarProps } from "../types";
-import { commonAxios } from "@/lib/commonAxios";
 
 function SearchBar({
   searchKeyword,
@@ -52,7 +51,6 @@ function SearchBar({
       <Button
         className="w-1/12 text-white text-xl rounded-xl bg-lime-500 shadow"
         size="lg"
-        // onClick={onSubmit}
       >
         검색
       </Button>
@@ -61,33 +59,28 @@ function SearchBar({
 }
 
 const AdminUserBody = () => {
-  // const [testData, setTestData] = useState(null);
-  // useEffect(() => {
-  //   commonAxios
-  //     .get(
-  //       `http://70.12.246.227:8080/api/admin/members/certification/student/1`
-  //     )
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setTestData(res.data);
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, []);
-
   const [searchType, setSearchType] = useState<string>(
     SearchUserOptions[0].value
   );
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [isEdit, setIsEdit] = useState(false);
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>(UserRole[0].name);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+
+  const editHandler = (userName: string, userEmail: string) => {
+    setUserName(userName);
+    setUserEmail(userEmail);
+
+    setIsEdit(true);
+  };
 
   useEffect(() => {
-    console.log(isEdit);
-  }, [isEdit]);
+    console.log(userRole);
+  }, [userRole]);
 
   return (
     <section className="w-10/12 flex flex-col mx-auto py-10">
-      {/* 이미지 처리 */}
-      {/* {testData ? <img src={testData.quitConfirmationPaths[1]} alt="" /> : null} */}
       <p className="my-5 text-2xl">유저목록</p>
       <SearchBar
         searchType={searchType}
@@ -95,59 +88,74 @@ const AdminUserBody = () => {
         setSearchKeyword={setSearchKeyword}
         setSearchType={setSearchType}
       />
-      <Table
-        aria-label="유저 관리 게시판"
-        selectionMode="single"
-        className={isEdit ? "mt-10 max-h-[30rem] w-6/12" : "mt-10 max-h-80"}
-        // bottomContent={
-        //   totalPage > 0 ? (
-        //     <div className="flex w-full justify-center">
-        //       <Pagination
-        //         isCompact
-        //         showControls
-        //         showShadow
-        //         color="success"
-        //         page={currentPage}
-        //         total={totalPage}
-        //         onChange={(page: number) => setCurrentPage(page)}
-        //       />
-        //     </div>
-        //   ) : null
-        // }
-      >
-        <TableHeader>
-          <TableColumn key="id">ID</TableColumn>
-          <TableColumn key="title">이름</TableColumn>
-          <TableColumn key="name">이메일</TableColumn>
-          <TableColumn key="createdAt">생일</TableColumn>
-          <TableColumn key="hit">역할</TableColumn>
-        </TableHeader>
-        <TableBody items={DUMMY_DATA}>
-          {(board) => (
-            <TableRow
-              key={board.id}
-              onClick={() => (isEdit ? setIsEdit(false) : setIsEdit(true))}
-            >
-              <TableCell>{board.id}</TableCell>
-              <TableCell
-                className="cursor-pointer"
-                // 테이블 속성에서 너비 조정이 제대로 먹지않아서 inline 속성으로 style 적용함. 추후에 css 파일로 분리 예정
-                style={{
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  maxWidth: "25rem",
-                }}
+      <div className="flex gap-10">
+        <Table
+          aria-label="유저 관리 게시판"
+          selectionMode="single"
+          className={isEdit ? "mt-10 max-h-[30rem] w-6/12" : "mt-10 max-h-80"}
+        >
+          <TableHeader>
+            <TableColumn key="id">ID</TableColumn>
+            <TableColumn key="title">이름</TableColumn>
+            <TableColumn key="name">이메일</TableColumn>
+            <TableColumn key="createdAt">생일</TableColumn>
+            <TableColumn key="hit">역할</TableColumn>
+          </TableHeader>
+          <TableBody items={DUMMY_DATA}>
+            {(user) => (
+              <TableRow
+                key={user.id}
+                onClick={() => editHandler(user.name, user.email)}
               >
-                {board.name}
-              </TableCell>
-              <TableCell>{board.email}</TableCell>
-              <TableCell>{dayjs(board.birthday).format("YY-MM-DD")}</TableCell>
-              <TableCell>{board.role}</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                <TableCell>{user.id}</TableCell>
+                <TableCell
+                  className="cursor-pointer"
+                  style={{
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    maxWidth: "25rem",
+                  }}
+                >
+                  {user.name}
+                </TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{dayjs(user.birthday).format("YY-MM-DD")}</TableCell>
+                <TableCell>{user.role}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        <div
+          className={
+            isEdit
+              ? "flex flex-col justify-around mt-10 max-h-[30rem] w-6/12 bg-slate-50 p-5 rounded-lg"
+              : "hidden"
+          }
+        >
+          <Input type="email" value={userName} label="Email" />
+          <Input type="text" value={userEmail} label="name" />
+          <Select
+            label="Select Role"
+            className="max-w-full"
+            defaultSelectedKeys={[userRole]}
+            onChange={(e) => setUserRole(e.target.value)}
+          >
+            {UserRole.map((role) => (
+              <SelectItem key={role.name} value={role.value}>
+                {role.name}
+              </SelectItem>
+            ))}
+          </Select>
+          <Button
+            color="success"
+            className="w-full py-5"
+            onClick={() => setIsEdit(false)}
+          >
+            수정
+          </Button>
+        </div>
+      </div>
     </section>
   );
 };
