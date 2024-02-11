@@ -1,13 +1,10 @@
 package com.otc.tinyclassroom.chat.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.Getter;
 
 /**
@@ -19,23 +16,37 @@ import lombok.Getter;
 public class ChatRoom {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToMany
-    @JoinColumn(name = "chat_room_id")
-    private List<ChatRoomMember> chatRoomMember;
+    private String id;
 
     protected ChatRoom() {
 
     }
 
-    private ChatRoom(Long id, List<ChatRoomMember> chatRoomMember) {
+    private ChatRoom(String id) {
         this.id = id;
-        this.chatRoomMember = chatRoomMember;
     }
 
-    public static ChatRoom of(Long id, List<ChatRoomMember> chatRoomMemberList) {
-        return new ChatRoom(id, chatRoomMemberList);
+    /**
+     * 팩토리 메서드 생성자.
+     */
+    public static ChatRoom of() {
+        String tempId = UUID.randomUUID().toString();
+        return new ChatRoom(tempId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChatRoom chatRoom)) {
+            return false;
+        }
+        return id != null && id.equals(chatRoom.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

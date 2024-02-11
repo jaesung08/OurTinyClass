@@ -31,13 +31,12 @@ public class ChatRoomMember {
 
     }
 
-    private ChatRoomMember(Long id, Member member, ChatRoom chatRoom) {
-        this.id = id;
+    private ChatRoomMember(Member member, ChatRoom chatRoom) {
         this.member = member;
         this.chatRoom = chatRoom;
     }
 
-    public static ChatRoomMember of(Long id, Member member, ChatRoom chatRoom) {
-        return new ChatRoomMember(id, member, chatRoom);
+    public static ChatRoomMember of(Member member, ChatRoom chatRoom) {
+        return new ChatRoomMember(member, chatRoom);
     }
 }

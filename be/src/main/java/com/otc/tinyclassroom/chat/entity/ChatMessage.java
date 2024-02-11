@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.Getter;
 import org.hibernate.annotations.CurrentTimestamp;
 
@@ -17,7 +18,7 @@ import org.hibernate.annotations.CurrentTimestamp;
 @Getter
 @Entity
 @Table
-public class Chat {
+public class ChatMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,12 +37,11 @@ public class Chat {
 
     private Boolean isSystem;
 
-    protected Chat() {
+    protected ChatMessage() {
 
     }
 
-    private Chat(Long id, ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
-        this.id = id;
+    private ChatMessage(ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
         this.chatRoom = chatRoom;
         this.member = member;
         this.message = message;
@@ -51,7 +51,23 @@ public class Chat {
     /**
      * 팩토리 메서드 생성자.
      */
-    public static Chat of(Long id, ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
-        return new Chat(id, chatRoom, member, message, isSystem);
+    public static ChatMessage of(ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
+        return new ChatMessage(chatRoom, member, message, isSystem);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ChatMessage chatMessage)) {
+            return false;
+        }
+        return id.equals(chatMessage.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

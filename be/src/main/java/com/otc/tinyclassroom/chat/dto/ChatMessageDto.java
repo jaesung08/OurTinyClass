@@ -1,21 +1,38 @@
 package com.otc.tinyclassroom.chat.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.otc.tinyclassroom.chat.entity.ChatMessage;
+import com.otc.tinyclassroom.member.dto.MemberDto;
 
 /**
  * 메세지 Dto.
  */
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class ChatMessageDto {
+public record ChatMessageDto(ChatRoomDto chatRoomDto, MemberDto memberDto, String message, Boolean isSystem) {
 
-    private String sender;
-    private String channelId;
-    private String content;
+    public static ChatMessageDto of(ChatRoomDto chatRoomDto, MemberDto memberDto, String message, Boolean isSystem) {
+        return new ChatMessageDto(chatRoomDto, memberDto, message, isSystem);
+    }
 
+    /**
+     * entity -> dto.
+     */
+    public static ChatMessageDto from(ChatMessage entity) {
+        return new ChatMessageDto(
+                ChatRoomDto.from(entity.getChatRoom()),
+                MemberDto.from(entity.getMember()),
+                entity.getMessage(),
+                entity.getIsSystem()
+        );
+    }
+
+    /**
+     * dto -> entity.
+     */
+    public static ChatMessage toEntity(ChatMessageDto dto) {
+        return ChatMessage.of(
+                ChatRoomDto.toEntity(dto.chatRoomDto),
+                MemberDto.toEntity(dto.memberDto),
+                dto.message,
+                dto.isSystem
+        );
+    }
 }

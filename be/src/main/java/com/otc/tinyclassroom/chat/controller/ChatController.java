@@ -1,6 +1,8 @@
 package com.otc.tinyclassroom.chat.controller;
 
-import com.otc.tinyclassroom.chat.dto.ChatMessageDto;
+import com.otc.tinyclassroom.chat.dto.request.ChatMessageCreateRequestDto;
+import com.otc.tinyclassroom.chat.dto.response.ChatMessageResponseDto;
+import com.otc.tinyclassroom.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,13 +19,15 @@ public class ChatController {
 
     // 특정 브로커로 메세지 전달.
     private final SimpMessageSendingOperations simpMessageSendingOperations;
+    private final ChatService chatService;
 
     /**
      * 클라이언트가 /pub/message 으로 메세지를 발행.
      */
     @MessageMapping("/message")
-    public void message(ChatMessageDto chatMessageDto) {
-        simpMessageSendingOperations.convertAndSend("/sub/channel/" + chatMessageDto.getChannelId(), chatMessageDto.getContent());
-        log.info("Room : {}, message : {}", chatMessageDto.getChannelId(), chatMessageDto.getContent());
+    public void message(ChatMessageCreateRequestDto dto) {
+        ChatMessageResponseDto responseDto = chatService.saveChatMessage(dto);
+        simpMessageSendingOperations.convertAndSend("/sub/room/" + dto.roomId(), responseDto);
+        log.info("Room : {}, message : {}", responseDto.roomId(), responseDto.message());
     }
 }
