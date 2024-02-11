@@ -7,8 +7,8 @@ import static com.otc.tinyclassroom.schedule.entity.QSchedule.schedule;
 import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private final EntityManagerFactory entityManagerFactory;
 
     /**
      * 원하는 날짜의 해당 멤버 스케줄을 주 단위로 반환.
@@ -32,7 +31,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @return 스케줄 리스트. 날짜 오름차, 교시 오름차 순으로 정렬.
      */
     @Override
-    public List<ScheduleListDto> findScheduleListByMemberId(String memberId, LocalDate start) {
+    public List<ScheduleListDto> findScheduleListByMemberId(String memberId, String teacherMemberId, LocalDate start) {
         // 주의 종료일. 월요일 + 4 = 금요일
         LocalDate end = start.plusDays(4);
 
@@ -53,8 +52,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
             .join(schedule.lecture, lecture)
             .join(schedule.member, member)
             .where(
-                // 스케줄 memberId와 현재 유저의 id 값이 같고
-                member.memberId.eq(memberId),
+                // 스케줄 memberId가 현재 학생의 혹은 그 학생이 담당하는 선생의 memberId 값과 같고
+                studentAndTeacherNameEq(memberId, teacherMemberId),
                 // scheduleDate가 start와 end 사이 안에 있고
                 schedule.scheduleDate.between(start, end),
                 // 소프트 딜리트 되지 않은 경우
@@ -128,7 +127,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @return 스케줄 Dto.
      */
     @Override
-    public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTable) {
+    public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(
+        String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
             jpaQueryFactory
                 .select(Projections.constructor(ScheduleCheckDto.class,
@@ -143,12 +143,19 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 .join(schedule.lecture, lecture)
                 .join(schedule.member, member)
                 .where(
-                    member.id.eq(memberId),
+                    studentAndTeacherNameEq(memberId, teacherMemberId),
                     schedule.scheduleDate.eq(scheduleDate),
                     lecture.timeTable.eq(timeTable),
                     schedule.deletedAt.isNull()
                 )
-                .fetchOne()
+                .fetchFirst()
         );
+    }
+
+    /**
+     * 스케줄이 목표 학생 혹은 해당 학생 반의 선생의 스케줄인지 검사하는 동적쿼리문.
+     */
+    private BooleanExpression studentAndTeacherNameEq(String memberId, String teacherId) {
+        return member.memberId.eq(memberId).or(member.memberId.eq(teacherId));
     }
 }

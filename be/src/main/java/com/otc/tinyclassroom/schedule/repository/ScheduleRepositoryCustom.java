@@ -11,11 +11,11 @@ import java.util.Optional;
  */
 public interface ScheduleRepositoryCustom {
 
-    List<ScheduleListDto> findScheduleListByMemberId(String memberId, LocalDate start);
+    List<ScheduleListDto> findScheduleListByMemberId(String memberId, String teacherMemberId, LocalDate start);
 
     long deleteScheduleById(Long id);
 
     Optional<ScheduleCheckDto> findScheduleById(Long id);
 
-    Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(Long memberId, LocalDate scheduleDate, Integer timeTalbe);
+    Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable);
 }
