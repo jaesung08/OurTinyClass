@@ -159,10 +159,9 @@ public class ArticleService {
      *
      * @param articleId 게시글 아이디
      */
-    public void validateAuthority(Long articleId) {
-        Long loginUserId = jwtProvider.getCurrentMemberId();
+    public void validateAuthority(Long memberId, Long articleId) {
         Long articleUserId = getArticleUserId(articleId);
-        if (!loginUserId.equals(articleUserId)) {
+        if (!memberId.equals(articleUserId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
         }
     }

@@ -5,15 +5,16 @@ import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.exception.ClassAssignmentErrorCode;
 import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
+import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +32,15 @@ public class ClassAssignmentService {
 
     private final ClassRoomRepository classRoomRepository;
     private final MemberRepository memberRepository;
+    private final MemberClassRoomRepository memberClassRoomRepository;
     private final JwtProvider jwtProvider;
 
     /**
      * 반 생성 메서드.
      */
     public ClassRoomDto createClassRoom(ClassRoomDto classRoomDto) {
-        ClassRoom classRoom = ClassRoom.of(classRoomDto.year(), classRoomDto.grade(),
-            classRoomDto.number());
-
+        ClassRoom classRoom = ClassRoom.of(classRoomDto.year(), classRoomDto.grade(), classRoomDto.number());
         ClassRoom savedClassRoom = classRoomRepository.save(classRoom);
-
         return ClassRoomDto.from(savedClassRoom);
     }
 
@@ -50,65 +49,90 @@ public class ClassAssignmentService {
      */
     public List<MemberClassRoomResponseDto> placeMembers(List<Long> memberIds, Long classRoomId) {
         ClassRoom classRoom = getClassRoomById(classRoomId);
-        List<MemberClassRoomResponseDto> placedMembers = new ArrayList<>();
-
+        List<MemberClassRoomResponseDto> members = new ArrayList<>();
+        List<MemberClassRoom> result = new ArrayList<>();
         for (Long memberId : memberIds) {
-            Member existingMember = getMemberById(memberId);
-
-            // 멤버의 classRoom 컬럼에 추가
-            existingMember.getClassRooms().add(classRoom);
-
-            // 멤버 업데이트
-            Member placedMember = memberRepository.save(existingMember);
-
+            Member member = getMemberById(memberId);
+            // 연관관계 맵핑 테이블에 추가
+            MemberClassRoom memberClassRoom = MemberClassRoom.of(member, classRoom);
+            result.add(memberClassRoom);
             // 업데이트된 멤버 정보를 DTO로 변환하여 리스트에 추가
-            placedMembers.add(MemberClassRoomResponseDto.from(placedMember));
+            members.add(MemberClassRoomResponseDto.from(memberClassRoom));
         }
-
-        return placedMembers;
+        memberClassRoomRepository.saveAll(result);
+        return members;
     }
 
     /**
      * 반 수정 메서드.
      */
     public MemberClassRoomResponseDto updateMemberClass(Long memberId, Long classRoomId) {
+        // 수정해야 하는 멤버와 반
+        Member member = getMemberById(memberId);
         ClassRoom classRoom = getClassRoomById(classRoomId);
 
-        Member existingMember = getMemberById(memberId);
+        // 멤버의 현재 반을 수정한다.
+        List<MemberClassRoom> classRooms = member.getMemberClassRooms();
 
-        // 멤버의 반 목록을 초기화하고 새로운 반을 설정
-        Set<ClassRoom> classRooms = existingMember.getClassRooms();
-        classRooms.clear();
-        classRooms.add(classRoom);
+        if (classRooms.isEmpty()) {
+            throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
+        }
 
-        Member updatedMember = memberRepository.save(existingMember);
-
-        return MemberClassRoomResponseDto.from(updatedMember);
+        MemberClassRoom currentClass = classRooms.get(classRooms.size() - 1);
+        currentClass.setClassRoom(classRoom);
+        return MemberClassRoomResponseDto.from(currentClass);
     }
 
     /**
      * 반 인원 목록 조회.
      */
     public List<MemberClassRoomResponseDto> getMembersByClassRoom(Long classRoomId) {
-        List<Member> members = memberRepository.findAllByClassRoomsId(classRoomId);
-
+        //TODO: QueryDSL로 변경
+        List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoomId);
         return members.stream().map(MemberClassRoomResponseDto::from).collect(Collectors.toList());
     }
 
     /**
      * 요청한 유저의 권한이 있는지 확인(선생, 관리자).
      */
-    public void checkTeacherOrAdmin() {
-        Long currentMemberId = Long.valueOf(jwtProvider.getCurrentUserId());
-        Member currentMember = memberRepository.findById(currentMemberId)
-            .orElseThrow(() -> new ClassAssignmentException(
-                ClassAssignmentErrorCode.NO_AUTHORITY));
-        Role userRole = currentMember.getRole();
+    public void checkTeacherOrAdmin(Role userRole) {
         if (userRole != Role.ROLE_TEACHER && userRole != Role.ROLE_ADMIN) {
             throw new ClassAssignmentException(ClassAssignmentErrorCode.NO_AUTHORITY);
         }
     }
 
+
+    /**
+     * 랜덤으로 반 편성하기.
+     */
+    public List<MemberClassRoomResponseDto> randomAssignmentClassRooms(Long classRoomId) {
+
+        ClassRoom classRoom = getClassRoomById(classRoomId);
+        // targetClassRommId에 해당하는 반 멤버 가져오기
+        List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoomId);
+        List<ClassRoom> targetClassRooms = classRoomRepository.findClassRoomByGradeAndYearWithNonZeroNumber(classRoom.getGrade(), classRoom.getYear());
+
+        // 멤버들을 랜덤한 순서로 섞기
+        Collections.shuffle(members);
+
+        List<MemberClassRoom> result = new ArrayList<>(members.size());
+        // 남은 학생들에 대해 처음 반부터 다시 반복하여 배정
+        int studentIndex = 0;
+        for (Member student : members) {
+
+            ClassRoom currentClassRoom = targetClassRooms.get((studentIndex % targetClassRooms.size()));
+            MemberClassRoom memberClassRoom = MemberClassRoom.of(student, classRoom);
+            result.add(memberClassRoom);
+
+            // 다음 반으로 넘어가기
+            studentIndex++;
+        }
+        memberClassRoomRepository.saveAll(result);
+        // 저장된 멤버 엔터티들을 DTO로 변환하여 반환
+        return result.stream()
+            .map(MemberClassRoomResponseDto::from)
+            .collect(Collectors.toList());
+    }
 
     private ClassRoom getClassRoomById(Long classRoomId) {
         return classRoomRepository.findById(classRoomId)
@@ -119,58 +143,6 @@ public class ClassAssignmentService {
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new ClassAssignmentException(
             ClassAssignmentErrorCode.MEMBER_NOT_FOUND));
-    }
-
-    /**
-     * 랜덤으로 반 편성하기.
-     */
-    public List<MemberClassRoomResponseDto> randomAssignmentClassRooms(Long targetGrade, Long targetYear,
-        Long targetClassRoomId) {
-        // 모든 멤버 및 반 정보 조회
-        List<Member> allMembers = memberRepository.findAll();
-        List<ClassRoom> allClassRooms = classRoomRepository.findAll();
-
-        // 학생인 멤버들만 추출
-        List<Member> students = allMembers.stream()
-            .filter(member -> member.getRole() == Role.ROLE_STUDENT)
-            .toList();
-
-        // targetClassRoomId에 해당하는 반의 멤버만 남기기
-        List<Member> filteredMembers = students.stream()
-            .filter(member -> member.getClassRooms().stream()
-                .anyMatch(classRoom -> classRoom.getId().equals(targetClassRoomId)))
-            .collect(Collectors.toList());
-
-        // 입력받은 grade, targetYear의 반들만 골라내기
-        List<ClassRoom> targetClassRooms = allClassRooms.stream()
-            .filter(classRoom -> classRoom.getGrade() == targetGrade
-                && classRoom.getYear() == targetYear)
-            .toList();
-
-        // 멤버들을 랜덤한 순서로 섞기
-        Collections.shuffle(filteredMembers);
-
-        // 남은 학생들에 대해 처음 반부터 다시 반복하여 배정
-        int studentIndex = 0;
-        for (Member student : filteredMembers) {
-            // 현재 반에 배정할 수 있는지 확인
-            if (studentIndex >= targetClassRooms.size()) {
-                // 남은 반이 없으면 처음 반으로 돌아가기
-                studentIndex = 0;
-            }
-
-            // 현재 학생에게 현재 반 배정
-            ClassRoom currentClassRoom = targetClassRooms.get(studentIndex);
-            student.getClassRooms().add(currentClassRoom);
-
-            // 다음 반으로 넘어가기
-            studentIndex++;
-        }
-
-        // 저장된 멤버 엔터티들을 DTO로 변환하여 반환
-        return filteredMembers.stream()
-            .map(MemberClassRoomResponseDto::from)
-            .collect(Collectors.toList());
     }
 }
 

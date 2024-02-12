@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.request.AssignmentMembersRequestDto;
 import com.otc.tinyclassroom.member.dto.request.RandomAssignmentMemberRequestDto;
@@ -10,6 +11,7 @@ import com.otc.tinyclassroom.member.service.ClassAssignmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +34,8 @@ public class ClassAssignmentController {
      * 반 생성.
      */
     @PostMapping("")
-    public BaseResponse<ClassRoomDto> createClassRoom(@RequestBody ClassRoomDto classRoomDto) {
-        classFormationService.checkTeacherOrAdmin();
+    public BaseResponse<ClassRoomDto> createClassRoom(@RequestBody ClassRoomDto classRoomDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
         ClassRoomDto createdClassRoom = classFormationService.createClassRoom(classRoomDto);
         return BaseResponse.success(HttpStatus.OK.value(), "반 개설에 성공하였습니다!", createdClassRoom);
     }
@@ -42,8 +44,9 @@ public class ClassAssignmentController {
      * 학생들 반 편성.
      */
     @PatchMapping("/members/place")
-    public BaseResponse<List<MemberClassRoomResponseDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request) {
-        classFormationService.checkTeacherOrAdmin();
+    public BaseResponse<List<MemberClassRoomResponseDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        System.out.println(request);
+        classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
         List<MemberClassRoomResponseDto> placedMembers = classFormationService.placeMembers(request.memberIds(), request.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "멤버들을 배치하였습니다!", placedMembers);
     }
@@ -52,8 +55,8 @@ public class ClassAssignmentController {
      * 학생(하나) 반 편성.
      */
     @PatchMapping("/member/updateClass")
-    public BaseResponse<MemberClassRoomResponseDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto) {
-        classFormationService.checkTeacherOrAdmin();
+    public BaseResponse<MemberClassRoomResponseDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
         MemberClassRoomResponseDto updatedMember = classFormationService.updateMemberClass(dto.memberId(), dto.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "멤버 반 변경에 성공하였습니다!", updatedMember);
     }
@@ -72,7 +75,7 @@ public class ClassAssignmentController {
      */
     @PatchMapping("/randomAssignment")
     public BaseResponse<List<MemberClassRoomResponseDto>> randomAssignmentClassRooms(@RequestBody RandomAssignmentMemberRequestDto dto) {
-        List<MemberClassRoomResponseDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.targetGrade(), dto.targetYear(), dto.targetClassRoomId());
+        List<MemberClassRoomResponseDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "랜덤으로 반을 부여하였습니다!", updatedMembers);
     }
 }

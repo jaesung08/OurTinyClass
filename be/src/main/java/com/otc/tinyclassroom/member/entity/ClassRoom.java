@@ -5,15 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import lombok.Getter;
 
 /**
- *  반 Entity.
+ * 반 Entity.
  */
 @Getter
 @Entity
@@ -31,8 +31,8 @@ public class ClassRoom {
     @Column(nullable = false)
     private int number; // 반
 
-    @ManyToMany(mappedBy = "classRooms")
-    private Set<Member> members = new HashSet<>();
+    @OneToMany(mappedBy = "classRoom")
+    private final List<MemberClassRoom> members = new ArrayList<>();
 
     protected ClassRoom() {
     }

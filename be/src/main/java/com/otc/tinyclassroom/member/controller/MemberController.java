@@ -51,7 +51,7 @@ public class MemberController {
      */
     @PostMapping("/logout")
     public BaseResponse<Long> logoutMember() {
-        Long memberId = refreshTokenService.getCurrentUserId();
+        Long memberId = refreshTokenService.getCurrentMemberId();
         String refreshToken = refreshTokenService.getRefreshTokenByUserId(memberId);
         refreshTokenService.deleteRefreshToken(refreshToken);
 

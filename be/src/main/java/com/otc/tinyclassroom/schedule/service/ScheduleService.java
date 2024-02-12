@@ -74,8 +74,8 @@ public class ScheduleService {
             );
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
-        String currentUserId = jwtProvider.getCurrentUserId();
-        Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
+        Long currentUserId = jwtProvider.getCurrentMemberId();
+        Member currentMember = memberRepository.findById(currentUserId)
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_FOUND_MEMBER)
             );
 

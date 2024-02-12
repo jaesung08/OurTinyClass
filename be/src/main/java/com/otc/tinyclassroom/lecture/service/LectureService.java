@@ -110,10 +110,6 @@ public class LectureService {
             .collect(Collectors.toList());
     }
 
-    //    private Specification<Lecture> buildApprovedLecturesSpecification() {
-//        return (root, query, criteriaBuilder) ->
-//            criteriaBuilder.equal(root.get("approved"), LectureApprovalStatusType.APPROVED);
-//    }
     private Specification<Lecture> buildApprovedLecturesSpecification() {
         return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction(); // 모든 상태 허용
     }
@@ -191,7 +187,7 @@ public class LectureService {
      * 요청한 유저의 권한이 있는지 확인(선생, 멘토, 관리자).
      */
     private void checkTeacherOrAdmin() {
-        Long currentMemberId = Long.valueOf(jwtProvider.getCurrentUserId());
+        Long currentMemberId = jwtProvider.getCurrentMemberId();
         Member currentMember = memberRepository.findById(currentMemberId)
             .orElseThrow(() -> new LectureException(
                 LectureErrorCode.NO_AUTHORITY));  // 권한이 없습니다로 변경하기.

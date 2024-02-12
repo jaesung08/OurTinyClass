@@ -95,10 +95,9 @@ public class ArticleCommentService {
      *
      * @param articleCommentId 댓글 아이디
      */
-    public void validateAuthority(Long articleCommentId) {
-        Long loginMemberId = jwtProvider.getCurrentMemberId();
+    public void validateAuthority(Long memberId, Long articleCommentId) {
         Long articleCommentMemberId = getMemberIdFromArticleCommentId(articleCommentId);
-        if (!loginMemberId.equals(articleCommentMemberId)) {
+        if (!memberId.equals(articleCommentMemberId)) {
             throw new CommunityException(CommunityErrorCode.HAVE_NO_AUTHORITY);
         }
     }
