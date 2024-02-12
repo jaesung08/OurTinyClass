@@ -3,15 +3,18 @@ package com.otc.tinyclassroom.member.controller;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
 import com.otc.tinyclassroom.media.service.MediaService;
+import com.otc.tinyclassroom.member.dto.request.KakaoLoginRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.MemberLoginResponseDto;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.MemberService;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +49,16 @@ public class MemberController {
     }
 
     /**
-     *  로그아웃 메서드.
-     *  Refresh Token 을 무효화 함.
+     * 카카오 로그인.
+     */
+    @PostMapping("/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDto request) {
+        // TODO: filter단으로 옮겨야 할듯 ?
+        return memberService.kakaoLogin(request);
+    }
+
+    /**
+     * 로그아웃 메서드. Refresh Token 을 무효화 함.
      */
     @PostMapping("/logout")
     public BaseResponse<Long> logoutMember() {
