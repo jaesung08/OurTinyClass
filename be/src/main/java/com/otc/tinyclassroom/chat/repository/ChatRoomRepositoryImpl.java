@@ -1,5 +1,6 @@
 package com.otc.tinyclassroom.chat.repository;
 
+import static com.otc.tinyclassroom.chat.entity.QChatMessage.chatMessage;
 import static com.otc.tinyclassroom.chat.entity.QChatRoom.chatRoom;
 import static com.otc.tinyclassroom.chat.entity.QChatRoomMember.chatRoomMember;
 
@@ -23,10 +24,13 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
         List<ChatRoomResponseDto> execute = jpaQueryFactory
                 .select(Projections.constructor(
                         ChatRoomResponseDto.class,
-                        chatRoom.id
+                        chatRoom.id,
+                        chatMessage.id,
+                        chatMessage.message
                 ))
                 .from(chatRoomMember)
                 .join(chatRoomMember.chatRoom, chatRoom)
+                .leftJoin(chatRoom.lastChatMessage, chatMessage)
                 .where(chatRoomMember.member.id.eq(userId))
                 .fetch();
 

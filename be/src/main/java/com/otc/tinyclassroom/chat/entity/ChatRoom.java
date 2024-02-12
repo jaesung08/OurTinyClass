@@ -2,6 +2,7 @@ package com.otc.tinyclassroom.chat.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,12 +19,16 @@ public class ChatRoom {
     @Id
     private String id;
 
+    @OneToOne
+    private ChatMessage lastChatMessage;
+
     protected ChatRoom() {
 
     }
 
-    private ChatRoom(String id) {
+    private ChatRoom(String id, ChatMessage lastChatMessage) {
         this.id = id;
+        this.lastChatMessage = lastChatMessage;
     }
 
     /**
@@ -31,7 +36,11 @@ public class ChatRoom {
      */
     public static ChatRoom of() {
         String tempId = UUID.randomUUID().toString();
-        return new ChatRoom(tempId);
+        return new ChatRoom(tempId, null);
+    }
+
+    public void updateLastChatMessage(ChatMessage lastChatMessage) {
+        this.lastChatMessage = lastChatMessage;
     }
 
     @Override

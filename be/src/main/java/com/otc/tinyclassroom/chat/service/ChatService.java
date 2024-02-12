@@ -52,7 +52,7 @@ public class ChatService {
         chatRoomMemberRepository.save(ChatRoomMember.of(toMember, chatRoom));
         chatRoomMemberRepository.save(ChatRoomMember.of(fromMember, chatRoom));
 
-        return ChatRoomResponseDto.of(chatRoom.getId());
+        return ChatRoomResponseDto.of(chatRoom.getId(), null, null);
     }
 
     /**
@@ -65,9 +65,7 @@ public class ChatService {
         Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER));
 
-        List<ChatRoomResponseDto> subscribedList = chatRoomRepository.findAllChatRoomByMemberId(currentMember.getId());
-
-        return subscribedList;
+        return chatRoomRepository.findAllChatRoomByMemberId(currentMember.getId());
     }
 
     /**
@@ -85,6 +83,10 @@ public class ChatService {
         ChatMessage chatMessage = ChatMessage.of(chatRoom, member, dto.message(), false);
         ChatMessage saveMessage = chatMessageRepository.save(chatMessage);
 
+        // 해당 채팅방의 마지막 채팅 변경.
+        chatRoom.updateLastChatMessage(saveMessage);
+        chatRoomRepository.save(chatRoom);
+
         return ChatMessageResponseDto.of(
                 saveMessage.getId(),
                 saveMessage.getChatRoom().getId(),
@@ -99,7 +101,6 @@ public class ChatService {
      */
     @Transactional(readOnly = true)
     public List<ChatMessageResponseDto> findAllChatMessage(String roomId) {
-        List<ChatMessageResponseDto> chatList = chatMessageRepository.findAllChatByRoomId(roomId);
-        return chatList;
+        return chatMessageRepository.findAllChatByRoomId(roomId);
     }
 }
