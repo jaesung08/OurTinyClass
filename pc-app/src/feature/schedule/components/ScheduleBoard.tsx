@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Button, Divider } from "@nextui-org/react";
+import { Button, Divider, useDisclosure } from "@nextui-org/react";
 import { getCurrentDayName } from "@/utils/DateFormattingHelpers";
 import { Tag } from "@/components/Elements/Tag/Tag";
 import { useCallback, useEffect, useState } from "react";
@@ -15,10 +15,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { deleteSchedule } from "../api/deleteSchedule";
+import ScheduleModal from "./ScheduleModal";
+
 interface CalenderHeaderProps {
   planStartDate: dayjs.Dayjs;
   onClickChangePlanDate: (isBefore: boolean) => void;
 }
+
 
 function CalenderHeader({
   planStartDate,
@@ -35,13 +38,13 @@ function CalenderHeader({
         </span>
         <span
           onClick={() => onClickChangePlanDate(true)}
-          className=" cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
+          className="cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
         >
           <FontAwesomeIcon icon={faCaretUp} />
         </span>
         <span
           onClick={() => onClickChangePlanDate(false)}
-          className=" cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
+          className="cursor-pointer w-7 h-7 bg-lime-100 rounded-full flex items-center justify-center shadow hover:bg-lime-200"
         >
           <FontAwesomeIcon icon={faCaretDown} />
         </span>
@@ -73,20 +76,25 @@ interface ScheduleItemProp {
   onDelete: (scheduleId: number) => void;
 }
 function ScheduleItem({ schedule, editMode, onDelete }: ScheduleItemProp) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   if (editMode) {
     return (
       <div className="h-full p-2">
         {schedule == null ? (
           <div className="flex justify-center items-center h-full">
-            <Button isIconOnly color="success">
+            <Button onPress={onOpen} isIconOnly color="success">
               <FontAwesomeIcon icon={faSquarePlus} />
             </Button>
+            <ScheduleModal
+             isOpen={isOpen}
+             onOpenChange={onOpenChange}
+            />  
           </div>
         ) : (
           <div className="flex flex-col justify-center">
             <div className="flex justify-end">
               <Button
-                className="flex"
+                className="flex text-red-500"
                 isIconOnly
                 onClick={() => onDelete(schedule.scheduleId)}
               >
