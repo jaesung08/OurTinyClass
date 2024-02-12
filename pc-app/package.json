@@ -19,6 +19,8 @@
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^1.10.1",
     "@chatscope/use-chat": "^3.1.2",
+    "@daily-co/daily-js": "^0.58.0",
+    "@daily-co/daily-react": "^0.17.2",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-brands-svg-icons": "^6.5.1",
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
