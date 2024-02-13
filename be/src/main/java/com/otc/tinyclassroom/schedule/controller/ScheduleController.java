@@ -42,7 +42,6 @@ public class ScheduleController {
      */
     @PostMapping("/insert")
     public BaseResponse<?> insertSchedule(@RequestBody ScheduleInsertRequestDto requestDto) {
-        System.out.println("requestDto.lectureId() = " + requestDto.lectureId());
 
         scheduleService.insertSchedule(requestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "스케줄이 추가되었습니다.", null);
