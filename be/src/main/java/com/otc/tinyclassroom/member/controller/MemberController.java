@@ -49,15 +49,6 @@ public class MemberController {
     }
 
     /**
-     * 카카오 로그인.
-     */
-    @PostMapping("/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestBody KakaoLoginRequestDto request) {
-        // TODO: filter단으로 옮겨야 할듯 ?
-        return memberService.kakaoLogin(request);
-    }
-
-    /**
      * 로그아웃 메서드. Refresh Token 을 무효화 함.
      */
     @PostMapping("/logout")

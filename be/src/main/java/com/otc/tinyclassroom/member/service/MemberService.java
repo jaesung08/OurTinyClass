@@ -98,7 +98,10 @@ public class MemberService {
             );
     }
 
-    private Member findOrCreateMember(KakaoOAuthResponse response) {
+    /**
+     * 카카오 계정으로 로그인한 기록이 있으면 멤버를 가져오고 없는 경우 저장한다.
+     */
+    public Member findOrCreateMember(KakaoOAuthResponse response) {
         String memberId = "kakao-" + response.id();
         return memberRepository.findByMemberId(memberId)
             .orElseGet(

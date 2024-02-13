@@ -29,8 +29,6 @@ public class KakaoClient {
     }
 
     private Mono<Map<String, Object>> sendRequest(String accessToken) {
-        System.out.println("엑세스 토큰");
-        System.out.println(accessToken);
 
         // WebClient 인스턴스 생성 및 구성
         WebClient kakaoWebClient = WebClient.builder()
