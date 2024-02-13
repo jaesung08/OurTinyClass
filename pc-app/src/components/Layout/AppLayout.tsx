@@ -8,6 +8,7 @@ import PersonIcon from "@/assets/img/PersonIcon";
 import LogoutIcon from "@/assets/img/LogoutIcon";
 import { useCallback } from "react";
 import { logout } from "@/feature/auth/api/logout";
+import SpecialLecture from "@/assets/img/SpecialLecture";
 
 type AppLayoutProps = {
 	children: React.ReactNode;
@@ -75,7 +76,7 @@ function SideBar() {
 				</Tooltip>
 				<Tooltip color="success" content={"특강 목록"} placement="right" className="capitalize">
 					<Button isIconOnly className="p-2 bg-lime-500" size="lg" onClick={goLecture}>
-						<CalendarIcon />
+						<SpecialLecture />
 					</Button>
 				</Tooltip>
 			</div>
