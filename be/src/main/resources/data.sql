@@ -21,11 +21,11 @@ insert into classroom (id, year, grade, number) values (19, 2023, 8, 5);
 insert into classroom (id, year, grade, number) values (20, 2023, 3, 3);
 -- 멤버
 insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role) values (1, 'park', 1,'lF7`Oeb?e', '박재선', 'park@otc.com', '2023-03-30', 27, 3);
-insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role) values (2,  'choi', 8,'cH8\1,y`D|z', '최창호', 'choi@otc.com', '2023-09-08', 53, 1);
-insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (3, 'jang', 8,'kH8}osxJQ#p\6', '장재성', 'jang@otc.com', '2023-06-04', 95, 2);
-insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (4, 'jeong', 8,'kH8}osxJQ#p\6', '정서희', 'jeong@otc.com', '2023-06-04', 95, 2);
-insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (5, 'guen', 8,'kH8}osxJQ#p\6', '최근영', 'guen@otc.com', '2023-06-04', 95, 0);
-insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (6, 'jeon', 8,'kH8}osxJQ#p\6', '전영빈', 'jeon@otc.com', '1998-02-16', 90000, 0);
+insert into member (id, member_id, class_room_id, password, name, email, birthday, point, role) values (2,  'choi', 2,'cH8\1,y`D|z', '최창호', 'choi@otc.com', '2023-09-08', 53, 1);
+insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (3, 'jang', 2,'kH8}osxJQ#p\6', '장재성', 'jang@otc.com', '2023-06-04', 95, 2);
+insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (4, 'jeong', 2,'kH8}osxJQ#p\6', '정서희', 'jeong@otc.com', '2023-06-04', 95, 2);
+insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (5, 'guen', 2,'kH8}osxJQ#p\6', '최근영', 'guen@otc.com', '2023-06-04', 95, 0);
+insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role) values (6, 'jeon', 2,'kH8}osxJQ#p\6', '전영빈', 'jeon@otc.com', '1998-02-16', 90000, 0);
 
 -- 게시글
 insert into article (id, member_id, class_room_id, title, content, article_type, created_by, modified_by, created_at, modified_at, hit) values (1, 1, 8, 'Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat.', 'Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien.', 'HOBBY', 'Adela', 'Casey', '2023-05-07 02:08:59', '2023-10-30 13:34:17', 0);
@@ -1152,18 +1152,7 @@ INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `descri
 INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '0', '3', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-12');
 INSERT INTO `ssafy`.`lecture` (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '1', '4', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-13');
 
-
-
-
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-11', '1', '1', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-12', '2', '1', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-14', '1', '3', false);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-11', '3', '3', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '2', '2', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-12', '1', '2', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '1', '1', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-13', '3', '1', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-01-14', '2', '1', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-12', '1', '2', true);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-13', '2', '2', false);
-INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`) VALUES ('2024-02-14', '3', '3', true);
+-- 스케줄
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '10', '2', false, '2', '3');
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '11', '2', false, '2', '4');
+INSERT INTO `ssafy`.`schedule` (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '9', '2', false, '1', '3');

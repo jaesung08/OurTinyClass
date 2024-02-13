@@ -8,10 +8,10 @@ import java.time.LocalDate;
 /**
  * 스케줄 DTO.
  */
-public record ScheduleDto(Long id, MemberDto memberDto, LectureDto lectureDto, LocalDate scheduleDate, Boolean deletable) {
+public record ScheduleDto(Long id, MemberDto memberDto, LectureDto lectureDto, LocalDate scheduleDate, int dayOfWeek, int timeTable, Boolean deletable) {
 
-    public static ScheduleDto of(Long id, MemberDto memberDto, LectureDto lectureDto, LocalDate scheduleDate, Boolean deletable) {
-        return new ScheduleDto(id, memberDto, lectureDto, scheduleDate, deletable);
+    public static ScheduleDto of(Long id, MemberDto memberDto, LectureDto lectureDto, LocalDate scheduleDate, int dayOfWeek, int timeTable, Boolean deletable) {
+        return new ScheduleDto(id, memberDto, lectureDto, scheduleDate, dayOfWeek, timeTable, deletable);
     }
 
     /**
@@ -23,6 +23,8 @@ public record ScheduleDto(Long id, MemberDto memberDto, LectureDto lectureDto, L
             MemberDto.from(entity.getMember()),
             LectureDto.from(entity.getLecture()),
             entity.getScheduleDate(),
+            entity.getDayOfWeek(),
+            entity.getTimeTable(),
             entity.getDeletable()
         );
     }
@@ -35,6 +37,8 @@ public record ScheduleDto(Long id, MemberDto memberDto, LectureDto lectureDto, L
             MemberDto.toEntity(dto.memberDto),
             LectureDto.toEntity(dto.lectureDto),
             dto.scheduleDate,
+            dto.dayOfWeek,
+            dto.timeTable,
             dto.deletable);
     }
 }

@@ -36,6 +36,12 @@ public class Schedule {
     private LocalDate scheduleDate;
 
     @NotNull
+    private int dayOfWeek;
+
+    @NotNull
+    private int timeTable;
+
+    @NotNull
     private Boolean deletable;
 
     private LocalDateTime deletedAt;
@@ -47,18 +53,20 @@ public class Schedule {
     /**
      * Schedule 기본 생성자.
      */
-    private Schedule(Member member, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
+    private Schedule(Member member, Lecture lecture, LocalDate scheduleDate, int dayOfWeek, int timeTable, Boolean deletable) {
         this.member = member;
         this.lecture = lecture;
         this.scheduleDate = scheduleDate;
+        this.dayOfWeek = dayOfWeek;
+        this.timeTable = timeTable;
         this.deletable = deletable;
     }
 
     /**
      * Schedule Entity 생성 메서드.
      */
-    public static Schedule of(Member member, Lecture lecture, LocalDate scheduleDate, Boolean deletable) {
-        return new Schedule(member, lecture, scheduleDate, deletable);
+    public static Schedule of(Member member, Lecture lecture, LocalDate scheduleDate, int dayOfWeek, int timeTable, Boolean deletable) {
+        return new Schedule(member, lecture, scheduleDate, dayOfWeek, timeTable, deletable);
     }
 
     @Override
