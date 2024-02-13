@@ -26,7 +26,7 @@ export const getSpecialLecture = (date: string, timeTable: number) => {
 	});
 };
 
-export const getFreeLecture = (lectureType: number) => {
+export const getFreeLecture = (lectureType: string) => {
 	return commonAxios.get("/lectures", {
 		params: {
 			lectureType,

@@ -31,9 +31,9 @@ type ResponseLecture = {
 export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, fetchScheduleList }: CreateScheduleProps) {
 	const [todoSchedule, setTodoSchedule] = useState<string>("");
 	const [currentLecture, setCurrentLecture] = useState<number>(1);
-	const [specialLecture, setSpecialLecture] = useState<object[]>([]);
-	const [freeLecture, setFreeLecture] = useState<object[]>([]);
-	const [categoryName, setCategoryName] = useState<string[]>([]);
+	const [specialLecture, setSpecialLecture] = useState<ResponseLecture[]>([]);
+	const [freeLecture, setFreeLecture] = useState<object[] | any>([]);
+	const [isSpecial, setIsSpecial] = useState<boolean>(false);
 
 	useEffect(() => {
 		const getCategories = async () => {
@@ -54,7 +54,14 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 					{}
 				);
 				setFreeLecture(groupedLectures);
-				setCategoryName(Object.keys(groupedLectures));
+
+				if (responseSpecial.data.length > 0) {
+					setSpecialLecture(responseSpecial.data);
+					setIsSpecial(true);
+				} else {
+					setIsSpecial(false);
+				}
+				console.log(responseSpecial.data);
 			} catch (error) {
 				console.error(error);
 			}
@@ -66,12 +73,28 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 		try {
 			await createSchedule(lectureId, date, dayOfWeek);
 			fetchScheduleList();
-			console.log(fetchScheduleList());
 		} catch (error) {
 			console.error(error);
 		}
 	};
 
+	const renderSpecialLecture = specialLecture.map((item: ResponseLecture) => {
+		return (
+			<p
+				className="group-[.is-splitted]:px-4 group-[.is-splitted]:bg-content1 group-[.is-splitted]:shadow-medium group-[.is-splitted]:rounded-medium border-1 rounded-xl px-5 cursor-pointer"
+				key={item.id}
+				aria-label={`${item.id}`}
+				onClick={() => {
+					setTodoSchedule(item.title);
+					setCurrentLecture(item.id);
+				}}
+			>
+				<h2 className="flex py-4 w-full h-full gap-3 items-center tap-highlight-transparent outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 transition-opacity">
+					{item.title}
+				</h2>
+			</p>
+		);
+	});
 	return (
 		<>
 			<Modal isOpen={isOpen} onOpenChange={onOpenChange} className="max-w-[800px]">
@@ -87,24 +110,19 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 								</div>
 								<div className="flex">
 									<div className="flex flex-col w-full overflow-y-scroll h-52 gap-5 scrollbar-hide">
-										{freeLecture.map((item, index) => {
+										{Object.keys(freeLecture).map((item, index) => {
 											return (
 												<Accordion key={index}>
-													<AccordionItem
-														className="border-1 rounded-xl px-5"
-														key={`${index}`}
-														aria-label={`${index}`}
-														title={categoryName[index]}
-													>
-														{item.map((info) => {
+													<AccordionItem className="border-1 rounded-xl px-5" key={`${index}`} aria-label={item} title={item}>
+														{freeLecture[item].map((info: { title: string; id: number }) => {
 															return (
 																<p
 																	className="p-5 cursor-pointer"
 																	onClick={() => {
-																		setTodoSchedule();
-																		setCurrentLecture(info.lectureId);
+																		setTodoSchedule(info.title);
+																		setCurrentLecture(info.id);
 																	}}
-																	key={info.lectureId}
+																	key={info.id}
 																>
 																	{info.title}
 																</p>
@@ -116,33 +134,7 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 										})}
 									</div>
 									<div className="flex flex-col w-full overflow-y-scroll h-52 gap-5 scrollbar-hide">
-										{SelectCategories.map((item) => {
-											return (
-												<Accordion key={item.id}>
-													<AccordionItem
-														className="border-1 rounded-xl px-5"
-														key={item.id}
-														aria-label={`${item.id} ${item.id}`}
-														title={`${item.name}`}
-													>
-														{item.content.map((info) => {
-															return (
-																<p
-																	className="p-5 cursor-pointer"
-																	onClick={() => {
-																		setTodoSchedule(info.title);
-																		setCurrentLecture(info.lectureId);
-																	}}
-																	key={info.lectureId}
-																>
-																	{info.title}
-																</p>
-															);
-														})}
-													</AccordionItem>
-												</Accordion>
-											);
-										})}
+										{isSpecial ? renderSpecialLecture : <p className="w-full h-full text-center">진행중인 특강이 없습니다.</p>}
 									</div>
 								</div>
 							</ModalBody>

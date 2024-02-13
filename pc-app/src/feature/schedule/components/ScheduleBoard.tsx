@@ -86,7 +86,7 @@ function ScheduleItem({ schedule, date, dayOfWeek, editMode, onDelete, fetchSche
 					<div className="flex flex-col justify-center">
 						<div className="flex justify-end">
 							<Button className="flex text-red-500" isIconOnly onClick={() => onDelete(schedule.scheduleId)}>
-								<FontAwesomeIcon icon={faTrash} size="lg" onClick={() => onDelete(schedule.scheduleId)} />
+								<FontAwesomeIcon icon={faTrash} size="lg" />
 							</Button>
 						</div>
 						<ScheduleContent schedule={schedule} />
@@ -136,7 +136,9 @@ function ScheduleBoard({ editMode }: ScheduleBoardProps) {
 				res.data.scheduleList.forEach((schedule) => {
 					if (scheduleIndex != schedule.timeTable) {
 						for (let i = scheduleIndex; i < schedule.timeTable; i++) {
-							newPlanList[schedule.dayOfWeek].scheduleList[scheduleIndex] = null;
+							if (newPlanList[schedule.dayOfWeek].scheduleList[scheduleIndex] === null) {
+								newPlanList[schedule.dayOfWeek].scheduleList[scheduleIndex] = null;
+							}
 						}
 					}
 					newPlanList[schedule.dayOfWeek].scheduleList[schedule.timeTable] = schedule;
@@ -176,10 +178,8 @@ function ScheduleBoard({ editMode }: ScheduleBoardProps) {
 	return (
 		<div className="flex flex-col gap-5 h-full">
 			<CalenderHeader planStartDate={planStartDate} onClickChangePlanDate={onClickChangePlanDate} />
-
 			<div className="flex w-full h-full">
 				<Divider orientation="vertical" />
-
 				<ul className="flex flex-col">
 					{/*가장 앞 목차 번호 */}
 					<Divider />
