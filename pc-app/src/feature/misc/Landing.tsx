@@ -8,39 +8,39 @@ import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 
 function Landing() {
-  const userInfo = useRecoilValue(userState);
-  const isLogined = userInfo.memberId ? true : false;
-  const navigate = useNavigate();
-  const goLogin = useCallback(() => navigate("/auth/login"), [navigate]);
+	const userInfo = useRecoilValue(userState);
+	const isLogined = userInfo.memberId ? true : false;
+	const navigate = useNavigate();
+	const goLogin = useCallback(() => navigate("/auth/login"), [navigate]);
 
-  const onClickLogoutBtn = useCallback(async () => {
-    await logout();
-    localStorage.clear();
-    goLogin();
-  }, [goLogin]);
+	const onClickLogoutBtn = useCallback(async () => {
+		await logout();
+		localStorage.clear();
+		goLogin();
+	}, [goLogin]);
 
-  const onClickTestBtn = async () => {
-    try {
-      await commonAxios.post("/test/test1");
-      Swal.fire("성공");
-    } catch (e) {
-      Swal.fire("실패");
-      console.log(e);
-    }
-  };
+	const onClickTestBtn = async () => {
+		try {
+			await commonAxios.post("/test/test1");
+			Swal.fire("성공");
+		} catch (e) {
+			Swal.fire("실패");
+			console.log(e);
+		}
+	};
 
-  return (
-    <div>
-      {isLogined ? (
-        <div className="flex gap-5">
-          <Button onClick={onClickLogoutBtn}>로그아웃</Button>
-          <Button onClick={onClickTestBtn}>테스트 </Button>
-        </div>
-      ) : (
-        <a href="#/auth/login">로그인</a>
-      )}
-    </div>
-  );
+	return (
+		<div>
+			{isLogined ? (
+				<div className="flex gap-5">
+					<Button onClick={onClickLogoutBtn}>로그아웃</Button>
+					<Button onClick={onClickTestBtn}>테스트 </Button>
+				</div>
+			) : (
+				<a href="#/auth/login">로그인</a>
+			)}
+		</div>
+	);
 }
 
 export default Landing;
