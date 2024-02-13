@@ -139,6 +139,7 @@ function CurrentLectureCard({ navigator }: CurrentLectureCardProps) {
 	);
 }
 export default function MainDashBoard() {
+
 	const todayDate = dayjs().startOf("day");
 
 	const [attendanceState, setAttendanceState] = useState<Attendance | undefined>();

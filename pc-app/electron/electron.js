@@ -30,13 +30,18 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../dist/index.html")}`
   );
+
   // Open the DevTools.
   if (isDev) {
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
 }
+app.on("ready", () => {
+  app.setAppUserModelId('com.otc.ourTinyClassroom');
+})
 
 app.whenReady().then(() => {
+
   createWindow();
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
