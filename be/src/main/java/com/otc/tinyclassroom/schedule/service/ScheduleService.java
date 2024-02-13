@@ -4,7 +4,9 @@ import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.lecture.entity.Lecture;
 import com.otc.tinyclassroom.lecture.repository.LectureRepository;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
+import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
@@ -33,9 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleService {
 
     private final LectureRepository lectureRepository;
-
     private final MemberRepository memberRepository;
-
+    private final MemberClassRoomRepository memberClassRoomRepository;
     private final ScheduleRepository scheduleRepository;
     private final JwtProvider jwtProvider;
 
@@ -47,17 +48,13 @@ public class ScheduleService {
      * @return 스케줄 리스트 반환.
      */
     @Transactional(readOnly = true)
-    public ScheduleListResponseDto getScheduleList(String memberId, LocalDate scheduleDate) {
-
-        // 리스트를 가져오려는 멤버가 존재하지 않을 경우 Exception 발생.
-        Member member = memberRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER));
-
-        // 그 멤버가 배정된 반에 할당된 선생이 없을 경우 Exception 발생.
-        Member teacher = memberRepository.findByRoleAndClassRoom(Role.ROLE_TEACHER, member.getClassRoom())
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_TEACHER));
-
-        List<ScheduleListDto> scheduleList = scheduleRepository.findScheduleListByMemberId(memberId, teacher.getMemberId(), scheduleDate);
+    public ScheduleListResponseDto getScheduleList(Long memberId, LocalDate scheduleDate) {
+        // 멤버 검증
+        Member member = getMemberById(memberId);
+        // 가장 최근의 멤버 클래스룸 검증 및 선생님 확인
+        Member teacher = getClassroomTeacher(member);
+        // 스케줄 리스트 가져오기
+        List<ScheduleListDto> scheduleList = scheduleRepository.findScheduleListById(memberId, teacher.getMemberId(), scheduleDate);
         return ScheduleListResponseDto.of(scheduleDate, scheduleList);
     }
 
@@ -69,25 +66,21 @@ public class ScheduleService {
     public void insertSchedule(ScheduleInsertRequestDto requestDto) {
 
         // 적용하려는 lecture가 존재하지 않은 경우 에러 발생.
-        Lecture lecture = lectureRepository.findById(requestDto.lectureId())
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_LECTURE));
+        Lecture lecture = getLectureById(requestDto.lectureId());
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
-        String currentUserId = jwtProvider.getCurrentUserId();
-        Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER)
-            );
+        Long currentUserId = jwtProvider.getCurrentMemberId();
+        Member member = getMemberById(currentUserId);
 
         // 그 멤버가 배정된 반에 할당된 선생이 없을 경우 Exception 발생.
-        Member teacher = memberRepository.findByRoleAndClassRoom(Role.ROLE_TEACHER, currentMember.getClassRoom())
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_TEACHER));
+        Member teacher = getClassroomTeacher(member);
 
         // 사용자 role에 따라 삭제 가능여부를 판단.
-        boolean deletable = currentMember.getRole() == Role.ROLE_STUDENT;
+        boolean deletable = member.getRole() == Role.ROLE_STUDENT;
 
         // 시간표에 있는지 확인하기.
         scheduleRepository.findScheduleByMemberIdAndScheduleDateAndTimeTable(
-            currentMember.getMemberId(),
+            member.getId(),
             teacher.getMemberId(),
             requestDto.scheduleDate(),
             lecture.getTimeTable()
@@ -96,7 +89,7 @@ public class ScheduleService {
         });
 
         Schedule schedule = Schedule.of(
-            currentMember,
+            member,
             lecture,
             requestDto.scheduleDate(),
             deletable
@@ -118,10 +111,8 @@ public class ScheduleService {
             );
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
-        String currentUserId = jwtProvider.getCurrentUserId();
-        Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER)
-            );
+        Long currentUserId = jwtProvider.getCurrentMemberId();
+        Member currentMember = getMemberById(currentUserId);
 
         // 스케줄 삭제를 시도하는 사람이 학생인 경우.
         if (currentMember.getRole() == Role.ROLE_STUDENT) {
@@ -132,5 +123,28 @@ public class ScheduleService {
         }
 
         scheduleRepository.deleteScheduleById(id);
+    }
+
+    private Lecture getLectureById(Long lectureId) {
+        return lectureRepository.findById(lectureId)
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_LECTURE));
+    }
+
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER));
+    }
+
+    private Member getClassroomTeacher(Member member) {
+        List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
+        if (memberClassRooms.isEmpty()) {
+            throw new ScheduleException(ScheduleErrorCode.CLASSROOM_NOT_ASSIGNED);
+        }
+
+        MemberClassRoom memberClassroom = memberClassRooms.get(memberClassRooms.size() - 1);
+        List<Member> teachers = memberClassRoomRepository.findMemberByClassRoomIdAndRole(memberClassroom.getClassRoom().getId(), Role.ROLE_TEACHER);
+
+        return teachers.stream().findFirst()
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_TEACHER));
     }
 }

@@ -28,8 +28,10 @@ public class ClassRoom {
     private int year; // 해당 년도
     @Column(nullable = false)
     private int grade; // 학년
-    @Column(nullable = false)
+    @Column
     private int number; // 반
+    @Column
+    private String roomUrl;
 
     @OneToMany(mappedBy = "classRoom")
     private final List<MemberClassRoom> members = new ArrayList<>();
@@ -40,14 +42,19 @@ public class ClassRoom {
     /**
      * 교실 생성자.
      */
-    public ClassRoom(int year, int grade, int number) {
+    public ClassRoom(int year, int grade, int number, String roomUrl) {
         this.year = year;
         this.grade = grade;
         this.number = number;
+        this.roomUrl = roomUrl;
     }
 
     public static ClassRoom of(int year, int grade, int number) {
-        return new ClassRoom(year, grade, number);
+        return new ClassRoom(year, grade, number, null);
+    }
+
+    public static ClassRoom of(int year, int grade, int number, String roomUrl) {
+        return new ClassRoom(year, grade, number, roomUrl);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.lecture.dto.request.RoomCreateRequestDto;
+import com.otc.tinyclassroom.lecture.service.WebClientService;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
@@ -12,6 +14,9 @@ import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 /**
  * 반 편성 관련 service.
@@ -33,16 +39,29 @@ public class ClassAssignmentService {
     private final ClassRoomRepository classRoomRepository;
     private final MemberRepository memberRepository;
     private final MemberClassRoomRepository memberClassRoomRepository;
+    private final WebClientService webClientService;
     private final JwtProvider jwtProvider;
 
     /**
      * 반 생성 메서드.
      */
     public ClassRoomDto createClassRoom(ClassRoomDto classRoomDto) {
-        ClassRoom classRoom = ClassRoom.of(classRoomDto.year(), classRoomDto.grade(), classRoomDto.number());
+
+        LocalDateTime nbfTime = LocalDateTime.of(classRoomDto.year(), Month.JANUARY, 1, 0, 0);
+        long nbf = nbfTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+        LocalDateTime expTime = LocalDateTime.of(classRoomDto.year(), Month.DECEMBER, 31, 23, 59);
+        long exp = expTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+
+        int maxParticipants = 20;
+        String url = createClassRoomUrlIfNeeded(classRoomDto, nbf, exp, maxParticipants);
+
+        // ClassRoom 객체 생성 로직 중복 제거
+        ClassRoom classRoom = ClassRoom.of(classRoomDto.year(), classRoomDto.grade(), classRoomDto.number(), url);
         ClassRoom savedClassRoom = classRoomRepository.save(classRoom);
+
         return ClassRoomDto.from(savedClassRoom);
     }
+
 
     /**
      * 반 편성 메서드.
@@ -88,7 +107,7 @@ public class ClassAssignmentService {
      */
     public List<MemberClassRoomResponseDto> getMembersByClassRoom(Long classRoomId) {
         //TODO: QueryDSL로 변경
-        List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoomId);
+        List<Member> members = memberClassRoomRepository.findMemberByClassRoomIdAndRole(classRoomId, Role.ROLE_STUDENT);
         return members.stream().map(MemberClassRoomResponseDto::from).collect(Collectors.toList());
     }
 
@@ -109,7 +128,7 @@ public class ClassAssignmentService {
 
         ClassRoom classRoom = getClassRoomById(classRoomId);
         // targetClassRommId에 해당하는 반 멤버 가져오기
-        List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoomId);
+        List<Member> members = memberClassRoomRepository.findMemberByClassRoomIdAndRole(classRoomId, Role.ROLE_STUDENT);
         List<ClassRoom> targetClassRooms = classRoomRepository.findClassRoomByGradeAndYearWithNonZeroNumber(classRoom.getGrade(), classRoom.getYear());
 
         // 멤버들을 랜덤한 순서로 섞기
@@ -138,6 +157,17 @@ public class ClassAssignmentService {
         return classRoomRepository.findById(classRoomId)
             .orElseThrow(() -> new ClassAssignmentException(
                 ClassAssignmentErrorCode.CLASSROOM_NOT_FOUND));
+    }
+
+    private String createClassRoomUrlIfNeeded(ClassRoomDto classRoomDto, long nbf, long exp, int maxParticipants) {
+        if (classRoomDto.number() == 0) {
+            return null;
+        }
+        String identifier = classRoomDto.year() + "-" + classRoomDto.grade() + "-" + classRoomDto.number();
+        Mono<String> urlMono = webClientService.createClassRoomUrl(RoomCreateRequestDto.of(identifier, nbf, exp, maxParticipants));
+
+        // Mono<String>을 String으로 동기적으로 변환
+        return urlMono.block();
     }
 
     private Member getMemberById(Long memberId) {

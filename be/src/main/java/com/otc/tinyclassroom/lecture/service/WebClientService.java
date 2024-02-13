@@ -50,7 +50,7 @@ public class WebClientService {
                 requestDto.nbf(),
                 requestDto.exp(),
                 requestDto.maxParticipants(),
-                true, true, true, true, true,
+                true, true, true, true, false,
                 true, true, true, true, true,
                 "ko", "ap-northeast-2"
             )

@@ -31,7 +31,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @return 스케줄 리스트. 날짜 오름차, 교시 오름차 순으로 정렬.
      */
     @Override
-    public List<ScheduleListDto> findScheduleListByMemberId(String memberId, String teacherMemberId, LocalDate start) {
+    public List<ScheduleListDto> findScheduleListById(Long memberId, String teacherMemberId, LocalDate start) {
         // 주의 종료일. 월요일 + 4 = 금요일
         LocalDate end = start.plusDays(4);
 
@@ -73,16 +73,16 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * 스케줄 삭제 메서드.
      * 소프트 딜리트 적용.
      *
-     * @param id 지우고자 하는 스케줄의 pk.
+     * @param scheduleId 지우고자 하는 스케줄의 pk.
      * @return 지운 스케줄 갯수. 정상 삭제 시 1.
      */
     @Override
-    public long deleteScheduleById(Long id) {
+    public long deleteScheduleById(Long scheduleId) {
         return jpaQueryFactory
             .update(schedule)
             .set(schedule.deletedAt, LocalDateTime.now())
             .where(
-                schedule.id.eq(id),
+                schedule.id.eq(scheduleId),
                 schedule.deletedAt.isNull()
             )
             .execute();
@@ -91,11 +91,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     /**
      * 주어진 pk에 해당하는 스케줄 반환 메서드.
      *
-     * @param id 스케줄 pk.
+     * @param scheduleId 스케줄 pk.
      * @return 스케줄 dto 반환.
      */
     @Override
-    public Optional<ScheduleCheckDto> findScheduleById(Long id) {
+    public Optional<ScheduleCheckDto> findScheduleById(Long scheduleId) {
         return Optional.ofNullable(
             jpaQueryFactory
                 .select(Projections.constructor(ScheduleCheckDto.class,
@@ -110,7 +110,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 .join(schedule.lecture, lecture)
                 .join(schedule.member, member)
                 .where(
-                    schedule.id.eq(id),
+                    schedule.id.eq(scheduleId),
                     schedule.deletedAt.isNull()
                 )
                 .fetchOne()
@@ -128,7 +128,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      */
     @Override
     public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(
-        String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
+        Long memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
             jpaQueryFactory
                 .select(Projections.constructor(ScheduleCheckDto.class,
@@ -155,7 +155,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     /**
      * 스케줄이 목표 학생 혹은 해당 학생 반의 선생의 스케줄인지 검사하는 동적쿼리문.
      */
-    private BooleanExpression studentAndTeacherNameEq(String memberId, String teacherId) {
-        return member.memberId.eq(memberId).or(member.memberId.eq(teacherId));
+    private BooleanExpression studentAndTeacherNameEq(Long memberId, String teacherId) {
+        return member.id.eq(memberId).or(member.memberId.eq(teacherId));
     }
 }

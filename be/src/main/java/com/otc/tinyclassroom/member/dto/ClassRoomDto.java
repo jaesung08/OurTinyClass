@@ -10,10 +10,10 @@ import java.util.stream.Collectors;
  * DTO for  {@link com.otc.tinyclassroom.member.entity.ClassRoom}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record ClassRoomDto(Long id, int year, int grade, int number) {
+public record ClassRoomDto(Long id, int year, int grade, int number, String roomUrl) {
 
-    public static ClassRoomDto of(Long id, int year, int grade, int number) {
-        return new ClassRoomDto(id, year, grade, number);
+    public static ClassRoomDto of(Long id, int year, int grade, int number, String roomUrl) {
+        return new ClassRoomDto(id, year, grade, number, roomUrl);
     }
 
     /**
@@ -23,7 +23,7 @@ public record ClassRoomDto(Long id, int year, int grade, int number) {
         if (dto == null) {
             return null;
         }
-        return ClassRoom.of(dto.year(), dto.grade(), dto.number());
+        return ClassRoom.of(dto.year(), dto.grade(), dto.number(), dto.roomUrl());
     }
 
     /**
@@ -46,7 +46,8 @@ public record ClassRoomDto(Long id, int year, int grade, int number) {
             classRoom.getId(),
             classRoom.getYear(),
             classRoom.getGrade(),
-            classRoom.getNumber()
+            classRoom.getNumber(),
+            classRoom.getRoomUrl()
         );
     }
 

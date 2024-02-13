@@ -10,4 +10,7 @@ package com.otc.tinyclassroom.lecture.dto.request;
  */
 public record RoomCreateRequestDto(String roomName, long nbf, long exp, int maxParticipants) {
 
+    public static RoomCreateRequestDto of(String roomName, long nbf, long exp, int maxParticipants) {
+        return new RoomCreateRequestDto(roomName, nbf, exp, maxParticipants);
+    }
 }

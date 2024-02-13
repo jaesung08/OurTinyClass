@@ -19,15 +19,16 @@ public class MemberClassRoomRepositoryCustomImpl implements MemberClassRoomRepos
 
     private final JPAQueryFactory queryFactory;
 
+
     @Override
-    public List<Member> findMemberByClassRoomId(Long classRoomId) {
+    public List<Member> findMemberByClassRoomIdAndRole(Long classRoomId, Role role) {
         QMemberClassRoom qMemberClassRoom = QMemberClassRoom.memberClassRoom;
 
         return queryFactory
             .select(qMemberClassRoom.member)
             .from(qMemberClassRoom)
             .where(qMemberClassRoom.classRoom.id.eq(classRoomId)
-                .and(qMemberClassRoom.member.role.eq(Role.ROLE_STUDENT)))
+                .and(qMemberClassRoom.member.role.eq(role)))
             .fetch();
     }
 

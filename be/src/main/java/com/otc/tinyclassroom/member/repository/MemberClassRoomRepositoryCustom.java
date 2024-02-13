@@ -2,6 +2,7 @@ package com.otc.tinyclassroom.member.repository;
 
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.Role;
 import java.util.List;
 
 /**
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface MemberClassRoomRepositoryCustom {
 
-    List<Member> findMemberByClassRoomId(Long classRoomId);
+    List<Member> findMemberByClassRoomIdAndRole(Long classRoomId, Role role);
 
     List<ClassRoom> findClassRoomByMemberId(Long memberId);
 }
