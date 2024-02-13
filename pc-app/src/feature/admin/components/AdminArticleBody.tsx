@@ -11,11 +11,7 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import {
-  DUMMY_DATA,
-  SearchArticleOptions,
-  UserRole,
-} from "../assets/textContent";
+import { DUMMY_DATA, SearchArticleOptions } from "../assets/textContent";
 import { useState } from "react";
 import { SearchBarProps } from "../types";
 

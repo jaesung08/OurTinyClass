@@ -27,7 +27,7 @@ const AdminNavBar = ({ setpage }: AdminNavBarProps) => {
             게시판 관리
           </p>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem onClick={() => setpage("accept")}>
           <p className="text-white cursor-pointer">등업 관리</p>
         </NavbarItem>
       </NavbarContent>
