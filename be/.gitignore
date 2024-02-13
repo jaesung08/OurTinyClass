@@ -9,12 +9,18 @@
 *.yml
 *.yaml
 
+### Querydsl
+/src/main/generated
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+
+# codeStyles
+be/.idea/codeStyles/codeStyleConfig.xml
 
 # AWS User-specific
 .idea/**/aws.xml
