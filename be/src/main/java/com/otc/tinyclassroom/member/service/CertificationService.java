@@ -15,8 +15,14 @@ import com.otc.tinyclassroom.member.exception.CertificationException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.member.repository.MentorRoleUpdateRepository;
 import com.otc.tinyclassroom.member.repository.StudentRoleUpdateRepository;
+import com.otc.tinyclassroom.mypage.entity.Badge;
+import com.otc.tinyclassroom.mypage.entity.BadgeEvent;
+import com.otc.tinyclassroom.mypage.exception.BadgeErrorCode;
+import com.otc.tinyclassroom.mypage.exception.BadgeException;
+import com.otc.tinyclassroom.mypage.repository.BadgeRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,6 +40,8 @@ public class CertificationService {
     private final StudentRoleUpdateRepository studentRoleUpdateRepository;
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final ApplicationEventPublisher publisher;
+    private final BadgeRepository badgeRepository;
 
     /**
      * 유효성 검사 후 MentorRoleUpdateRequest 저장.
@@ -43,7 +51,7 @@ public class CertificationService {
             throw new CertificationException(CertificationErrorCode.NO_BELONG);
         }
 
-        Member member = memberRepository.findById(jwtProvider.getCurrentUserId()).orElseThrow(
+        Member member = memberRepository.findById(jwtProvider.getCurrentMemberId()).orElseThrow(
             () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
 
@@ -60,7 +68,7 @@ public class CertificationService {
             throw new CertificationException(CertificationErrorCode.NOT_SCHOOL_TYPE, "유효한 학교타입이 아닙니다.");
         }
 
-        Member member = memberRepository.findById(jwtProvider.getCurrentUserId()).orElseThrow(
+        Member member = memberRepository.findById(jwtProvider.getCurrentMemberId()).orElseThrow(
             () -> new CertificationException(CertificationErrorCode.NO_USER_FOUND, "유저 아이디가 존재하지 않습니다.")
         );
         StudentRoleUpdateRequest studentRoleUpdateRequest
@@ -78,6 +86,11 @@ public class CertificationService {
         );
         if (isAuthorizedForRoleChange()) {
             member.setRole(role);
+
+            Badge badge = badgeRepository.findById(3L).orElseThrow(
+                () -> new BadgeException(BadgeErrorCode.NOT_FOUND_BADGE)
+            );
+            publisher.publishEvent(new BadgeEvent(badge, member));
         }
         return RoleUpdateResponseDto.of(memberId, role);
     }

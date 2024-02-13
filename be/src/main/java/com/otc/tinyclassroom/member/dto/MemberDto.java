@@ -9,10 +9,10 @@ import java.time.LocalDate;
  * DTO for {@link com.otc.tinyclassroom.member.entity.Member}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record MemberDto(String memberId, ClassRoomDto classRoomDto, String password, String name, String email, LocalDate birthday, int point) {
+public record MemberDto(String memberId, ClassRoomDto classRoomDto, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
 
-    public static MemberDto of(String memberId, ClassRoomDto classRoom, String password, String name, String email, LocalDate birthday, int point) {
-        return new MemberDto(memberId, classRoom, password, name, email, birthday, point);
+    public static MemberDto of(String memberId, ClassRoomDto classRoom, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+        return new MemberDto(memberId, classRoom, password, name, email, birthday, point, profileUrl);
     }
 
     /**
@@ -26,7 +26,8 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
             entity.getName(),
             entity.getEmail(),
             entity.getBirthday(),
-            entity.getPoint()
+            entity.getPoint(),
+            entity.getProfileUrl()
         );
     }
 
@@ -42,7 +43,8 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
             dto.name(),
             dto.email(),
             dto.birthday(),
-            dto.point()
+            dto.point(),
+            dto.profileUrl()
         );
     }
 

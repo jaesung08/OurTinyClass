@@ -23,6 +23,7 @@ insert into classroom (id, year, grade, number) values (20, 2023, 3, 3);
 insert into member (id, member_id, class_room_id, password, name, email, birthday, point) values (1, 'park', 10,'lF7`Oeb?e', 'Keogh', 'mkeogh0@topsy.com', '2023-03-30', 27);
 insert into member (id, member_id, class_room_id, password, name, email, birthday, point) values (2,  'kim',null,'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53);
 insert into member (id, member_id ,class_room_id, password, name, email, birthday, point) values (3, 'lee', 8,'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95);
+insert into member (id, member_id ,class_room_id, password, name, email, birthday, point, role, profile_url) values (4, 'ssafy123', 5,'$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, "ROLE_ADMIN", "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 
 -- 게시글
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (1, 2, null, 'Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.', 'Integer a nibh.', 'NOTICE', '2023-09-17 12:41:20', '2023-03-15 15:38:35', 0);
@@ -125,6 +126,12 @@ insert into article (id, member_id, class_room_id, title, content, article_type,
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (98, 2, null, 'Nunc rhoncus dui vel sem. Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti.', 'Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti. Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum.', 'COUNSELING', '2023-11-15 09:18:11', '2023-02-21 12:13:13', 4);
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (99, 1, null, 'Quisque ut erat. Curabitur gravida nisi at nibh. In hac habitasse platea dictumst.', 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque.', 'NOTICE', '2023-03-13 23:08:08', '2023-08-18 02:36:37', 3);
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (100, 1, 7, 'Donec diam neque, vestibulum eget, vulputate ut, ultrices vel, augue. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices, erat tortor sollicitudin mi, sit amet lobortis sapien sapien non mi. Integer ac neque. Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus. In sagittis dui vel nisl.', 'Proin eu mi.', 'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (101, 4, 7, '내가쓴 글 1', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (102, 4, 7, '내가쓴 글 2', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (103, 4, 7, '내가쓴 글 3', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (104, 4, 7, '내가쓴 글 4', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (105, 4, 7, '내가쓴 글 5', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
+insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit) values (106, 4, 7, '내가쓴 글 6', '내가쓴 내용이에용',  'HOBBY', '2023-06-22 15:05:17', '2023-05-11 02:12:22', 3);
 
 --댓글
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (1, 1, 100, 'Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus. Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero. Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.', '2023-12-16 12:34:20', '2023-08-02 10:11:42');
@@ -1127,3 +1134,23 @@ insert into article_comment (id, member_id, article_id, content, created_at, mod
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (998, 3, 22, 'Cras pellentesque volutpat dui. Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti. Nullam porttitor lacus at turpis.', '2023-08-22 09:00:35', '2023-10-03 18:10:50');
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (999, 2, 49, 'Vivamus vel nulla eget eros elementum pellentesque. Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus. Phasellus in felis. Donec semper sapien a libero. Nam dui. Proin leo odio, porttitor id, consequat in, consequat ut, nulla.', '2023-06-25 01:55:31', '2023-11-30 01:03:34');
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at) values (1000, 3, 31, 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', '2023-05-21 21:46:44', '2023-06-14 12:07:02');
+
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 1, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (1, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 2, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (1, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 3, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (2, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 4, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (2, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 5, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 6, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 7, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 8, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 9, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (3, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 10, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (3, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 11, 4);
+
+insert into badge (id, image_url) values (1, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png");
+insert into badge (id, image_url) values (2, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/38ae118f-ca62-45a6-b591-376bbce43bdc.png");
+insert into badge (id, image_url) values (3, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/ec37c826-aece-46ff-8372-775b1104c4e2.png");
+
+
+insert into member_badge(member_id, badge_id) values (4, 1);
+insert into member_badge(member_id, badge_id) values (4, 2);

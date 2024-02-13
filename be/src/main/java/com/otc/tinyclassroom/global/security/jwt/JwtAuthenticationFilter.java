@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+
             return null;
 
         } catch (Exception e) {

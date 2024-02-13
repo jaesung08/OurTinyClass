@@ -64,7 +64,7 @@ public class JwtProvider {
      */
     public Long getMemberIdByAccessToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret)).build().verify(token)
-            .getClaim("id").asLong();
+            .getClaim("memberId").asLong();
     }
 
     /**

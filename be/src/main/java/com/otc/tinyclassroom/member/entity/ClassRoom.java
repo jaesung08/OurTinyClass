@@ -5,8 +5,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
 
 /**
@@ -27,6 +30,9 @@ public class ClassRoom {
     private int grade; // 학년
     @Column(nullable = false)
     private int number; // 반
+
+    @OneToMany(mappedBy = "classRoom")
+    private Set<ClassRoomMember> classRoomMembers = new HashSet<>();
 
     protected ClassRoom() {
     }

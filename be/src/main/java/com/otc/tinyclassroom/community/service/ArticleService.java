@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.community.dto.ArticleDto;
 import com.otc.tinyclassroom.community.dto.ArticleWithCommentDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleUpdateRequestDto;
+import com.otc.tinyclassroom.community.dto.response.MyPageArticleResponseDto;
 import com.otc.tinyclassroom.community.entity.Article;
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
@@ -15,10 +16,14 @@ import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +82,25 @@ public class ArticleService {
                 articleRepository.findByClassRoom_IdAndArticleTypeAndTitleContainingOrContentContaining(classRoomId, articleType, searchKeyword, searchKeyword, pageable).map(ArticleDto::from);
             case NAME -> articleRepository.findByClassRoom_IdAndArticleTypeAndMember_Name(classRoomId, articleType, searchKeyword, pageable).map(ArticleDto::from);
         };
+    }
+
+    /**
+     * 내가 쓴 글을 조회한다.(페이징)
+     *
+     * @param pageNumber 페이징 시작 쪽수
+     * @param pageSize 페이징 사이즈
+     * @return  제목, 내용, 작성자.
+     */
+    public List<MyPageArticleResponseDto> searchMyArticles(int pageNumber, int pageSize) {
+        Long currentMemberId = jwtProvider.getCurrentMemberId();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+
+        // Paging하여 "createdAt" 순으로 5개 리턴
+        Page<Article> articles = articleRepository.findByMemberId(currentMemberId, pageable);
+
+        return articles.getContent().stream()
+            .map(article -> MyPageArticleResponseDto.of(article.getId(), article.getTitle()))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -175,4 +199,8 @@ public class ArticleService {
     public Long getCurrentMemberId() {
         return jwtProvider.getCurrentMemberId();
     }
+
+
+
+
 }
