@@ -2,7 +2,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input
 import { useEffect, useState } from "react";
 import { SelectCategories } from "../assets/textContents";
 import { Accordion, AccordionItem } from "@nextui-org/react";
-import { createSchedule, getScheduleCategories } from "../api/createSchedule";
+import { createSchedule, getSpecialLecture, getFreeLecture } from "../api/createSchedule";
 
 type CreateScheduleProps = {
 	isOpen: boolean;
@@ -19,8 +19,9 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 	useEffect(() => {
 		const getCategories = async () => {
 			try {
-				const response = await getScheduleCategories(date, dayOfWeek);
-				console.log(response);
+				const responseSpecial = await getSpecialLecture(date, dayOfWeek);
+				const responseFree = await getFreeLecture(0);
+				console.log(responseFree, responseSpecial);
 			} catch (error) {
 				console.error(error);
 			}

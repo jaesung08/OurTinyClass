@@ -17,11 +17,19 @@ export const createSchedule = (lectureId: number, scheduleDate: string, timeTabl
 	});
 };
 
-export const getScheduleCategories = (date: string, timeTable: number) => {
+export const getSpecialLecture = (date: string, timeTable: number) => {
 	return commonAxios.get("/lectures", {
 		params: {
 			date,
 			timeTable,
+		},
+	});
+};
+
+export const getFreeLecture = (lectureType: number) => {
+	return commonAxios.get("/lectures", {
+		params: {
+			lectureType,
 		},
 	});
 };
