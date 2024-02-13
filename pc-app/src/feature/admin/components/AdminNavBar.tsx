@@ -12,7 +12,7 @@ interface AdminNavBarProps {
 
 const AdminNavBar = ({ setpage }: AdminNavBarProps) => {
   return (
-    <Navbar className="bg-lime-950">
+    <Navbar className="bg-lime-950" maxWidth="2xl">
       <NavbarBrand>
         <img src={Logo} className="w-20 h-20" alt="" />
         <p className="font-bold text-inherit text-white">우리들의 작은 교실</p>

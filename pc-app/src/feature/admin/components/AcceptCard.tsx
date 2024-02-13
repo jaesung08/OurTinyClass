@@ -4,6 +4,7 @@ import {
   CardBody,
   CardFooter,
   Avatar,
+  Button,
 } from "@nextui-org/react";
 
 export default function AcceptCard() {
@@ -27,7 +28,7 @@ export default function AcceptCard() {
           </div>
         </div>
       </CardHeader>
-      <CardBody className="px-3 py-0 text-small text-default-400">
+      <CardBody className="px-3 py-0 text-small text-default-400 cursor-pointer">
         <p>
           Frontend developer and UI/UX enthusiast. Join me on this coding
           adventure!
@@ -39,15 +40,13 @@ export default function AcceptCard() {
           </span>
         </span>
       </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">4</p>
-          <p className=" text-default-400 text-small">Following</p>
-        </div>
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">97.1K</p>
-          <p className="text-default-400 text-small">Followers</p>
-        </div>
+      <CardFooter className="flex justify-around gap-3">
+        <Button className="w-2/6" color="success">
+          승인
+        </Button>
+        <Button className="w-2/6" color="danger">
+          거절
+        </Button>
       </CardFooter>
     </Card>
   );
