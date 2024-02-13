@@ -5,6 +5,7 @@ import MainDashboard from "@/feature/users/routes/MainDashboard";
 import JoinRoom from "@/feature/classroom/pages/JoinRoom";
 import { CommunitiesRoutes } from "@/feature/communities/routes";
 import AppLayout from "@/components/Layout/AppLayout";
+import UserInfo from "@/feature/users/routes/Mypage";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ export const protectedRoutes = [
       { path: "join-classroom", element: <JoinRoom /> },
       { path: "main-dashboard", element: <MainDashboard /> },
       { path: "communities/*", element: <CommunitiesRoutes /> },
+      { path: "/user-info/*", element: <UserInfo /> },
     ],
   },
 ];

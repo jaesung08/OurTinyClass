@@ -65,7 +65,7 @@ function CreateArticle() {
         await editDetail(title, content, articleId);
         Swal.fire("성공!", "게시글 수정이 성공하였습니다.", "success").then(
           () => {
-            navigator("/comunities/detail", { state: articleId });
+            navigator("/comunities/detail/" + articleId);
           }
         );
       } else {

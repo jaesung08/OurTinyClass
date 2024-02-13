@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getDetail } from "../api/detailBoard";
 import { editComment, removeComment } from "../api/comments";
 import { BoardDetail } from "../types";
@@ -18,25 +18,27 @@ function DetailArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState<object[]>([]);
   const [boardDetails, setBoardDetails] = useState<null | BoardDetail>(null);
-  const { state } = useLocation();
+  const { articleId } = useParams();
   const navigator = useNavigate();
 
   // 렌더링 시 데이터 불러오는 부분
   useEffect(() => {
     const renderDetail = async () => {
-      try {
-        setIsLoaded(false);
-        const res = await getDetail(state);
-        setBoardDetails(res.data);
-        setCommentList(propertyAddHandler(res.data.articleComments));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoaded(true);
+      if (articleId) {
+        try {
+          setIsLoaded(false);
+          const res = await getDetail(articleId);
+          setBoardDetails(res.data);
+          setCommentList(propertyAddHandler(res.data.articleComments));
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsLoaded(true);
+        }
       }
     };
     renderDetail();
-  }, [state]);
+  }, [articleId]);
 
   // 수정 중인지 체크하는 변수 추가 함수
   const propertyAddHandler = (probsComments: object[]) => {
@@ -71,7 +73,7 @@ function DetailArticle() {
   };
 
   const goEditArticle = () => {
-    navigator(`/communities/write/${state}`);
+    navigator(`/communities/write/${articleId}`);
   };
 
   return (
@@ -124,7 +126,7 @@ function DetailArticle() {
             <p>{boardDetails ? Parser(boardDetails.content) : ""}</p>
           </Skeleton>
           <CommentInput
-            articleId={state}
+            articleId={articleId ? +articleId : -1}
             commentList={commentList}
             setList={setCommentList}
           />

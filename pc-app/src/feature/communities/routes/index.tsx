@@ -16,7 +16,7 @@ export const CommunitiesRoutes = () => {
         }
       />
       <Route
-        path="detail"
+        path="detail/:articleId"
         element={
           <CommunityLayout>
             <DetailArticle />

@@ -26,6 +26,9 @@ function SideBar() {
     navigate("/communities");
   };
 
+  const goMyInfo = () => {
+    navigate("/user-info")
+  }
   const onClickLogoutBtn = useCallback(async () => {
     try {
       await logout();
@@ -103,7 +106,7 @@ function SideBar() {
             placement="right"
             className="capitalize"
           >
-            <Button isIconOnly className="p-2 bg-lime-500" size="lg">
+            <Button onClick={goMyInfo} isIconOnly className="p-2 bg-lime-500" size="lg">
               <PersonIcon />
             </Button>
           </Tooltip>

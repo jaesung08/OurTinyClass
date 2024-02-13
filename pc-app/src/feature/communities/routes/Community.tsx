@@ -154,9 +154,7 @@ function CommunityBoardTable({
         {(board) => (
           <TableRow
             key={board.id}
-            onClick={() =>
-              navigator("/communities/detail", { state: board.id })
-            }
+            onClick={() => navigator("/communities/detail/" + board.id)}
           >
             <TableCell>{board.id}</TableCell>
             <TableCell
@@ -207,7 +205,7 @@ function Community() {
         page: currentPage,
       });
       const data = res.data;
-      if (currentPage === res.data.number) {
+      if (currentPage === res.data.number + 1) {
         setBoardList(data.content);
         setTotalPage(data.totalPages);
       }
@@ -228,8 +226,10 @@ function Community() {
         page: currentPage,
       });
       const data = res.data;
-      setBoardList(data.content);
-      setTotalPage(data.totalPages - 1);
+      if (currentPage === res.data.number + 1) {
+        setBoardList(data.content);
+        setTotalPage(data.totalPages - 1);
+      }
     } catch (e) {
       console.error(e);
     } finally {
