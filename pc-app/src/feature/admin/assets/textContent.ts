@@ -154,3 +154,22 @@ export const UserRole = [
     value: 2,
   },
 ];
+
+export const SearchArticleOptions = [
+  {
+    name: "제목",
+    value: "title",
+  },
+  {
+    name: "내용",
+    value: "content",
+  },
+  {
+    name: "제목 + 내용",
+    value: "title_content",
+  },
+  {
+    name: "작성자",
+    value: "name",
+  },
+];

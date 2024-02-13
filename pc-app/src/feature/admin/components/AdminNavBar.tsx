@@ -3,11 +3,15 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarItem,
-  Link,
 } from "@nextui-org/react";
 import Logo from "../../../assets/img/logo.png";
+import React from "react";
 
-const AdminNavBar = () => {
+interface AdminNavBarProps {
+  setpage: (page: string) => void;
+}
+
+const AdminNavBar = ({ setpage }: AdminNavBarProps) => {
   return (
     <Navbar className="bg-lime-950">
       <NavbarBrand>
@@ -15,10 +19,10 @@ const AdminNavBar = () => {
         <p className="font-bold text-inherit text-white">우리들의 작은 교실</p>
       </NavbarBrand>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
+        <NavbarItem onClick={() => setpage("user")}>
           <p className="text-white cursor-pointer">유저 목록</p>
         </NavbarItem>
-        <NavbarItem isActive>
+        <NavbarItem onClick={() => setpage("article")}>
           <p className="text-white cursor-pointer" aria-current="page">
             게시판 관리
           </p>

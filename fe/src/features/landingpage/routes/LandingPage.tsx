@@ -14,7 +14,7 @@ export function LandingPage() {
       <div className="w-full h-lvh relative bg-red-100 bg-cover bg-no-repeat bg-[url('./assets/img/landingback.png')]">
         <Navbar maxWidth="2xl">
           <NavbarBrand className="flex gap-7">
-            <img className="w-20 h-20" src={Logo} alt="" />
+            <img className="w-20 h-20" src={Logo} alt=""/>
             <p className="font-bold text-inherit">우리들의 작은 교실</p>
           </NavbarBrand>
           <NavbarContent justify="end">

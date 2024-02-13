@@ -1,11 +1,30 @@
+import { useState } from "react";
 import AdminNavBar from "../components/AdminNavBar";
 import AdminUserBody from "../components/AdminUserBody";
+import AdminArticleBody from "../components/AdminArticleBody";
 
 const AdminPage = () => {
+  const [currentPage, setCurrentPage] = useState<string>("user");
+
+  const pageHandler = (page: string): void => {
+    setCurrentPage(page);
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case "user":
+        return <AdminUserBody />;
+      case "article":
+        return <AdminArticleBody />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
-      <AdminNavBar />
-      <AdminUserBody />
+      <AdminNavBar setpage={pageHandler} />
+      {renderPage()}
     </>
   );
 };

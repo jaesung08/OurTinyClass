@@ -11,7 +11,11 @@ import {
   SelectItem,
 } from "@nextui-org/react";
 import dayjs from "dayjs";
-import { DUMMY_DATA, SearchUserOptions, UserRole } from "../assets/textContent";
+import {
+  DUMMY_DATA,
+  SearchArticleOptions,
+  UserRole,
+} from "../assets/textContent";
 import { useState } from "react";
 import { SearchBarProps } from "../types";
 
@@ -26,11 +30,11 @@ function SearchBar({
       <Select
         className="ml-5 bg-white w-1/6 rounded-xl"
         size="sm"
-        defaultSelectedKeys={[SearchUserOptions[0].name]}
-        aria-label="유저를 검색할 방법을 선택해주세요."
+        defaultSelectedKeys={[SearchArticleOptions[0].name]}
+        aria-label="게시글을 검색할 방법을 선택해주세요."
         value={searchType}
       >
-        {SearchUserOptions.map((item) => (
+        {SearchArticleOptions.map((item) => (
           <SelectItem
             key={item.name}
             value={item.value}
@@ -59,38 +63,14 @@ function SearchBar({
 }
 
 const AdminUserBody = () => {
-  // const [testData, setTestData] = useState(null);
-  // useEffect(() => {
-  //   commonAxios
-  //     .get(
-  //       `http://70.12.246.227:8080/api/admin/members/certification/student/1`
-  //     )
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       setTestData(res.data);
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, []);
-
   const [searchType, setSearchType] = useState<string>(
-    SearchUserOptions[0].value
+    SearchArticleOptions[0].value
   );
   const [searchKeyword, setSearchKeyword] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [userRole, setUserRole] = useState<string>(UserRole[0].name);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-
-  const editHandler = (userName: string, userEmail: string) => {
-    setUserName(userName);
-    setUserEmail(userEmail);
-
-    setIsEdit(true);
-  };
 
   return (
     <section className="w-10/12 flex flex-col mx-auto py-10">
-      <p className="my-5 text-2xl">유저목록</p>
+      <p className="my-5 text-2xl">게시글 목록</p>
       <SearchBar
         searchType={searchType}
         searchKeyword={searchKeyword}
@@ -101,21 +81,18 @@ const AdminUserBody = () => {
         <Table
           aria-label="유저 관리 게시판"
           selectionMode="single"
-          className={isEdit ? "mt-10 max-h-[30rem] w-6/12" : "mt-10 max-h-80"}
+          className="mt-10 max-h-80"
         >
           <TableHeader>
             <TableColumn key="id">ID</TableColumn>
-            <TableColumn key="title">이름</TableColumn>
-            <TableColumn key="name">이메일</TableColumn>
-            <TableColumn key="createdAt">생일</TableColumn>
-            <TableColumn key="hit">역할</TableColumn>
+            <TableColumn key="title">제목</TableColumn>
+            <TableColumn key="name">작성자</TableColumn>
+            <TableColumn key="createdAt">작성일</TableColumn>
+            <TableColumn key="hit">조회수</TableColumn>
           </TableHeader>
           <TableBody items={DUMMY_DATA}>
             {(user) => (
-              <TableRow
-                key={user.id}
-                onClick={() => editHandler(user.name, user.email)}
-              >
+              <TableRow key={user.id}>
                 <TableCell>{user.id}</TableCell>
                 <TableCell
                   className="cursor-pointer"
@@ -135,35 +112,6 @@ const AdminUserBody = () => {
             )}
           </TableBody>
         </Table>
-        <div
-          className={
-            isEdit
-              ? "flex flex-col justify-around mt-10 max-h-[30rem] w-6/12 bg-slate-50 p-5 rounded-lg"
-              : "hidden"
-          }
-        >
-          <Input type="email" value={userName} label="Email" />
-          <Input type="text" value={userEmail} label="name" />
-          <Select
-            label="Select Role"
-            className="max-w-full"
-            defaultSelectedKeys={[userRole]}
-            onChange={(e) => setUserRole(e.target.value)}
-          >
-            {UserRole.map((role) => (
-              <SelectItem key={role.name} value={role.value}>
-                {role.name}
-              </SelectItem>
-            ))}
-          </Select>
-          <Button
-            color="success"
-            className="w-full py-5"
-            onClick={() => setIsEdit(false)}
-          >
-            수정
-          </Button>
-        </div>
       </div>
     </section>
   );
