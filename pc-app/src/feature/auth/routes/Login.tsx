@@ -1,24 +1,20 @@
 import { Button } from "@nextui-org/react";
 import LoginForm from "../components/LoginForm";
-import { login } from "../api/login";
+import { kakaoLogin, login } from "../api/login";
 import { useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { userState } from "@/atoms/user";
-import Cookies from "js-cookie";
 import { useCallback } from "react";
+import { LoginResponse } from "..";
 
 export default function Login() {
   const navigate = useNavigate();
   const setUserState = useSetRecoilState(userState);
-  const mutation = useMutation({
-    mutationFn: (loginData: { id: string; password: string }) => {
-      return login(loginData.id, loginData.password);
-    },
-    onSuccess: (res) => {
-      // 로그인 성공 처리
-      if (res.data) {
+
+  const onLoginSuccess = (res: LoginResponse) => {
+    if (res.data) {
         // 정상 로그인
         setUserState({
           memberId: res.data.memberId,
@@ -26,7 +22,7 @@ export default function Login() {
           point: res.data.point,
           role: res.data.role,
         });
-        Cookies.set("refreshToken", res.data.refreshToken);
+        localStorage.setItem('refreshToken', res.data.refreshToken);
         Swal.fire("성공!", "로그인에 성공하였습니다.", "success").then(() => {
           navigate("/");
         });
@@ -36,6 +32,14 @@ export default function Login() {
           "error"
         );
       }
+  }
+  const mutation = useMutation({
+    mutationFn: (loginData: { id: string; password: string }) => {
+      return login(loginData.id, loginData.password);
+    },
+    onSuccess: (res: LoginResponse) => {
+      // 로그인 성공 처리
+      onLoginSuccess(res)
     },
     onError: (error: {
       response: {
@@ -62,6 +66,16 @@ export default function Login() {
     navigate("/auth/join");
   }, [navigate]);
 
+  const onKakaoSuccess = async(accessToken: string) => {
+    try {
+      const res = await kakaoLogin(accessToken);
+      onLoginSuccess(res);
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-yellow-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full">
@@ -79,7 +93,7 @@ export default function Login() {
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <LoginForm onSubmit={onSubmit} />
+          <LoginForm onSubmit={onSubmit} onKakaoSuccess={onKakaoSuccess}/>
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

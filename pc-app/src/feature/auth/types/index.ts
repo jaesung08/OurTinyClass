@@ -21,6 +21,7 @@ export interface JoinResponse extends BaseResponse {
 
 export interface LoginFormProps {
   onSubmit: (id: string, password: string) => void;
+  onKakaoSuccess: (accessToken: string) => void;
 }
 
 export interface LoginResponse extends BaseResponse {

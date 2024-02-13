@@ -1,15 +1,22 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/idSQHuphTh3
- */
-
-import { Button, Input, Link } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import { useCallback, useState } from "react";
 import { LoginFormProps } from "../types";
+import KakaoLogin from "react-kakao-login";
+import { KAKAO_CLIENT_ID } from "@/config";
 
-export default function LoginForm({ onSubmit }: LoginFormProps) {
+interface KakaoLoginResponse {
+    token_type: string;
+    access_token: string;
+    expires_in: string;
+    refresh_token: string;
+    refresh_token_expires_in: number;
+    scope: string;
+}
+
+export default function LoginForm({ onSubmit, onKakaoSuccess }: LoginFormProps) {
   const [inputId, setInputId] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+
   const onChangeInputId = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setInputId(e.target.value);
@@ -31,6 +38,15 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
     },
     [inputId, inputPassword, onSubmit]
   );
+
+  const kakaoSuccessHandle = async (res: { response: KakaoLoginResponse }) => {
+    const accessToken = res.response.access_token;
+    onKakaoSuccess(accessToken);
+  }
+
+  const kakaoFailureHandle = (error: unknown) => {
+    console.log(error);
+  }
   return (
     <form className="space-y-6" data-testid="LoginForm" onSubmit={onSubmitForm}>
       <div>
@@ -62,16 +78,6 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
           type="password"
         />
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <Link
-            className="font-medium text-green-600 hover:text-green-500"
-            href="#"
-          >
-            비밀번호를 잊으셨나요?
-          </Link>
-        </div>
-      </div>
       <div>
         <Button
           className="w-full bg-green-500 hover:bg-green-700 text-white"
@@ -79,6 +85,11 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
         >
           로그인
         </Button>
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+        <KakaoLogin token={KAKAO_CLIENT_ID} onSuccess={kakaoSuccessHandle} onFail={kakaoFailureHandle} />
+        </div>
       </div>
     </form>
   );

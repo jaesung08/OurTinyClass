@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import LoginForm from "../components/LoginForm";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { render } from "@/_tests_/testUtils";
 import userEvent from "@testing-library/user-event";
+import LoginForm from "../components/LoginForm";
 
 describe("<LoginForm />", () => {
   const setup = () => {
