@@ -2,6 +2,8 @@ package com.otc.tinyclassroom.schedule.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.lecture.entity.Lecture;
+import com.otc.tinyclassroom.lecture.entity.type.LectureApprovalStatusType;
+import com.otc.tinyclassroom.lecture.entity.type.LectureType;
 import com.otc.tinyclassroom.lecture.repository.LectureRepository;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MemberClassRoom;
@@ -68,9 +70,26 @@ public class ScheduleService {
         // 적용하려는 lecture가 존재하지 않은 경우 에러 발생.
         Lecture lecture = getLectureById(requestDto.lectureId());
 
+        // 추가하려는 lecture가 승인되지 않은 경우 Exception 발생.
+        if (!lecture.getApproved().equals(LectureApprovalStatusType.APPROVED)) {
+            throw new ScheduleException(ScheduleErrorCode.NOT_ACCEPT_LECTURE);
+        }
+
+        // 추가하려는 강의가 특강인 경우 request의 날짜와 교시가 특강의 것과 정확히 일치해야 한다.
+        if (lecture.getLectureType().equals(LectureType.SPECIAL_LECTURE)) {
+            if (!lecture.getDate().equals(requestDto.scheduleDate()) || !(lecture.getTimeTable() == requestDto.timeTable())) {
+                throw new ScheduleException(ScheduleErrorCode.NOT_ACCURATE_LECTURE);
+            }
+        }
+
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
         Long currentUserId = jwtProvider.getCurrentMemberId();
         Member member = getMemberById(currentUserId);
+
+        // 현재 사용자가 추가하려는 강의가 정규 강의일 경우 Exception 발생.
+        if (lecture.getLectureType().equals(LectureType.REGULAR_LECTURE) && member.getRole().equals(Role.ROLE_STUDENT)) {
+            throw new ScheduleException(ScheduleErrorCode.NO_AUTH_SCHEDULE_INSERT);
+        }
 
         // 그 멤버가 배정된 반에 할당된 선생이 없을 경우 Exception 발생.
         Member teacher = getClassroomTeacher(member);
@@ -80,19 +99,21 @@ public class ScheduleService {
 
         // 시간표에 있는지 확인하기.
         scheduleRepository.findScheduleByMemberIdAndScheduleDateAndTimeTable(
-            member.getId(),
-            teacher.getMemberId(),
-            requestDto.scheduleDate(),
-            lecture.getTimeTable()
+                member.getId(),
+                teacher.getMemberId(),
+                requestDto.scheduleDate(),
+                requestDto.timeTable()
         ).ifPresent(e -> {
             throw new ScheduleException(ScheduleErrorCode.ALREADY_EXISTED_SCHEDULE);
         });
 
         Schedule schedule = Schedule.of(
-            member,
-            lecture,
-            requestDto.scheduleDate(),
-            deletable
+                member,
+                lecture,
+                requestDto.scheduleDate(),
+                requestDto.scheduleDate().getDayOfWeek().getValue(),
+                requestDto.timeTable(),
+                deletable
         );
 
         scheduleRepository.save(schedule);
@@ -107,8 +128,8 @@ public class ScheduleService {
 
         // 삭제하려는 스케줄이 존재하지 않는 경우 exception 발생.
         ScheduleCheckDto schedule = scheduleRepository.findScheduleById(id)
-            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE)
-            );
+                .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE)
+                );
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
         Long currentUserId = jwtProvider.getCurrentMemberId();

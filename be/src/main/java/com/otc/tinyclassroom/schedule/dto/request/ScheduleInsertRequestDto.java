@@ -7,14 +7,14 @@ import java.time.LocalDate;
  *
  * @param lectureId 강의 pk.
  */
-public record ScheduleInsertRequestDto(Long lectureId, LocalDate scheduleDate) {
+public record ScheduleInsertRequestDto(Long lectureId, LocalDate scheduleDate, int timeTable) {
 
     /**
      * 팩토리 메서드.
      *
      * @param lectureId 강의 pk.
      */
-    public static ScheduleInsertRequestDto of(Long lectureId, LocalDate scheduleDate) {
-        return new ScheduleInsertRequestDto(lectureId, scheduleDate);
+    public static ScheduleInsertRequestDto of(Long lectureId, LocalDate scheduleDate, int timeTable) {
+        return new ScheduleInsertRequestDto(lectureId, scheduleDate, timeTable);
     }
 }
