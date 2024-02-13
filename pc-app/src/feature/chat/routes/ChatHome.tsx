@@ -17,7 +17,12 @@ import { Chat, ChatRoom } from "../types";
 import { useEffect, useMemo, useState } from "react";
 import { IMessage, useStompClient, useSubscription } from "react-stomp-hooks";
 import { userState } from "@/atoms/user";
-import { createRoom, getChatList, getChatRoomList } from "../api/chatRoom";
+import {
+  createRoom,
+  getChatList,
+  getChatRoom,
+  getChatRoomList,
+} from "../api/chatRoom";
 import {
   Button,
   Listbox,
@@ -37,7 +42,7 @@ import Swal from "sweetalert2";
 
 const friendList = [
   {
-    memberId: "abc",
+    memberId: "ssafy1234",
     name: "박재선",
     profileImage: "https://i.pravatar.cc/150?u=a04258114e29026702d",
   },
@@ -143,23 +148,67 @@ const CreateChatRoomModal = ({
 
 const ChatHome = () => {
   const [chatRoomList, setChatRoomList] = useRecoilState(roomList);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const userInfo = useRecoilValue(userState);
   const stompClient = useStompClient();
-  const makeRoomName = (room: ChatRoom) => {
-    return room.roomMemberList.map((member) => member.name).join(", ");
+  const makeRoomName = (room: ChatRoom | undefined) => {
+    if (room) {
+      return room.roomMemberList.map((member) => member.name).join(", ");
+    } else {
+      return "";
+    }
   };
-  const [currentRoom, setCurrentRoom] = useState(chatRoomList[0]);
-  const [currentRoomId, setCurrentRoomId] = useState(0);
+  const [currentRoom, setCurrentRoom] = useState<ChatRoom | undefined>();
+  const [currentRoomId, setCurrentRoomId] = useState<string | undefined>();
   const [chatList, setChatList] = useState<Chat[]>([]);
   const [isCreateChatRoomLoading, setIsCreateChatRoomLoading] = useState(false);
+  const [subscribeList, setSubscribeList] = useState<Array<string>>([
+    "/sub/room/" + userInfo.memberId,
+  ]);
 
-  useSubscription("/sub/room/1", (message) => recevHandler(message));
+  useSubscription(subscribeList, (message) => recevHandler(message));
 
+  type ReceveMessageBody = {
+    chatMessageType: "MESSAGE" | "SUBSCRIBE";
+  } & Chat;
   function recevHandler(message: IMessage) {
-    const messageBody = JSON.parse(message.body);
+    const messageBody: ReceveMessageBody = JSON.parse(message.body);
+    switch (messageBody.chatMessageType) {
+      case "MESSAGE":
+        onRecevMessage(messageBody);
+        break;
+      case "SUBSCRIBE":
+        onRecevRoomInvite(messageBody.roomId);
+        break;
+    }
     if (currentRoomId == messageBody.roomId) {
       setChatList((chatList) => [...chatList, messageBody]);
+    }
+  }
+
+  function onRecevMessage(message: ReceveMessageBody) {
+    if (currentRoomId == message.roomId) {
+      setChatList((chatList) => [
+        ...chatList,
+        {
+          senderId: message.senderId,
+          chatId: message.chatId,
+          roomId: message.roomId,
+          message: message.message,
+          createdAt: message.createdAt,
+          senderName: message.senderName,
+        },
+      ]);
+    }
+  }
+
+  async function onRecevRoomInvite(roomId: string) {
+    setSubscribeList((beforeList) => [...beforeList, "/sub/room/" + roomId]);
+    try {
+      const res = await getChatRoom(roomId);
+      setChatRoomList((_roomList) => [..._roomList, res.data]);
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -168,10 +217,9 @@ const ChatHome = () => {
       stompClient.publish({
         destination: "/pub/message",
         body: JSON.stringify({
-          roomId: 1,
-          message: innerHtml,
           senderId: userInfo.memberId,
-          isSystem: false,
+          roomId: currentRoom?.roomId,
+          message: innerHtml,
         }),
       });
     }
@@ -182,6 +230,8 @@ const ChatHome = () => {
       setIsCreateChatRoomLoading(true);
       const res = await createRoom(memberId);
       setCurrentRoomId(res.data.roomId);
+      setChatRoomList((_roomList) => [res.data, ..._roomList]);
+      onClose();
     } catch (e) {
       Swal.fire(
         "채팅방 생성 실패",
@@ -194,14 +244,25 @@ const ChatHome = () => {
   };
 
   useEffect(() => {
-    setCurrentRoom(chatRoomList[currentRoomId]);
+    if (chatRoomList.length) {
+      if (currentRoomId) {
+        setCurrentRoom(
+          chatRoomList.find((room) => room.roomId === currentRoomId)
+        );
+      } else {
+        setCurrentRoom(chatRoomList[0]);
+        setCurrentRoomId(chatRoomList[0].roomId);
+      }
+    }
   }, [chatRoomList, currentRoomId]);
 
   useEffect(() => {
     const fetchChatList = async () => {
       try {
-        const res = await getChatList(currentRoomId);
-        setChatList(res.data);
+        if (currentRoomId) {
+          const res = await getChatList(currentRoomId);
+          setChatList(res.data);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -214,12 +275,17 @@ const ChatHome = () => {
       try {
         const res = await getChatRoomList();
         setChatRoomList(res.data);
+        setSubscribeList([
+          "/sub/room/" + userInfo.memberId,
+          ...res.data.map((chatRoom) => "/sub/room/" + chatRoom.roomId),
+        ]);
       } catch (e) {
         console.error(e);
       }
     };
     fetchChatRoomList();
-  }, [setChatRoomList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="relative w-full h-full">
@@ -265,7 +331,7 @@ const ChatHome = () => {
                   sentTime: "15 mins ago",
                   sender: chat.senderName,
                   direction:
-                    chat.memberId === userInfo.memberId
+                    chat.senderId === userInfo.memberId
                       ? "outgoing"
                       : "incoming",
                   position: "single",

@@ -1,7 +1,7 @@
 import { BaseResponse } from "./../../../types/BaseResponse";
 
 export type ChatRoom = {
-  roomId: number;
+  roomId: string;
   roomMemberList: Array<{
     memberId: string;
     name: string;
@@ -14,19 +14,16 @@ export type ChatRoom = {
 };
 
 export type Chat = {
-  senderId?: number;
-  senderName: string;
+  senderId: string;
   chatId?: number;
-  roomId: number;
+  roomId: string;
   message: string;
-  isSystem: boolean;
-  memberId: string;
+  createdAt: string;
+  senderName: string;
 };
 
 export interface CreateChatRoomResponse extends BaseResponse {
-  data: {
-    roomId: number;
-  };
+  data: ChatRoom;
 }
 
 export interface GetChatRoomListResponse extends BaseResponse {
@@ -35,4 +32,8 @@ export interface GetChatRoomListResponse extends BaseResponse {
 
 export interface GetChatListResponse extends BaseResponse {
   data: Chat[];
+}
+
+export interface GetChatRoomResponse extends BaseResponse {
+  data: ChatRoom;
 }
