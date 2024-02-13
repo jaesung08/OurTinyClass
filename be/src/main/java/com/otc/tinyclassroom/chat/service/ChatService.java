@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.chat.service;
 
+import com.otc.tinyclassroom.chat.dto.ChatMessageType;
+import com.otc.tinyclassroom.chat.dto.ChatRoomDto;
 import com.otc.tinyclassroom.chat.dto.request.ChatMessageCreateRequestDto;
 import com.otc.tinyclassroom.chat.dto.request.ChatRoomCreateRequestDto;
 import com.otc.tinyclassroom.chat.dto.response.ChatMessageResponseDto;
@@ -15,11 +17,13 @@ import com.otc.tinyclassroom.chat.repository.ChatRoomRepository;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 /**
  * 채팅룸 서비스.
@@ -34,6 +38,7 @@ public class ChatService {
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final SimpMessageSendingOperations simpMessageSendingOperations;
 
     /**
      * 채팅방을 만들고 roomId 값을 반환하는 메서드.
@@ -41,18 +46,34 @@ public class ChatService {
     @Transactional
     public ChatRoomResponseDto createChatRoom(ChatRoomCreateRequestDto dto) {
         String currentUserId = jwtProvider.getCurrentUserId();
-        Member toMember = memberRepository.findById(Long.valueOf(currentUserId))
+        Member fromMember = memberRepository.findById(Long.valueOf(currentUserId))
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER));
 
-        Member fromMember = memberRepository.findByMemberId(dto.targetMemberId())
+        Member toMember = memberRepository.findByMemberId(dto.targetMemberId())
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER));
 
         ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.of());
 
-        chatRoomMemberRepository.save(ChatRoomMember.of(toMember, chatRoom));
         chatRoomMemberRepository.save(ChatRoomMember.of(fromMember, chatRoom));
+        chatRoomMemberRepository.save(ChatRoomMember.of(toMember, chatRoom));
 
-        return ChatRoomResponseDto.of(chatRoom.getId(), null, null);
+        simpMessageSendingOperations.convertAndSend(
+                "/sub/room/" + toMember.getMemberId(),
+                ChatMessageResponseDto.of(
+                        null,
+                        chatRoom.getId(),
+                        fromMember.getMemberId(),
+                        "채팅방에 초대되었습니다.",
+                        LocalDateTime.now(),
+                        ChatMessageType.SUBSCRIBE
+                ));
+
+        return ChatRoomResponseDto.of(
+                chatRoom.getId(),
+                chatRoomRepository.findAllRoomMemberByRoomId(chatRoom.getId()),
+                null,
+                null
+        );
     }
 
     /**
@@ -65,7 +86,18 @@ public class ChatService {
         Member currentMember = memberRepository.findById(Long.valueOf(currentUserId))
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER));
 
-        return chatRoomRepository.findAllChatRoomByMemberId(currentMember.getId());
+        List<ChatRoomDto> chatRoomList = chatRoomRepository.findAllChatRoomByMemberId(currentMember.getId());
+        List<ChatRoomResponseDto> chatRoomResponseList = new ArrayList<>();
+        for (ChatRoomDto dto : chatRoomList) {
+            chatRoomResponseList.add(ChatRoomResponseDto.of(
+                    dto.roomId(),
+                    chatRoomRepository.findAllRoomMemberByRoomId(dto.roomId()),
+                    dto.lastChatId(),
+                    dto.lastMessage()
+            ));
+        }
+
+        return chatRoomResponseList;
     }
 
     /**
@@ -80,7 +112,7 @@ public class ChatService {
         Member member = memberRepository.findByMemberId(dto.senderId())
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER, "존재하지 않는 유저 이름입니다."));
 
-        ChatMessage chatMessage = ChatMessage.of(chatRoom, member, dto.message(), false);
+        ChatMessage chatMessage = ChatMessage.of(chatRoom, member, dto.message(), ChatMessageType.STANDARD);
         ChatMessage saveMessage = chatMessageRepository.save(chatMessage);
 
         // 해당 채팅방의 마지막 채팅 변경.
@@ -92,7 +124,8 @@ public class ChatService {
                 saveMessage.getChatRoom().getId(),
                 saveMessage.getMember().getMemberId(),
                 saveMessage.getMessage(),
-                saveMessage.getCreatedAt()
+                saveMessage.getCreatedAt(),
+                saveMessage.getChatMessageType()
         );
     }
 

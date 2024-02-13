@@ -3,8 +3,10 @@ package com.otc.tinyclassroom.chat.repository;
 import static com.otc.tinyclassroom.chat.entity.QChatMessage.chatMessage;
 import static com.otc.tinyclassroom.chat.entity.QChatRoom.chatRoom;
 import static com.otc.tinyclassroom.chat.entity.QChatRoomMember.chatRoomMember;
+import static com.otc.tinyclassroom.member.entity.QMember.member;
 
-import com.otc.tinyclassroom.chat.dto.response.ChatRoomResponseDto;
+import com.otc.tinyclassroom.chat.dto.ChatRoomDto;
+import com.otc.tinyclassroom.chat.dto.RoomMemberDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -19,11 +21,11 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<ChatRoomResponseDto> findAllChatRoomByMemberId(Long userId) {
+    public List<ChatRoomDto> findAllChatRoomByMemberId(Long userId) {
 
-        List<ChatRoomResponseDto> execute = jpaQueryFactory
+        return jpaQueryFactory
                 .select(Projections.constructor(
-                        ChatRoomResponseDto.class,
+                        ChatRoomDto.class,
                         chatRoom.id,
                         chatMessage.id,
                         chatMessage.message
@@ -33,7 +35,21 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
                 .leftJoin(chatRoom.lastChatMessage, chatMessage)
                 .where(chatRoomMember.member.id.eq(userId))
                 .fetch();
+    }
 
-        return execute;
+    @Override
+    public List<RoomMemberDto> findAllRoomMemberByRoomId(String roomId) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        RoomMemberDto.class,
+                        member.id,
+                        member.memberId,
+                        member.name,
+                        member.email
+                ))
+                .from(chatRoomMember)
+                .join(chatRoomMember.member, member)
+                .where(chatRoomMember.chatRoom.id.eq(roomId))
+                .fetch();
     }
 }

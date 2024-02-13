@@ -1,7 +1,10 @@
 package com.otc.tinyclassroom.chat.entity;
 
+import com.otc.tinyclassroom.chat.dto.ChatMessageType;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -35,24 +38,25 @@ public class ChatMessage {
     @CurrentTimestamp
     private LocalDateTime createdAt;
 
-    private Boolean isSystem;
+    @Enumerated(EnumType.STRING)
+    private ChatMessageType chatMessageType;
 
     protected ChatMessage() {
 
     }
 
-    private ChatMessage(ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
+    private ChatMessage(ChatRoom chatRoom, Member member, String message, ChatMessageType chatMessageType) {
         this.chatRoom = chatRoom;
         this.member = member;
         this.message = message;
-        this.isSystem = isSystem;
+        this.chatMessageType = chatMessageType;
     }
 
     /**
      * 팩토리 메서드 생성자.
      */
-    public static ChatMessage of(ChatRoom chatRoom, Member member, String message, Boolean isSystem) {
-        return new ChatMessage(chatRoom, member, message, isSystem);
+    public static ChatMessage of(ChatRoom chatRoom, Member member, String message, ChatMessageType chatMessageType) {
+        return new ChatMessage(chatRoom, member, message, chatMessageType);
     }
 
     @Override

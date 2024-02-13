@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.chat.repository;
 
-import com.otc.tinyclassroom.chat.dto.response.ChatRoomResponseDto;
+import com.otc.tinyclassroom.chat.dto.ChatRoomDto;
+import com.otc.tinyclassroom.chat.dto.RoomMemberDto;
 import java.util.List;
 
 /**
@@ -8,6 +9,8 @@ import java.util.List;
  */
 public interface ChatRoomRepositoryCustom {
 
-    List<ChatRoomResponseDto> findAllChatRoomByMemberId(Long userId);
+    List<ChatRoomDto> findAllChatRoomByMemberId(Long userId);
+
+    List<RoomMemberDto> findAllRoomMemberByRoomId(String roomId);
 
 }

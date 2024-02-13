@@ -6,10 +6,11 @@ import com.otc.tinyclassroom.member.dto.MemberDto;
 /**
  * 메세지 Dto.
  */
-public record ChatMessageDto(ChatRoomDto chatRoomDto, MemberDto memberDto, String message, Boolean isSystem) {
+public record ChatMessageDto(ChatRoomDto chatRoomDto, MemberDto memberDto, String message,
+                             ChatMessageType chatMessageType) {
 
-    public static ChatMessageDto of(ChatRoomDto chatRoomDto, MemberDto memberDto, String message, Boolean isSystem) {
-        return new ChatMessageDto(chatRoomDto, memberDto, message, isSystem);
+    public static ChatMessageDto of(ChatRoomDto chatRoomDto, MemberDto memberDto, String message, ChatMessageType chatMessageType) {
+        return new ChatMessageDto(chatRoomDto, memberDto, message, chatMessageType);
     }
 
     /**
@@ -20,7 +21,7 @@ public record ChatMessageDto(ChatRoomDto chatRoomDto, MemberDto memberDto, Strin
                 ChatRoomDto.from(entity.getChatRoom()),
                 MemberDto.from(entity.getMember()),
                 entity.getMessage(),
-                entity.getIsSystem()
+                entity.getChatMessageType()
         );
     }
 
@@ -32,7 +33,7 @@ public record ChatMessageDto(ChatRoomDto chatRoomDto, MemberDto memberDto, Strin
                 ChatRoomDto.toEntity(dto.chatRoomDto),
                 MemberDto.toEntity(dto.memberDto),
                 dto.message,
-                dto.isSystem
+                dto.chatMessageType
         );
     }
 }

@@ -5,17 +5,21 @@ import com.otc.tinyclassroom.chat.entity.ChatRoom;
 /**
  * 채팅룸 Dto.
  */
-public record ChatRoomDto() {
+public record ChatRoomDto(String roomId, Long lastChatId, String lastMessage) {
 
-    public static ChatRoomDto of() {
-        return new ChatRoomDto();
+    public static ChatRoomDto of(String roomId, Long lastChatId, String lastMessage) {
+        return new ChatRoomDto(roomId, lastChatId, lastMessage);
     }
 
     /**
      * entity -> dto.
      */
     public static ChatRoomDto from(ChatRoom entity) {
-        return new ChatRoomDto();
+        return new ChatRoomDto(
+                entity.getId(),
+                entity.getLastChatMessage().getId(),
+                entity.getLastChatMessage().getMessage()
+        );
     }
 
     /**
