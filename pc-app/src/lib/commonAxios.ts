@@ -25,7 +25,11 @@ let isTokenRefreshing = false;
 
 commonAxios.interceptors.response.use(
 	(response) => {
-		if (response.config.url?.includes("/login") || response.config.url?.includes("/token/refresh")) {
+		if (
+			response.config.url?.includes("/login") ||
+			response.config.url?.includes("/token/refresh") ||
+			response.config.url?.includes("/members/kakao")
+		) {
 			const accessToken = response.headers.authorization;
 			localStorage.setItem("accessToken", accessToken);
 		}
