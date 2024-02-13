@@ -3,6 +3,7 @@ import AdminNavBar from "../components/AdminNavBar";
 import AdminUserBody from "../components/AdminUserBody";
 import AdminArticleBody from "../components/AdminArticleBody";
 import AdminAccept from "../components/AdminAccept";
+import AdminClass from "../components/AdminClass";
 
 const AdminPage = () => {
   const [currentPage, setCurrentPage] = useState<string>("user");
@@ -19,6 +20,8 @@ const AdminPage = () => {
         return <AdminArticleBody />;
       case "accept":
         return <AdminAccept />;
+      case "class":
+        return <AdminClass />;
       default:
         return null;
     }

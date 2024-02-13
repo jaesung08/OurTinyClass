@@ -173,3 +173,54 @@ export const SearchArticleOptions = [
     value: "name",
   },
 ];
+
+export const GradeSelectOption = [
+  {
+    name: "초등학교 1학년",
+    value: 1,
+  },
+  {
+    name: "초등학교 2학년",
+    value: 2,
+  },
+  {
+    name: "초등학교 3학년",
+    value: 3,
+  },
+  {
+    name: "초등학교 4학년",
+    value: 4,
+  },
+  {
+    name: "초등학교 5학년",
+    value: 5,
+  },
+  {
+    name: "초등학교 6학년",
+    value: 6,
+  },
+  {
+    name: "중학교 1학년",
+    value: 7,
+  },
+  {
+    name: "중학교 2학년",
+    value: 8,
+  },
+  {
+    name: "중학교 3학년",
+    value: 9,
+  },
+  {
+    name: "고등학교 1학년",
+    value: 10,
+  },
+  {
+    name: "고등학교 2학년",
+    value: 11,
+  },
+  {
+    name: "고등학교 3학년",
+    value: 12,
+  },
+];

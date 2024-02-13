@@ -5,7 +5,6 @@ import {
   NavbarItem,
 } from "@nextui-org/react";
 import Logo from "../../../assets/img/logo.png";
-import React from "react";
 
 interface AdminNavBarProps {
   setpage: (page: string) => void;
@@ -29,6 +28,9 @@ const AdminNavBar = ({ setpage }: AdminNavBarProps) => {
         </NavbarItem>
         <NavbarItem onClick={() => setpage("accept")}>
           <p className="text-white cursor-pointer">등업 관리</p>
+        </NavbarItem>
+        <NavbarItem onClick={() => setpage("class")}>
+          <p className="text-white cursor-pointer">반 배정</p>
         </NavbarItem>
       </NavbarContent>
     </Navbar>
