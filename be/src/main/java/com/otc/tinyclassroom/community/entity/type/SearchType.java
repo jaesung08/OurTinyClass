@@ -21,6 +21,6 @@ public enum SearchType {
                 return type;
             }
         }
-        throw new CommunityException(CommunityErrorCode.INVALID_SEARCH_TYPE);
+	return null;
     }
 }

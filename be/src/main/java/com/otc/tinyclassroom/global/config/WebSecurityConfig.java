@@ -76,11 +76,13 @@ public class WebSecurityConfig {
             .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
                 .requestMatchers(("/api/members/join")).permitAll()
                 .requestMatchers("/api/members/login").permitAll()
-                .requestMatchers("/api/members/certification/student").permitAll()
-                .requestMatchers("/api/attendances/**").authenticated()
-                .requestMatchers("/api/community/**").authenticated()
-                .requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
-                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
+                .requestMatchers("/api/attendances/**").permitAll()
+                .requestMatchers("/api/community/**").permitAll()
+                .requestMatchers("/api/classrooms/**").permitAll()
+                .requestMatchers("/api/lectures/**").permitAll()
+                //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
+                //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling

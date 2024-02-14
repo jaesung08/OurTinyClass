@@ -17,6 +17,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import lombok.Getter;
@@ -59,8 +61,9 @@ public class Member {
     private String profileUrl;
     @OneToMany(mappedBy = "member")
     private Set<Heart> hearts = new HashSet<>();
+
     @OneToMany(mappedBy = "member")
-    private Set<ClassRoomMember> classRoomMembers = new HashSet<>();
+    private final List<MemberClassRoom> memberClassRooms = new ArrayList<>();
 
     protected Member() {
     }
@@ -68,9 +71,8 @@ public class Member {
     /**
      * 파라미터 생성자.
      */
-    private Member(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+    private Member(String memberId, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
         this.memberId = memberId;
-        this.classRoom = classRoom;
         this.password = password;
         this.name = name;
         this.email = email;
@@ -82,10 +84,10 @@ public class Member {
     }
 
     /**
-     * 파라미터로 부터 멤버 엔티티 객체를 생성하는 함수.
+     * 파라미터로부터 멤버 엔티티 객체를 생성하는 함수.
      */
-    public static Member of(String memberId, ClassRoom classRoom, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
-        return new Member(memberId, classRoom, password, name, email, birthday, point, profileUrl);
+    public static Member of(String memberId,String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+        return new Member(memberId, password, name, email, birthday, point, profileUrl);
     }
 
     @Override

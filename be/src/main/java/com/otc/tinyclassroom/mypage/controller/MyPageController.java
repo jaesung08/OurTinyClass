@@ -66,8 +66,8 @@ public class MyPageController {
      * 같은 반 친구들을 불러온다.
      */
     @GetMapping("/class-room-friends")
-    public BaseResponse<List<ClassRoomMembersResponseDto>> findClassRoomMembers() {
-        List<ClassRoomMembersResponseDto> result = myPageService.findClassRoomMembers();
+    public BaseResponse<List<ClassRoomMembersResponseDto>> findMemberClassRooms() {
+        List<ClassRoomMembersResponseDto> result = myPageService.findMemberClassRooms();
         return BaseResponse.success(HttpStatus.OK.value(), "같은 반 정보 불러오기 성공!", result);
     }
 

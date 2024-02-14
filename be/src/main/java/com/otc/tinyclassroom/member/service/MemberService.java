@@ -24,7 +24,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     /**
      * 회원가입을 수행한다.
      *
@@ -55,7 +54,7 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
         Member member = Member
-            .of(request.memberId(), null, passwordEncoder.encode(request.password()), request.name(), request.email(), request.birthday(), INITIAL_POINT, null);
+            .of(request.memberId(), passwordEncoder.encode(request.password()), request.name(), request.email(), request.birthday(), INITIAL_POINT, null);
 
         memberRepository.save(member);
     }

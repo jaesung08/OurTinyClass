@@ -8,12 +8,14 @@ import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
 import com.otc.tinyclassroom.community.service.ArticleService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -52,8 +54,9 @@ public class ArticleController {
      * 게시글 생성.
      */
     @PostMapping("/articles")
-    public BaseResponse<Void> createArticle(@RequestBody ArticleCreateRequestDto articleCreateRequestDto) {
-        articleService.createArticle(articleService.getCurrentMemberId(), articleCreateRequestDto);
+    public BaseResponse<Void> createArticle(@RequestBody ArticleCreateRequestDto articleCreateRequestDto,
+        @AuthenticationPrincipal PrincipalDetails principal) {
+        articleService.createArticle(principal.getMember().getId(), articleCreateRequestDto);
         return BaseResponse.success(HttpStatus.CREATED.value(), "게시글 작성 완료", null);
     }
 
@@ -61,8 +64,8 @@ public class ArticleController {
      * 게시글 삭제.
      */
     @DeleteMapping("/articles/{articleId}")
-    public BaseResponse<Void> removeArticle(@PathVariable("articleId") Long articleId) {
-        articleService.validateAuthority(articleId);
+    public BaseResponse<Void> removeArticle(@PathVariable("articleId") Long articleId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        articleService.validateAuthority(principalDetails.getMember().getId(), articleId);
         articleService.deleteArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
@@ -71,11 +74,11 @@ public class ArticleController {
      * 게시글 업데이트.
      */
     @PatchMapping("/articles/{articleId}")
-    public BaseResponse<Void> updateArticle(@PathVariable("articleId") Long articleId,
-        @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto) {
-        articleService.validateAuthority(articleId);
+    public BaseResponse<Void> updateArticle(@PathVariable("articleId") Long articleId, @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto,
+        @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        articleService.validateAuthority(principalDetails.getMember().getId(), articleId);
         articleService.updateArticle(articleId, articleUpdateRequestDto);
-        return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
+        return BaseResponse.success(HttpStatus.OK.value(), "게시글 수정 성공", null);
     }
 
     /**
@@ -115,8 +118,8 @@ public class ArticleController {
      * 반별 게시판 삭제.
      */
     @DeleteMapping("/classRoom/{classRoomId}/articles/{articleId}")
-    public BaseResponse<Void> removeArticleForClassRoom(@PathVariable("articleId") Long articleId) {
-        articleService.validateAuthority(articleId);
+    public BaseResponse<Void> removeArticleForClassRoom(@PathVariable("articleId") Long articleId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        articleService.validateAuthority(principalDetails.getMember().getId(), articleId);
         articleService.deleteArticle(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }
@@ -125,9 +128,9 @@ public class ArticleController {
      * 반별 게시판 내 게시글 업데이트.
      */
     @PatchMapping("/classRoom/{classRoomId}/articles/{articleId}")
-    public BaseResponse<Void> updateArticleForClassRoom(@PathVariable("articleId") Long articleId,
-        @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto) {
-        articleService.validateAuthority(articleId);
+    public BaseResponse<Void> updateArticleForClassRoom(@PathVariable("articleId") Long articleId, @RequestBody ArticleUpdateRequestDto articleUpdateRequestDto,
+        @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        articleService.validateAuthority(principalDetails.getMember().getId(), articleId);
         articleService.updateArticle(articleId, articleUpdateRequestDto);
         return BaseResponse.success(HttpStatus.OK.value(), "게시글 삭제 성공", null);
     }

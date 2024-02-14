@@ -35,7 +35,6 @@ public class GoalService {
      */
     public void saveGoal(String content) {
         Long currentMemberId = jwtProvider.getCurrentMemberId();
-        //TODO: MemberService의 findById메서드를 만들어 memberRepository에 접근 직접적으로 하지 않게 만들기.
         Member member = memberRepository.findById(currentMemberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         LocalDateTime now = LocalDateTime.now();
         // 이번주의 주차 가져오기

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * 반 Repository.
  */
 @Repository
-public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long> {
+public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long>, ClassRoomRepositoryCustom {
 }

@@ -5,14 +5,13 @@ import com.otc.tinyclassroom.member.entity.Member;
 import java.time.LocalDate;
 
 /**
- * 기본 멤버 DTO.
- * DTO for {@link com.otc.tinyclassroom.member.entity.Member}
+ * 기본 멤버 DTO. DTO for {@link com.otc.tinyclassroom.member.entity.Member}
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record MemberDto(String memberId, ClassRoomDto classRoomDto, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+public record MemberDto(String memberId, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
 
-    public static MemberDto of(String memberId, ClassRoomDto classRoom, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
-        return new MemberDto(memberId, classRoom, password, name, email, birthday, point, profileUrl);
+    public static MemberDto of(String memberId, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+        return new MemberDto(memberId, password, name, email, birthday, point, profileUrl);
     }
 
     /**
@@ -21,7 +20,6 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
     public static MemberDto from(Member entity) {
         return new MemberDto(
             entity.getMemberId(),
-            ClassRoomDto.from(entity.getClassRoom()),
             entity.getPassword(),
             entity.getName(),
             entity.getEmail(),
@@ -38,7 +36,6 @@ public record MemberDto(String memberId, ClassRoomDto classRoomDto, String passw
     public static Member toEntity(MemberDto dto) {
         return Member.of(
             dto.memberId(),
-            ClassRoomDto.toEntity(dto.classRoomDto()),
             dto.password(),
             dto.name(),
             dto.email(),

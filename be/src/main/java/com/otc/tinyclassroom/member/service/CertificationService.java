@@ -15,10 +15,7 @@ import com.otc.tinyclassroom.member.exception.CertificationException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.member.repository.MentorRoleUpdateRepository;
 import com.otc.tinyclassroom.member.repository.StudentRoleUpdateRepository;
-import com.otc.tinyclassroom.mypage.entity.Badge;
-import com.otc.tinyclassroom.mypage.entity.BadgeEvent;
-import com.otc.tinyclassroom.mypage.exception.BadgeErrorCode;
-import com.otc.tinyclassroom.mypage.exception.BadgeException;
+import com.otc.tinyclassroom.mypage.event.NoConditionBadgeEvent;
 import com.otc.tinyclassroom.mypage.repository.BadgeRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -87,10 +84,7 @@ public class CertificationService {
         if (isAuthorizedForRoleChange()) {
             member.setRole(role);
 
-            Badge badge = badgeRepository.findById(3L).orElseThrow(
-                () -> new BadgeException(BadgeErrorCode.NOT_FOUND_BADGE)
-            );
-            publisher.publishEvent(new BadgeEvent(badge, member));
+            publisher.publishEvent(new NoConditionBadgeEvent(memberId, 3L));
         }
         return RoleUpdateResponseDto.of(memberId, role);
     }

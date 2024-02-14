@@ -7,11 +7,13 @@ import com.otc.tinyclassroom.community.dto.response.MyPageArticleResponseDto;
 import com.otc.tinyclassroom.community.service.ArticleService;
 import com.otc.tinyclassroom.community.service.HeartService;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.lecture.entity.type.LectureCategoryType;
 import com.otc.tinyclassroom.media.service.MediaService;
-import com.otc.tinyclassroom.member.entity.ClassRoomMember;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
+import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.mypage.dto.request.EditMyInfoRequestDto;
 import com.otc.tinyclassroom.mypage.dto.response.AttendanceResponseDto;
@@ -22,7 +24,7 @@ import com.otc.tinyclassroom.mypage.dto.response.MyInfoResponseDto;
 import com.otc.tinyclassroom.mypage.dto.response.MyPageResponseDto;
 import com.otc.tinyclassroom.mypage.exception.MyPageErrorCode;
 import com.otc.tinyclassroom.mypage.exception.MyPageException;
-import com.otc.tinyclassroom.mypage.repository.ClassRoomMemberRepository;
+import com.otc.tinyclassroom.schedule.service.MemberScheduleService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +48,7 @@ public class MyPageService {
 
     private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final MemberClassRoomRepository memberClassRoomRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final AttendanceService attendanceService;
@@ -54,7 +57,8 @@ public class MyPageService {
     private final BadgeService badgeService;
     private final ArticleService articleService;
     private final GoalService goalService;
-    private final ClassRoomMemberRepository classRoomMemberRepository;
+    private final MemberScheduleService memberScheduleService;
+
 
     /**
      * 첫 로딩시 모든 정보를 불러온다.
@@ -72,10 +76,20 @@ public class MyPageService {
         }
         AttendanceResponseDto attendanceResponseDto = getAttendanceRate();
 
-        // TODO: 강의 수 세는 로직 추가시 바꿔야함
-        String favoriteClassFirst = "수학";
-        String favoriteClassSecond= "국어";
-        String favoriteClassThird = "영어";
+        Long lectureCnt = memberScheduleService.countByMemberId(currentMemberId);
+        int totalLectureTime = (int) (lectureCnt * 5 / 6);
+
+        List<LectureCategoryType> favoriteClass = memberScheduleService.findDistinctLectureCategoryTypeByMemberIdOrderByLectureCategoryTypeDesc(currentMemberId);
+
+        String favoriteClassFirst = null;
+        String favoriteClassSecond = null;
+        String favoriteClassThird = null;
+
+        if (favoriteClass != null && !favoriteClass.isEmpty()) {
+            favoriteClassFirst = favoriteClass.get(0) != null ? favoriteClass.get(0).getKorName() : null;
+            favoriteClassSecond = favoriteClass.size() > 1 && favoriteClass.get(1) != null ? favoriteClass.get(1).getKorName() : null;
+            favoriteClassThird = favoriteClass.size() > 2 && favoriteClass.get(2) != null ? favoriteClass.get(2).getKorName() : null;
+        }
 
         // TODO: 담임선생님 가져오기
         String classRoomTeacher = "김관식";
@@ -89,6 +103,7 @@ public class MyPageService {
         List<MyPageArticleResponseDto> likedArticlesDto = heartService.searchLikedArticles(0, 5);
         List<MyPageArticleResponseDto> myArticlesDto = articleService.searchMyArticles(0, 5);
         return MyPageResponseDto.of(member.getName(), grade, classNumber, classRoomTeacher, member.getProfileUrl(), member.getPoint(), thisWeekGoal.content(),
+            lectureCnt, totalLectureTime,
             attendanceResponseDto.attendanceRate(), attendanceResponseDto.attend(), attendanceResponseDto.lateOrLeaveFast(), attendanceResponseDto.absent(),
             favoriteClassFirst, favoriteClassSecond, favoriteClassThird, myBadge,
             likedArticlesDto, myArticlesDto);
@@ -148,13 +163,13 @@ public class MyPageService {
      *
      * @return 프로필사진과 이름
      */
-    public List<ClassRoomMembersResponseDto> findClassRoomMembers() {
+    public List<ClassRoomMembersResponseDto> findMemberClassRooms() {
         Long currentMemberId = jwtProvider.getCurrentMemberId();
 
-        return classRoomMemberRepository
+        return memberClassRoomRepository
             .findByMemberId(currentMemberId)
             .stream()
-            .map(ClassRoomMember::getMember)
+            .map(MemberClassRoom::getMember)
             .map(m -> ClassRoomMembersResponseDto.of(m.getName(), m.getProfileUrl()))
             .collect(Collectors.toList());
     }
@@ -174,19 +189,12 @@ public class MyPageService {
         int attend = 0;
         int attendanceRate = 0;
         for (AttendanceMonthInfo a : list) {
-            switch (a.status()){
-                case 3:
-                    absent++;
-                    break;
-                case 1:
-                case 2:
-                    lateOrLeaveFast++;
-                    break;
-                case 0:
-                    attend++;
-                    break;
-                default:
-                    break;
+            switch (a.status()) {
+                case 3 -> absent++;
+                case 1, 2 -> lateOrLeaveFast++;
+                case 0 -> attend++;
+                default -> {
+                }
             }
         }
         attendanceRate = list.size() == 0 ? 0 : 100 * (list.size() - absent) / list.size();
