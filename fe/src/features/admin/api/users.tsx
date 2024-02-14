@@ -70,3 +70,37 @@ export const requestGetMentorCertDetail = (
 ): Promise<requestGetMentorCertDetailResponse> => {
   return commonAxios.get("/admin/members/certification/mentor/" + articleId);
 };
+
+export const requestStudentCertChange = (
+  articleId: number,
+  isApprove: boolean,
+  grade: number
+) => {
+  if (isApprove) {
+    return commonAxios.post(
+      `/admin/members/certification/student/${articleId}/approve`,
+      {
+        grade,
+      }
+    );
+  } else {
+    return commonAxios.post(
+      `/admin/members/certification/student/${articleId}/deny`
+    );
+  }
+};
+
+export const requestMentorCertChange = (
+  articleId: number,
+  isApprove: boolean
+) => {
+  if (isApprove) {
+    return commonAxios.post(
+      `/admin/members/certification/mentor/${articleId}/approve`
+    );
+  } else {
+    return commonAxios.post(
+      `/admin/members/certification/mentor/${articleId}/deny`
+    );
+  }
+};

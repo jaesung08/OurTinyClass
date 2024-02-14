@@ -22,6 +22,7 @@ import {
   requestGetMentorCertList,
   requestGetStudentCertDetail,
   requestGetStudentCertList,
+  requestStudentCertChange,
 } from "../api/users";
 import { StudentCertDetail } from "../types";
 import dayjs from "dayjs";
@@ -39,6 +40,7 @@ const StudentDetailModal = ({
   articleId,
 }: StudentDetailProps) => {
   const [student, setStudent] = useState<StudentCertDetail>();
+  const [grade, setGrade] = useState<string>("");
   useEffect(() => {
     if (isOpen && articleId) {
       const getDetail = async () => {
@@ -48,6 +50,21 @@ const StudentDetailModal = ({
       getDetail();
     }
   }, [isOpen, articleId]);
+
+  const sendResult = async (isApprove: boolean) => {
+    if (articleId) {
+      try {
+        const res = await requestStudentCertChange(
+          articleId,
+          isApprove,
+          +grade
+        );
+        console.log(res);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const schoolTypeMap = () => {
     if (student) {
@@ -90,17 +107,24 @@ const StudentDetailModal = ({
                   readOnly
                 />
                 <Input label="이전 학교" value={student?.beforeSchool} />
+                <Input
+                  label="임시 학년"
+                  value={grade}
+                  onChange={(e) => setGrade(e.target.value)}
+                />
                 <Image
-                  alt="NextUI Fruit Image with Zoom"
+                  alt="자퇴 사유 파일"
                   src={student?.quitConfirmationPaths[0] ?? ""}
                 />
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" onPress={onClose}>
+              <Button color="danger" onPress={() => sendResult(false)}>
                 거절
               </Button>
-              <Button color="primary">승인</Button>
+              <Button color="primary" onPress={() => sendResult(true)}>
+                승인
+              </Button>
             </ModalFooter>
           </>
         )}
