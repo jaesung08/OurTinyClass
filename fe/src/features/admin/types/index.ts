@@ -35,3 +35,44 @@ export interface ClassRoom {
   number: number;
   roomUrl: string | null;
 }
+
+export interface requestGetStudentCertListResponse extends BaseResponse {
+  data: Array<{
+    articleId: number;
+    memberName: string;
+    birthday: string;
+  }>;
+}
+
+export interface requestGetMentorCertListResponse extends BaseResponse {
+  data: Array<{
+    articleId: number;
+    memberName: string;
+    birthday: string;
+  }>;
+}
+export interface requestGetStudentCertDetailResponse extends BaseResponse {
+  data: StudentCertDetail;
+}
+
+export interface requestGetMentorCertDetailResponse extends BaseResponse {
+  data: MentorCertDetail;
+}
+
+export interface StudentCertDetail {
+  articleId: number;
+  memberName: string;
+  birthday: string;
+  beforeSchoolType: number;
+  quitReason: string;
+  beforeSchool: string;
+  quitConfirmationPaths: string[];
+}
+
+export interface MentorCertDetail {
+  articleId: number;
+  memberName: string;
+  birthday: string;
+  belong: string;
+  belongDocumentPaths: string[];
+}
