@@ -70,9 +70,12 @@ public class MyPageService {
         );
         int grade = 0;
         int classNumber = 0;
-        if (member.getClassRoom() != null) {
-            grade = member.getClassRoom().getGrade();
-            classNumber = member.getClassRoom().getNumber();
+
+        List<MemberClassRoom> classes = memberClassRoomRepository.findByMemberId(currentMemberId);
+        if (!classes.isEmpty()){
+            MemberClassRoom recentClass = classes.get(classes.size() - 1);
+            grade = recentClass.getClassRoom().getGrade();
+            classNumber = recentClass.getClassRoom().getNumber();
         }
         AttendanceResponseDto attendanceResponseDto = getAttendanceRate();
 
