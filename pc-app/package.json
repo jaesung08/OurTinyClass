@@ -27,6 +27,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@nextui-org/react": "^2.2.9",
+    "@stomp/stompjs": "^7.0.0",
     "@tanstack/react-query": "^5.17.15",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.2",
@@ -35,6 +36,7 @@
     "@types/js-cookie": "^3.0.6",
     "@types/react-filepond": "^7.1.0",
     "@types/react-router-dom": "^5.3.3",
+    "@types/stompjs": "^2.3.9",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",
     "concurrently": "^8.2.2",
@@ -54,7 +56,9 @@
     "react-filepond": "^7.1.2",
     "react-kakao-login": "^2.1.1",
     "react-query": "^3.39.3",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^6.21.2",
+    "react-stomp-hooks": "^2.2.1",
     "recoil": "^0.7.7",
     "recoil-persist": "^5.1.0",
     "sass": "^1.70.0",
@@ -94,11 +98,19 @@
     "vite": "^5.0.8"
   },
   "build": {
-    "appId": "com.devname.package",
-    "productName": "OurTinyClassroom",
+    "appId": "com.otc.package",
+    "productName": "우리들의 작은 교실",
     "copyright": "Copyright © 2023 OTC",
-    "mac": {
-      "category": "public.app-category.utilities"
+    "win": {
+      "target": "nsis",
+      "appUserModelId": "com.otc.package",
+      "extraResources": [
+        {
+          "from": "./src/ToastActivator/",
+          "to": "ToastActivator/",
+          "filter": ["**/*"]
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,

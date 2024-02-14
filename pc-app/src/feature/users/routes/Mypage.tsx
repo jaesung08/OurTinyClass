@@ -13,12 +13,7 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MyPageUserInfo } from "../types/myPage";
-import {
-  editWeekGoal,
-  getMyPageBaseInfo,
-  updateMyInfo,
-  updateProfileImage,
-} from "../api/mypage";
+import { editWeekGoal, getMyPageBaseInfo, updateMyInfo, updateProfileImage } from "../api/myPage";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -453,7 +448,8 @@ const Mypage = () => {
             {userInfo == null
               ? null
               : userInfo.myBadges.map((badge) => (
-                  <Image
+                <Image
+                    key={badge.badgeId}
                     width={100}
                     height={100}
                     alt="badge"
@@ -470,7 +466,7 @@ const Mypage = () => {
           </h3>
           <ul>
             {userInfo?.myFiveArticles.map((article) => (
-              <li className=" cursor-pointer text-lg font-semibold ">
+              <li key={article.articleId} className=" cursor-pointer text-lg font-semibold ">
                 <a
                   className="hover:text-green-500 hover:font-bold"
                   onClick={() => goArticleDetail(article.articleId)}

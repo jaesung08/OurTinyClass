@@ -1,13 +1,11 @@
 
 import { useCallback,  useEffect,  useRef, useState } from 'react';
-import { DailyProvider, useCallFrame, useDaily } from '@daily-co/daily-react';
-import DailyIframe from '@daily-co/daily-js';
+import { DailyProvider, useCallFrame } from '@daily-co/daily-react';
 import { useRecoilValue } from 'recoil';
 import { userState } from '@/atoms/user';
-import { Button } from '@nextui-org/react';
 import { useNavigate } from 'react-router-dom';
 export default function Video() {
-  let callRef = useRef<HTMLDivElement>(null);
+  const callRef = useRef<HTMLDivElement>(null);
   const id = "test_room1";
   const domain = "https://ssafya.daily.co/";
   const userInfo = useRecoilValue(userState);
@@ -26,7 +24,8 @@ export default function Video() {
     },
     shouldCreateInstance: useCallback(() =>  Boolean(callRef.current) , []),
   });
-  const [callReady, setCallReady] = useState(false); // react가 callFrame의 변경 감지를 못하므로, 강제로 리렌더링 해주기 위한 state
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setCallReady] = useState(false); // react가 callFrame의 변경 감지를 못하므로, 강제로 리렌더링 해주기 위한 state
   useEffect(() => {
     setCallReady(true);
     callFrame?.join({ url: `${domain}${id}` });

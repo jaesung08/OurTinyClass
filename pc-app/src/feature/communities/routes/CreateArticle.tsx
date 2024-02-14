@@ -1,12 +1,12 @@
 import { Button, Select, SelectItem, Input } from "@nextui-org/react";
 import { useState, useRef, useMemo, useEffect } from "react";
 import ReactQuill from "react-quill";
-import { API_FILE_URL } from "@/config";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
 import { fileAxios } from "@/lib/fileAxios";
 import { editDetail, getDetail } from "../api/detailBoard";
 import Swal from "sweetalert2";
+import { API_URL } from "@/config";
 
 // todo : 카테고리 결정될 경우 아래 데이터 값들 변경해줘야함
 const CATEGORYLISTS = [
@@ -99,7 +99,7 @@ function CreateArticle() {
 				try {
 					const result = await fileAxios.post(
 						// todo : 임시로 영빈이랑 테스트 하기 위해 넣어둔 API 추후에 수정해야함
-						`${API_FILE_URL}media/images`,
+						`${API_URL}media/images`,
 						formData
 					);
 					const IMG_URL = result.data[0];
