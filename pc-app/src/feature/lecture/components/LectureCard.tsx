@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 
-export function LectureCard({ lecture, deleteHandler }: LectureCardProps): JSX.Element {
+export function LectureCard({ lecture, deleteHandler, addLectureToSchedule}: LectureCardProps): JSX.Element {
 	const navigator = useNavigate();
 	const user = useRecoilValue(userState);
 	const currentRole = user.role === "ADMIN" ? "관리자" : user.role === "MENTOR" ? "멘토" : "학생";
@@ -20,13 +20,15 @@ export function LectureCard({ lecture, deleteHandler }: LectureCardProps): JSX.E
 						<h5 className="text-small tracking-tight text-default-400">{lectureRole}</h5>
 					</div>
 				</CardHeader>
-				<CardBody className="flex flex-col h-full px-3 py-0 text-small text-default-400 justify-between w-4/6">
-					<p className="pt-2 h-1/6 truncate">제목 : {lecture.title}</p>
-					<p className="h-4/6">설명 : {lecture.description}</p>
-					<span className="pb-2 h-1/6">수강일 : {lecture.date}</span>
+				<CardBody className="flex flex-col  h-[80%] px-3 py-0 text-small text-default-400 justify-between w-4/6 ">
+					<div>
+						<h6 className="pt-2 truncate my-1 text-lg text-black"> {lecture.title}</h6>
+						<p className="">{lecture.description}</p>
+					</div>
+					<span className="pb-2 text-green-500"> {lecture.date} / {lecture.timeTable + 1 }교시</span>
 				</CardBody>
 			</div>
-			<CardFooter className="justify-around gap-3 h-1/6">
+			<CardFooter className="justify-around gap-3 py-3">
 				{currentRole === "관리자" || (currentRole === "멘토" && lecture.member.name == user.memberId) ? (
 					<>
 						<Button className="w-3/6 text-white" color="success" onClick={() => navigator(`./edit/${lecture.id}`)}>
@@ -38,8 +40,7 @@ export function LectureCard({ lecture, deleteHandler }: LectureCardProps): JSX.E
 					</>
 				) : (
 					<>
-						<Button className="w-3/6 bg-white">❤️</Button>
-						<Button className="w-3/6 bg-white">✔️</Button>
+						<Button onPress={() => addLectureToSchedule(lecture)} color="success" className="w-3/6 text-white">내 시간표에 추가하기</Button>
 					</>
 				)}
 			</CardFooter>

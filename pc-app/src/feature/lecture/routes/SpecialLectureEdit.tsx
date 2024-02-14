@@ -67,7 +67,7 @@ export const SpecialLectureEdit = () => {
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full  h-screen overflow-y-auto">
       <p className="text-2xl ml-12 my-5">특강 생성</p>
       <div className="flex flex-col ml-12 my-5 gap-5">
         <p className="text-lg">특강 분류</p>

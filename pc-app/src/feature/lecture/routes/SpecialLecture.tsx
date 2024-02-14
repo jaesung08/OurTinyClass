@@ -1,14 +1,16 @@
 import { LectureCard } from "../components/LectureCard";
-import { Avatar, Input, Select, SelectItem, Button } from "@nextui-org/react";
+import { Avatar, Input, Select, SelectItem, Button, Divider } from "@nextui-org/react";
 import EditIcon from "@/assets/img/EditIcon";
 import { useNavigate } from "react-router";
 
-import { deleteLecture, getLecture, searchLecture } from "../api/lecture";
+import { deleteLecture, getAddAbleSpecialLectures, searchLecture } from "../api/lecture";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "@/atoms/user";
 import { Lecture } from "../types";
 import { LectureCategory, SearchLecturesOptions } from "../assets/textContent";
+import { createSchedule } from "@/feature/schedule/api/createSchedule";
+import Swal from "sweetalert2";
 
 // 검색기능
 
@@ -51,21 +53,19 @@ function SearchBar({ searchKeyword, setSearchKeyword, searchType, setSearchType,
 	);
 }
 
-// TODO : 특강페이지 할일
-
 export function SpecialLecture() {
 	const [totalList, setTotalList] = useState<Lecture[]>([]);
 	const userInfo = useRecoilState(userState);
 	const [lectureLists, setLectureLists] = useState<Lecture[]>([]);
 	const [searchType, setSearchType] = useState<string>(SearchLecturesOptions[0].value);
 	const [searchKeyword, setSearchKeyword] = useState<string>("");
-	console.log(userInfo);
+
 	const navigator = useNavigate();
 	// 특강 목록 조회
 	useEffect(() => {
 		const onLoading = async () => {
 			try {
-				const lectures = await getLecture();
+				const lectures = await getAddAbleSpecialLectures();
 				setLectureLists(lectures.data);
 				setTotalList(lectures.data);
 			} catch (error) {
@@ -111,10 +111,20 @@ export function SpecialLecture() {
 		}
 	};
 
+	const addLectureToSchedule = async (lecture: Lecture) => {
+		try {
+      await createSchedule(lecture.id, lecture.date, lecture.timeTable);
+			Swal.fire("성공", "특강이 내 시간표에 추가되었습니다.", "success");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error:any) {
+			Swal.fire("실패", error.response.data.message, "error");
+    }
+	} 
+
 	return (
 		<>
-			<section className="w-[100%] h-full">
-				<div className="flex justify-between h-1/6">
+			<section className="w-[100%] h-screen overflow-y-auto">
+				<div className="flex justify-center my-5">
 					<SearchBar
 						searchType={searchType}
 						searchKeyword={searchKeyword}
@@ -122,15 +132,10 @@ export function SpecialLecture() {
 						setSearchType={setSearchType}
 						lectuerSearch={lectuerSearch}
 					/>
-					<div className="w-3/12 flex items-center justify-end gap-5 cursor-pointer mr-12">
-						<Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
-						<p>Hello {userInfo[0].memberId}</p>
-					</div>
 				</div>
-				<div className=" h-2/6 px-12 py-5">
-					<p className="text-lg">주요 특강 주제</p>
-					<div className=" h-52 py-8 flex gap-x-32 gap-y-8 flex-wrap overflow-y-scroll scrollbar-hide">
-						{/* todo : 추후 데이터 map 돌려서 작성 예정 */}
+				<div className=" px-12 py-7">
+					<h1 className="text-2xl py-5">주요 특강 주제</h1>
+					<div className="flex gap-y-8 justify-around overflow-y-scroll scrollbar-hide">
 						{LectureCategory.map((category) => {
 							return (
 								<div
@@ -145,16 +150,16 @@ export function SpecialLecture() {
 						})}
 					</div>
 				</div>
-				<hr className="mx-12" />
-				<p className="text-lg px-12 py-5">모집중인 특강 목록</p>
+				<Divider />
+				<h2 className="text-2xl px-12 py-7">모집중인 특강 목록</h2>
 				<div className=" h-[400px] px-12 py-5 flex flex-wrap gap-10 overflow-y-scroll scrollbar-hide">
 					{lectureLists.length !== 0 ? (
 						lectureLists.map((lectures: Lecture, index: number) => {
-							return <LectureCard lecture={lectures} key={index} deleteHandler={lectureDelete} />;
+							return <LectureCard lecture={lectures} key={index} deleteHandler={lectureDelete} addLectureToSchedule={addLectureToSchedule} />
 						})
 					) : (
-						<div className=" h-full flex justify-center items-center">
-							<p className="text-xl">등록된 강의가 존재하지 않습니다</p>
+						<div className=" flex justify-center items-center">
+							<p className="text-xl text-lime-600 text-center">현재 모집중인 특강이 없습니다</p>
 						</div>
 					)}
 				</div>

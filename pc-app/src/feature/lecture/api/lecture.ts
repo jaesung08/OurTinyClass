@@ -26,6 +26,15 @@ export const getLecture = async () => {
   return commonAxios.get(`/lectures`);
 };
 
+export const getAddAbleSpecialLectures = () => {
+  return commonAxios.get(`/lectures`, {
+    params: {
+      lectureType: 'SPECIAL_LECTURE',
+      approved: 'APPROVED',
+    },
+  });
+}
+
 export const deleteLecture = async (lectureId: number) => {
   return commonAxios.delete(`/lectures/${lectureId}`);
 };
@@ -35,8 +44,7 @@ export const getEditLecture = async (lectureId: number) => {
 };
 
 export const editLecture = async (
-  userId: string | number,
-
+  //userId: string | number,
   title: string,
   description: string,
   dayOfWeek: number,
