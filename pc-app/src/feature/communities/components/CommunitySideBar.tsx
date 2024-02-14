@@ -1,15 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
 import { CommunityHeaderContents } from "../assets/textContent";
 import { useEffect, useState } from "react";
-import { TYPE } from "../types";
+import { CODE } from "@/types/Code";
 import { getPathInfo } from "../utils/getPathInfo";
 
 function FreeBoardHeader() {
   const location = useLocation();
   const [boardCategory, setBoardCategory] = useState(
-    TYPE.BOARD_CATEGORY.NOTICE
+    CODE.BOARD_CATEGORY.NOTICE
   );
-  const [boardType, setBoardType] = useState(TYPE.BOARD_TYPE.SCHOOL);
+  const [boardType, setBoardType] = useState(CODE.BOARD_TYPE.SCHOOL);
 
   useEffect(() => {
     const { boardType, boardCategory } = getPathInfo(location.pathname);
@@ -41,7 +41,7 @@ function FreeBoardHeader() {
           >
             <li
               className={` pl-10 py-3 rounded-2xl mx-2 duration-200 ${selectionStyle(
-                TYPE.BOARD_TYPE.SCHOOL,
+                CODE.BOARD_TYPE.SCHOOL,
                 community.id
               )}`}
             >
