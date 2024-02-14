@@ -20,10 +20,17 @@ export function LandingPage() {
     navigator("/auth/join");
   };
 
+  const goAdmin = () => {
+    navigator("/admin");
+  };
+
   const onClickLogoutBtn = async () => {
-    await logout();
-    localStorage.clear();
-    window.location.reload();
+    try {
+      await logout();
+    } finally {
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   const userInfo = useRecoilValue(userState);
@@ -36,14 +43,23 @@ export function LandingPage() {
           </NavbarBrand>
           <NavbarContent justify="end">
             {userInfo?.memberId ? (
-              <NavbarItem className="hidden lg:flex">
-                <Button
-                  onPress={onClickLogoutBtn}
-                  color="default"
-                  variant="flat">
-                  로그아웃
-                </Button>
-              </NavbarItem>
+              <>
+                {userInfo.role === "ADMIN" ? (
+                  <NavbarItem className="hidden lg:flex">
+                    <Button onPress={goAdmin} color="primary" variant="flat">
+                      관리자 페이지로 이동
+                    </Button>
+                  </NavbarItem>
+                ) : null}
+                <NavbarItem className="hidden lg:flex">
+                  <Button
+                    onPress={onClickLogoutBtn}
+                    color="default"
+                    variant="flat">
+                    로그아웃
+                  </Button>
+                </NavbarItem>
+              </>
             ) : (
               <>
                 <NavbarItem className="hidden lg:flex">

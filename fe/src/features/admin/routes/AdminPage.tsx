@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminNavBar from "../components/AdminNavBar";
-import AdminArticleBody from "../components/AdminArticleBody";
 import AdminAccept from "../components/AdminAccept";
 import AdminClass from "../components/AdminClass";
-import AdminUserBody from "../components/AdminArticleBody";
+import AdminUserBody from "../components/AdminUserBody";
+import { userState } from "@/atoms/user";
+import { useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
 
 const AdminPage = () => {
   const [currentPage, setCurrentPage] = useState<string>("user");
-
+  const userInfo = useRecoilValue(userState);
+  const navigator = useNavigate();
   const pageHandler = (page: string): void => {
     setCurrentPage(page);
   };
@@ -16,8 +19,6 @@ const AdminPage = () => {
     switch (currentPage) {
       case "user":
         return <AdminUserBody />;
-      case "article":
-        return <AdminArticleBody />;
       case "accept":
         return <AdminAccept />;
       case "class":
@@ -26,6 +27,12 @@ const AdminPage = () => {
         return null;
     }
   };
+
+  useEffect(() => {
+    if (userInfo?.role !== "ADMIN") {
+      navigator("/");
+    }
+  }, [userInfo]);
 
   return (
     <>
