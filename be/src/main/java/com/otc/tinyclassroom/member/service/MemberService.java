@@ -59,7 +59,8 @@ public class MemberService {
         if (!isValidEmail(request.email())) {
             throw new MemberException(MemberErrorCode.INVALID_EMAIL);
         }
-        Member member = Member.of(request.memberId(), passwordEncoder.encode(request.password()), request.name(), request.email(), request.birthday(), INITIAL_POINT);
+        Member member = Member
+            .of(request.memberId(), passwordEncoder.encode(request.password()), request.name(), request.email(), request.birthday(), INITIAL_POINT, null);
 
         memberRepository.save(member);
     }

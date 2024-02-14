@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.community.repository;
 
 import com.otc.tinyclassroom.community.entity.Article;
+import com.otc.tinyclassroom.community.entity.Heart;
 import com.otc.tinyclassroom.community.entity.QArticle;
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -56,4 +57,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long>,
         bindings.bind(root.content).first(StringExpression::containsIgnoreCase);
         bindings.bind(root.member.name).first(StringExpression::containsIgnoreCase);
     }
+
+    Page<Article> findByMemberId(Long memberId, Pageable pageable);
 }

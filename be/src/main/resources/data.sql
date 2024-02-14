@@ -5,8 +5,8 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 values (2, 'kim', 'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_USER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
 values (3, 'lee', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
-insert into member (id, member_id, password, name, email, birthday, point, role)
-values (4, 'a', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (4, 'ssafy123', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN', "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role)
 values (5, 'b', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
@@ -19,6 +19,29 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 values (9, 'f', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
 values (10, 'g', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+
+
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 1, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (1, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 2, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (1, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 3, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (2, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 4, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (2, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 5, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 6, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 7, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 8, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 9, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (3, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 10, 4);
+insert into attendance (status, check_in, check_out, id, member_id) values (3, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 11, 4);
+
+insert into badge (id, image_url) values (1, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png");
+insert into badge (id, image_url) values (2, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/38ae118f-ca62-45a6-b591-376bbce43bdc.png");
+insert into badge (id, image_url) values (3, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/ec37c826-aece-46ff-8372-775b1104c4e2.png");
+insert into badge (id, image_url) values (4, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/484b859a-413a-42aa-98bb-50e7d51c4508.png");
+insert into badge (id, image_url) values (5, "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/681b5e23-b73a-4441-8b40-2853d52dbede.png");
+
+
+insert into member_badge(member_id, badge_id) values (4, 1);
+insert into member_badge(member_id, badge_id) values (4, 2);
 
 -- 반 정보
 insert into classroom (id, year, grade, number)
@@ -85,7 +108,27 @@ INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `t
 -- 스케줄
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '10', '2', false, '2', '3');
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '11', '2', false, '2', '4');
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '9', '2', false, '1', '3');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '1', '4', false, '1', '3');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '2', '4', false, '1', '4');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '3', '4', false, '1', '5');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '4', '4', false, '1', '6');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '5', '4', false, '2', '1');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '6', '4', false, '2', '2');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '7', '4', false, '2', '5');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '8', '4', false, '2', '6');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '9', '4', false, '2', '7');
+
+-- 멤버 스케줄
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('ART','4', '3');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('ART','4', '4');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('ART','4', '5');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('MATH','4', '6');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('MATH','4', '7');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('MATH','4', '8');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('MATH','4', '9');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('ENGLISH','4', '10');
+INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`) values ('ENGLISH','4', '11');
+
 
 -- 게시글
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit)

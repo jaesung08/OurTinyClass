@@ -18,6 +18,7 @@ public enum MemberErrorCode {
     PASSWORD_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "비밀번호는 8~20자리이며 특수문자, 영어 대소문자, 숫자를 포함해야 합니다."),
     INVALID_MEMBER_ID(HttpStatus.BAD_REQUEST, "아이디는 5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다."),
     NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "존재하지 않는 사용자입니다."),
+    PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
     NO_AUTHORITY(HttpStatus.BAD_REQUEST, "권한이 없습니다.");
 
     private final HttpStatus httpStatus;

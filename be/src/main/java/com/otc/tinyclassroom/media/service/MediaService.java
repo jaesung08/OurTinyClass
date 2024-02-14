@@ -35,8 +35,33 @@ public class MediaService {
         .of(".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG");
 
     /**
-     * MultipartFile 형식 데이터를 받아 S3에 저장한다.
-     * 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
+     * MultipartFile 형식 데이터를 받아 S3에 저장한다. 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
+     *
+     * @param file MultipartFile 형태 데이터
+     * @return S3에 저장된 MultipartFile의 url 리스트
+     */
+    public String storeImage(MultipartFile file) {
+
+        String url = "";
+        String storeName = createUniqueFileName(file.getOriginalFilename());
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentType(file.getContentType());
+        metadata.setContentLength(file.getSize());
+
+        try {
+            // 아마존 s3에 파일 저장
+            amazonS3Client.putObject(bucket, storeName, file.getInputStream(), metadata);
+            url = amazonS3Client.getResourceUrl(bucket, storeName);
+        } catch (IOException e) {
+            throw new MediaException(MediaErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+        return url;
+    }
+
+    /**
+     * MultipartFile 형식 데이터를 받아 S3에 저장한다. 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
      *
      * @param files MultipartFile 형태 데이터
      * @return S3에 저장된 MultipartFile의 url 리스트
@@ -69,8 +94,7 @@ public class MediaService {
     }
 
     /**
-     *  MultipartFile 형식 데이터를 받아 S3에 저장한다.
-     *  저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
+     * MultipartFile 형식 데이터를 받아 S3에 저장한다. 저장하기 전에 파일명과 파일 확장자에 대한 검증 과정을 거친다.
      */
     public Map<String, List<String>> storeImagesWithOriginalName(List<MultipartFile> files) {
 
