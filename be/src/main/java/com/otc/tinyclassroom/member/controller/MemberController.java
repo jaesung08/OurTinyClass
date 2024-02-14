@@ -7,6 +7,7 @@ import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.MemberService;
@@ -95,8 +96,8 @@ public class MemberController {
      * 전체 멤버 목록을 반환하는 메서드.
      */
     @GetMapping("")
-    public BaseResponse<List<AdminMemberResponseDto>> getAllMemberList() {
-        return BaseResponse.success(HttpStatus.OK.value(), "멤버 전체 목록을 불러왔습니다.", memberService.getMemberList());
+    public BaseResponse<List<AdminMemberPkIdResponseDto>> getAllMemberList() {
+        return BaseResponse.success(HttpStatus.OK.value(), "멤버 전체 목록을 불러왔습니다.", memberService.getMemberPkIdList());
     }
 
     /**

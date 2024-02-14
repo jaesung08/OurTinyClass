@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Role {
-    ROLE_USER("USER"), ROLE_STUDENT("STUDENT"), ROLE_TEACHER("TEACHER"), ROLE_MENTOR("MENTOR"), ROLE_ADMIN("ADMIN");
+    ROLE_USER("USER"), ROLE_STUDENT("STUDENT"), ROLE_TEACHER("TEACHER"), ROLE_MENTOR("MENTOR"), ROLE_ADMIN("ADMIN"), ROLE_WAITING("WAITING");
 
     private final String value;
 }

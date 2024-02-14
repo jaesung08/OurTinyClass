@@ -4,13 +4,17 @@ import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.lecture.dto.request.RoomCreateRequestDto;
 import com.otc.tinyclassroom.lecture.service.WebClientService;
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
+import com.otc.tinyclassroom.member.dto.request.RandomAssignmentRequestDto;
+import com.otc.tinyclassroom.member.dto.request.UserListRandomAssignmentMemberRequestDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
-import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.exception.ClassAssignmentErrorCode;
 import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
+import com.otc.tinyclassroom.member.exception.MemberErrorCode;
+import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
@@ -20,6 +24,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -127,7 +132,7 @@ public class ClassAssignmentService {
     public List<MemberClassRoomResponseDto> randomAssignmentClassRooms(Long classRoomId) {
 
         ClassRoom classRoom = getClassRoomById(classRoomId);
-        // targetClassRommId에 해당하는 반 멤버 가져오기
+        // targetClassRoomId에 해당하는 반 멤버 가져오기
         List<Member> members = memberClassRoomRepository.findMemberByClassRoomIdAndRole(classRoomId, Role.ROLE_STUDENT);
         List<ClassRoom> targetClassRooms = classRoomRepository.findClassRoomByGradeAndYearWithNonZeroNumber(classRoom.getGrade(), classRoom.getYear());
 
@@ -151,6 +156,33 @@ public class ClassAssignmentService {
         return result.stream()
             .map(MemberClassRoomResponseDto::from)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * 주어진 리스트에 대해 랜덤으로 반 편성하기.
+     */
+    public List<MemberClassRoomResponseDto> userListRandomAssignment(UserListRandomAssignmentMemberRequestDto dto) {
+        List<RandomAssignmentRequestDto> randomAssignmentRequestDto = dto.userList();
+
+        List<MemberClassRoom> result = new ArrayList<>();
+        for (RandomAssignmentRequestDto listMember : randomAssignmentRequestDto) {
+            List<ClassRoom> targetClassRooms = classRoomRepository.findClassRoomByGradeAndYearWithNonZeroNumber(listMember.grade(), LocalDateTime.now().getYear());
+            int randomNumber = new Random().nextInt(targetClassRooms.size());
+
+            Member student = memberRepository.findById(listMember.id()).orElseThrow(
+                () -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER)
+            );
+            ClassRoom assignedClassRoom = targetClassRooms.get(randomNumber);
+            MemberClassRoom memberClassRoom = MemberClassRoom.of(student, assignedClassRoom);
+            result.add(memberClassRoom);
+
+        }
+        memberClassRoomRepository.saveAll(result);
+        // 저장된 멤버 엔터티들을 DTO로 변환하여 반환
+        return result.stream()
+            .map(MemberClassRoomResponseDto::from)
+            .collect(Collectors.toList());
+
     }
 
     private ClassRoom getClassRoomById(Long classRoomId) {
