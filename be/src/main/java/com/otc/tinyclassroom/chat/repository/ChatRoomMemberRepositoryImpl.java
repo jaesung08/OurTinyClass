@@ -25,7 +25,7 @@ public class ChatRoomMemberRepositoryImpl implements ChatRoomMemberRepositoryCus
                         member.id,
                         member.memberId,
                         member.name,
-                        member.email
+                        member.profileUrl
                 ))
                 .from(chatRoomMember)
                 .join(chatRoomMember.member, member)
