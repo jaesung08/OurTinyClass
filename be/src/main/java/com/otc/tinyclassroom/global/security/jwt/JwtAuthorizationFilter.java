@@ -38,9 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
         String servletPath = request.getServletPath();
@@ -64,7 +62,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
         } else {
             try {
-
                 String token = jwtProvider.resolveAccessToken(request);
                 /*
                  * Expired 되었을 경우
@@ -73,7 +70,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 Long memberId = jwtProvider.getMemberIdByAccessToken(token);
                 if (memberId != null) {
                     Member member = memberRepository.findById(memberId).orElse(null);
-
                     if (member != null) {
                         // Access Token이 재발급되었으므로 사용자 정보를 업데이트
                         PrincipalDetails principalDetails = new PrincipalDetails(member);

@@ -1,13 +1,13 @@
 package com.otc.tinyclassroom.global.common.exception;
 
 import com.otc.tinyclassroom.attendance.exception.AttendanceException;
-import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.community.exception.CommunityException;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.global.security.refreshtoken.exception.RefreshTokenException;
 import com.otc.tinyclassroom.lecture.exception.LectureException;
 import com.otc.tinyclassroom.media.exception.MediaException;
 import com.otc.tinyclassroom.member.exception.CertificationException;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import lombok.extern.slf4j.Slf4j;

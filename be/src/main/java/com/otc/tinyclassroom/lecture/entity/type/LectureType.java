@@ -7,5 +7,5 @@ import lombok.Getter;
  */
 @Getter
 public enum LectureType {
-    FREE_LECTURE, REGULAR_LECTURE, SPECIAL_LECTURE;
+    FREE_LECTURE, REGULAR_LECTURE, SPECIAL_LECTURE
 }

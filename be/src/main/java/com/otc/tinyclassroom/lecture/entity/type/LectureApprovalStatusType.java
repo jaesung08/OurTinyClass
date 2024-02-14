@@ -7,5 +7,5 @@ import lombok.Getter;
  */
 @Getter
 public enum LectureApprovalStatusType {
-    APPROVED, WAITING, REJECTED;
+    APPROVED, WAITING, REJECTED
 }

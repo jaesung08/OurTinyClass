@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface MemberClassRoomRepository extends JpaRepository<MemberClassRoom, Long>, MemberClassRoomRepositoryCustom {
 
+    List<MemberClassRoom> findByMemberId(Long memberId);
+
     List<MemberClassRoom> findByClassRoom_Id(Long classRoomId);
 
     List<MemberClassRoom> findByMember_Id(Long memberId);

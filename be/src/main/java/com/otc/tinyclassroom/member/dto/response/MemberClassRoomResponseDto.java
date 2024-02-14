@@ -2,8 +2,8 @@ package com.otc.tinyclassroom.member.dto.response;
 
 import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
-import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MemberClassRoom;
+import com.otc.tinyclassroom.member.entity.Member;
 import java.util.List;
 
 /**

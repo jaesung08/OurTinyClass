@@ -45,7 +45,6 @@ public class ClassAssignmentController {
      */
     @PatchMapping("/members/place")
     public BaseResponse<List<MemberClassRoomResponseDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        System.out.println(request);
         classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
         List<MemberClassRoomResponseDto> placedMembers = classFormationService.placeMembers(request.memberIds(), request.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "멤버들을 배치하였습니다!", placedMembers);
