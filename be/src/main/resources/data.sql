@@ -1,20 +1,20 @@
 -- 멤버
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (1, 'park', 'lF7`Oeb?e', 'Keogh', 'mkeogh0@topsy.com', '2023-03-30', 27, 'ROLE_USER');
+values (1, 'park', 'lF7`Oeb?e', 'Keogh', 'mkeogh0@topsy.com', '2023-03-30', 27, 'ROLE_ADMIN');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (2, 'kim', 'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_USER');
+values (2, 'kim', 'cH8\1,y`D|z', 'Nabbs', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (3, 'lee', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
-insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (4, 'ssafy123', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN', "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+values (3, 'lee', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_MENTOR');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (5, 'b', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+values (4, 'a', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_MENTOR');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (6, 'c', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+values (5, 'b', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_STUDENT');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (7, 'd', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+values (6, 'c', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_STUDENT');
 insert into member (id, member_id, password, name, email, birthday, point, role)
-values (8, 'e', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+values (7, 'd', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_STUDENT');
+insert into member (id, member_id, password, name, email, birthday, point, role)
+values (8, 'e', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_STUDENT');
 insert into member (id, member_id, password, name, email, birthday, point, role)
 values (9, 'f', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
@@ -84,6 +84,15 @@ insert into classroom (id, year, grade, number)
 values (19, 2024, 4, 2);
 insert into classroom (id, year, grade, number)
 values (20, 2024, 4, 3);
+
+-- 반 매핑
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '2');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '3');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '4');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '5');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '6');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '7');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '8');
 
 -- 자유강의
 INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '모션 그래픽 공부', '모션 그래픽', 'ART', 'FREE_LECTURE', 'APPROVED');

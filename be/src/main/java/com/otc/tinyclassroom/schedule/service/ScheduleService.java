@@ -56,13 +56,14 @@ public class ScheduleService {
      * @return 스케줄 리스트 반환.
      */
     @Transactional(readOnly = true)
-    public ScheduleListResponseDto getScheduleList(Long memberId, LocalDate scheduleDate) {
+    public ScheduleListResponseDto getScheduleList(String memberId, LocalDate scheduleDate) {
         // 멤버 검증
-        Member member = getMemberById(memberId);
+        Member member = getMemberByMemberId(memberId);
         // 가장 최근의 멤버 클래스룸 검증 및 선생님 확인
         Member teacher = getClassroomTeacher(member);
         // 스케줄 리스트 가져오기
-        List<ScheduleListDto> scheduleList = scheduleRepository.findScheduleListById(memberId, teacher.getMemberId(), scheduleDate);
+        List<ScheduleListDto> scheduleList = scheduleRepository.findScheduleListById(memberId,
+            teacher.getMemberId(), scheduleDate);
         return ScheduleListResponseDto.of(scheduleDate, scheduleList);
     }
 
@@ -83,7 +84,8 @@ public class ScheduleService {
 
         // 추가하려는 강의가 특강인 경우 request의 날짜와 교시가 특강의 것과 정확히 일치해야 한다.
         if (lecture.getLectureType().equals(LectureType.SPECIAL_LECTURE)) {
-            if (!lecture.getDate().equals(requestDto.scheduleDate()) || !(lecture.getTimeTable() == requestDto.timeTable())) {
+            if (!lecture.getDate().equals(requestDto.scheduleDate()) || !(lecture.getTimeTable()
+                == requestDto.timeTable())) {
                 throw new ScheduleException(ScheduleErrorCode.NOT_ACCURATE_LECTURE);
             }
         }
@@ -93,7 +95,8 @@ public class ScheduleService {
         Member member = getMemberById(currentUserId);
 
         // 현재 사용자가 추가하려는 강의가 정규 강의일 경우 Exception 발생.
-        if (lecture.getLectureType().equals(LectureType.REGULAR_LECTURE) && member.getRole().equals(Role.ROLE_STUDENT)) {
+        if (lecture.getLectureType().equals(LectureType.REGULAR_LECTURE) && member.getRole()
+            .equals(Role.ROLE_STUDENT)) {
             throw new ScheduleException(ScheduleErrorCode.NO_AUTH_SCHEDULE_INSERT);
         }
 
@@ -105,21 +108,21 @@ public class ScheduleService {
 
         // 시간표에 있는지 확인하기.
         scheduleRepository.findScheduleByMemberIdAndScheduleDateAndTimeTable(
-                member.getId(),
-                teacher.getMemberId(),
-                requestDto.scheduleDate(),
-                requestDto.timeTable()
+            member.getMemberId(),
+            teacher.getMemberId(),
+            requestDto.scheduleDate(),
+            requestDto.timeTable()
         ).ifPresent(e -> {
             throw new ScheduleException(ScheduleErrorCode.ALREADY_EXISTED_SCHEDULE);
         });
 
         Schedule schedule = Schedule.of(
-                member,
-                lecture,
-                requestDto.scheduleDate(),
-                requestDto.scheduleDate().getDayOfWeek().getValue(),
-                requestDto.timeTable(),
-                deletable
+            member,
+            lecture,
+            requestDto.scheduleDate(),
+            requestDto.scheduleDate().getDayOfWeek().getValue() - 1,
+            requestDto.timeTable(),
+            deletable
         );
 
         scheduleRepository.save(schedule);
@@ -137,8 +140,8 @@ public class ScheduleService {
 
         // 삭제하려는 스케줄이 존재하지 않는 경우 exception 발생.
         ScheduleCheckDto schedule = scheduleRepository.findScheduleById(id)
-                .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE)
-                );
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE)
+            );
 
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
         Long currentUserId = jwtProvider.getCurrentMemberId();
@@ -147,7 +150,8 @@ public class ScheduleService {
         // 스케줄 삭제를 시도하는 사람이 학생인 경우.
         if (currentMember.getRole() == Role.ROLE_STUDENT) {
             // 스케줄을 추가한 사람이 관리자이거나, 스케줄을 추가한 사람과 삭제하려는 사람이 다른 경우 exception 발생.
-            if (!schedule.deletable() || !Objects.equals(schedule.memberId(), currentMember.getId())) {
+            if (!schedule.deletable() || !Objects.equals(schedule.memberId(),
+                currentMember.getId())) {
                 throw new ScheduleException(ScheduleErrorCode.NO_AUTH_SCHEDULE_DELETE);
             }
         }
@@ -162,8 +166,13 @@ public class ScheduleService {
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_LECTURE));
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+            .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE));
+    }
+
+    private Member getMemberByMemberId(String memberId) {
+        return memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER));
     }
 
@@ -174,7 +183,8 @@ public class ScheduleService {
         }
 
         MemberClassRoom memberClassroom = memberClassRooms.get(memberClassRooms.size() - 1);
-        List<Member> teachers = memberClassRoomRepository.findMemberByClassRoomIdAndRole(memberClassroom.getClassRoom().getId(), Role.ROLE_TEACHER);
+        List<Member> teachers = memberClassRoomRepository.findMemberByClassRoomIdAndRole(
+            memberClassroom.getClassRoom().getId(), Role.ROLE_TEACHER);
 
         return teachers.stream().findFirst()
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_TEACHER));
