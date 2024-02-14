@@ -1,5 +1,6 @@
 import {
   Button,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -13,6 +14,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Textarea,
   useDisclosure,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ import {
   requestGetStudentCertList,
 } from "../api/users";
 import { StudentCertDetail } from "../types";
+import dayjs from "dayjs";
 
 type StudentDetailProps = {
   isOpen: boolean;
@@ -46,6 +49,21 @@ const StudentDetailModal = ({
     }
   }, [isOpen, articleId]);
 
+  const schoolTypeMap = () => {
+    if (student) {
+      switch (student.beforeSchoolType) {
+        case 0:
+          return "초등학교";
+        case 1:
+          return "중학교";
+        case 2:
+          return "고등학교";
+        case 3:
+          return "기타";
+      }
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -55,13 +73,31 @@ const StudentDetailModal = ({
               학생 신청 상세 조회
             </ModalHeader>
             <ModalBody>
-              <Input> </Input>
+              <div className="h-max-[70vh] overflow-y-auto flex flex-col gap-5">
+                <Input label="이름" value={student?.memberName} size="sm" />
+                <Input
+                  label="생일"
+                  value={dayjs(student?.memberName).format("YYYY년 MM월 DD일")}
+                  readOnly></Input>
+                <Input
+                  label="이전 학교 구분"
+                  value={schoolTypeMap()}
+                  readOnly
+                />
+                <Textarea
+                  label="자퇴 사유"
+                  value={student?.quitReason}
+                  readOnly
+                />
+                <Input label="이전 학교" value={student?.beforeSchool} />
+                <Image
+                  alt="NextUI Fruit Image with Zoom"
+                  src={student?.quitConfirmationPaths[0] ?? ""}
+                />
+              </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={onClose}>
-                닫기
-              </Button>
-              <Button color="danger" variant="light" onPress={onClose}>
+              <Button color="danger" onPress={onClose}>
                 거절
               </Button>
               <Button color="primary">승인</Button>
