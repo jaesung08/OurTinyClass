@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.chat.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,14 +23,13 @@ public class ChatRoomMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private ChatRoom chatRoom;
 
     protected ChatRoomMember() {
-
     }
 
     private ChatRoomMember(Member member, ChatRoom chatRoom) {

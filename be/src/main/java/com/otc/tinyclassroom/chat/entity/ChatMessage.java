@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.chat.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.chat.entity.type.ChatMessageType;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
@@ -27,10 +29,10 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private ChatRoom chatRoom;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private Member member;
 
     private String message;
