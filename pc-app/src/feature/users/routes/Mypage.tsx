@@ -39,11 +39,7 @@ const UserProfile = ({ userInfo }: UserProfileProps) => {
   return (
     <div className="flex w-full items-center min-h-10 ">
       <div>
-        <Avatar
-          alt="User Profile Image"
-          src={userInfo?.profileImage}
-          className="w-40 h-40"
-        />
+        <Avatar alt="User Profile Image" src={userInfo?.profileImage} className="w-40 h-40" />
       </div>
       <div className="w-1/2">
         <h2 className="text-xl font-semibold mx-4 py-1 ">{userInfo?.name}</h2>
@@ -65,21 +61,10 @@ type EditUserInfoModalProp = {
   userInfo: UserInfo | null;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onSubmitEditUserInfo: (
-    name: string,
-    password: string,
-    newPassword: string,
-    profile: File | null
-  ) => void;
+  onSubmitEditUserInfo: (name: string, password: string, newPassword: string, profile: File | null) => void;
   isLoading: boolean;
 };
-const EditUserInfoModal = ({
-  userInfo,
-  isOpen,
-  onOpenChange,
-  onSubmitEditUserInfo,
-  isLoading,
-}: EditUserInfoModalProp) => {
+const EditUserInfoModal = ({ userInfo, isOpen, onOpenChange, onSubmitEditUserInfo, isLoading }: EditUserInfoModalProp) => {
   const [name, setName] = useState(userInfo ? userInfo?.name : "");
   const [beforePassword, setBeforePassword] = useState("");
   const [password, setPassword] = useState("");
@@ -92,24 +77,15 @@ const EditUserInfoModal = ({
     setName(e.target.value);
   }, []);
 
-  const onChangeBeforePassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setBeforePassword(e.target.value);
-    },
-    []
-  );
-  const onChangePassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPassword(e.target.value);
-    },
-    []
-  );
-  const onChangePasswordConfirm = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setPasswordConfirm(e.target.value);
-    },
-    []
-  );
+  const onChangeBeforePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setBeforePassword(e.target.value);
+  }, []);
+  const onChangePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  }, []);
+  const onChangePasswordConfirm = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordConfirm(e.target.value);
+  }, []);
 
   const onChangeProfile = (event: React.ChangeEvent<HTMLInputElement>) => {
     // event.target.files가 null이 아님을 확인하고 첫 번째 파일을 가져옵니다.
@@ -123,11 +99,7 @@ const EditUserInfoModal = ({
     if (password === passwordConfirm) {
       onSubmitEditUserInfo(name, beforePassword, password, profile);
     } else {
-      Swal.fire(
-        "주의!",
-        "비밀번호와 비밀번호 확인의 값이 다릅니다.",
-        "warning"
-      );
+      Swal.fire("주의!", "비밀번호와 비밀번호 확인의 값이 다릅니다.", "warning");
     }
   };
 
@@ -149,29 +121,12 @@ const EditUserInfoModal = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              유저 정보 수정
-            </ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">유저 정보 수정</ModalHeader>
             <ModalBody>
               <Input label="이름" value={name} onChange={onChangeName}></Input>
-              <Input
-                label="현재 비밀번호"
-                type="password"
-                value={beforePassword}
-                onChange={onChangeBeforePassword}
-              ></Input>
-              <Input
-                label="새 비밀번호"
-                type="password"
-                value={password}
-                onChange={onChangePassword}
-              ></Input>
-              <Input
-                label="새 비밀번호 확인"
-                type="password"
-                value={passwordConfirm}
-                onChange={onChangePasswordConfirm}
-              ></Input>
+              <Input label="현재 비밀번호" type="password" value={beforePassword} onChange={onChangeBeforePassword}></Input>
+              <Input label="새 비밀번호" type="password" value={password} onChange={onChangePassword}></Input>
+              <Input label="새 비밀번호 확인" type="password" value={passwordConfirm} onChange={onChangePasswordConfirm}></Input>
               <Button
                 color="primary"
                 onClick={() => {
@@ -192,10 +147,10 @@ const EditUserInfoModal = ({
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
-                Close
+                취소
               </Button>
               <Button isLoading={isLoading} color="primary" onPress={onSubmit}>
-                Action
+                확인
               </Button>
             </ModalFooter>
           </>
@@ -214,12 +169,9 @@ const WeekGoalCard = ({ thisWeekGoalContent }: WeekGoalCardProps) => {
   const [inputGoal, setInputGoal] = useState(thisWeekGoalContent);
   const [editState, setEditState] = useState(false);
 
-  const onChangeInputGoal = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputGoal(e.target.value);
-    },
-    []
-  );
+  const onChangeInputGoal = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputGoal(e.target.value);
+  }, []);
   useEffect(() => {
     setContent(thisWeekGoalContent);
   }, [thisWeekGoalContent]);
@@ -241,11 +193,7 @@ const WeekGoalCard = ({ thisWeekGoalContent }: WeekGoalCardProps) => {
       <p className="font-bold mb-3 text-green-900"> 이번주 목표</p>
       {editState ? (
         <div>
-          <Input
-            className="my-4"
-            value={inputGoal}
-            onChange={onChangeInputGoal}
-          ></Input>
+          <Input className="my-4" value={inputGoal} onChange={onChangeInputGoal}></Input>
           <div className="flex gap-2">
             <Button onPress={() => setEditState(false)} className="bg-red-200">
               취소
@@ -257,11 +205,7 @@ const WeekGoalCard = ({ thisWeekGoalContent }: WeekGoalCardProps) => {
         </div>
       ) : (
         <div>
-          <p className="my-4">
-            {content.length
-              ? content
-              : "설정된 목표가 없습니다. 목표를 설정해주세요."}
-          </p>
+          <p className="my-4">{content.length ? content : "설정된 목표가 없습니다. 목표를 설정해주세요."}</p>
           <Button color="primary" onPress={() => setEditState(true)}>
             수정하기
           </Button>
@@ -285,12 +229,7 @@ const Mypage = () => {
     }
   };
 
-  const onSubmitEditUserInfo = async (
-    name: string,
-    password: string,
-    newPassword: string,
-    profileImage: File | null
-  ) => {
+  const onSubmitEditUserInfo = async (name: string, password: string, newPassword: string, profileImage: File | null) => {
     try {
       setIsLoading(true);
       if (name.length || password.length || newPassword.length) {
@@ -322,6 +261,10 @@ const Mypage = () => {
   const goArticleDetail = (articleId: number) => {
     navigator("/communities/detail/" + articleId);
   };
+
+  const goScheduleDetail = () => {
+    navigator("/schedule");
+  };
   return (
     <div className="bg-white w-full py-10 px-20 overflow-y-auto h-screen max-w-[1600px] mx-auto">
       <div className="flex w-full min-h-10 gap-10">
@@ -344,10 +287,7 @@ const Mypage = () => {
             <div className="flex flex-row w-full justify-between">
               <p className="text-sm">총 수업일수: </p>
               <p className="text-sm text-right">
-                {userInfo
-                  ? userInfo.attend + userInfo.lateOrLeaveFast + userInfo.absent
-                  : 0}
-                일
+                {userInfo ? userInfo.attend + userInfo.lateOrLeaveFast + userInfo.absent : 0}일
               </p>
             </div>
             <div className="flex flex-row w-full justify-between">
@@ -362,9 +302,7 @@ const Mypage = () => {
                 <div className="w-2 h-2 bg-yellow-400 rounded-full"> </div>
                 <p className="text-sm"> 지각/조퇴:</p>
               </div>
-              <p className="text-sm">
-                {userInfo ? userInfo.lateOrLeaveFast : "0"}일
-              </p>
+              <p className="text-sm">{userInfo ? userInfo.lateOrLeaveFast : "0"}일</p>
             </div>
             <div className="flex flex-row w-full justify-between">
               <div className="flex flex-row items-center gap-1">
@@ -376,67 +314,43 @@ const Mypage = () => {
           </div>
           <div className="flex flex-col justify-around items-center min-h-10">
             <div className="flex min-h-8 flex-col items-end w-full">
-              <Button
-                onPress={onOpen}
-                color="secondary"
-                className=" rounded-lg  mb-2"
-              >
+              <Button onPress={onOpen} color="secondary" className=" rounded-lg  mb-2">
                 프로필 수정
               </Button>
-              <Button color="primary" className="rounded-lg ">
+              <Button onClick={goScheduleDetail} color="primary" className="rounded-lg ">
                 내 시간표 보기
               </Button>
             </div>
             <p className="text-lg whitespace-nowrap">
               담임 선생님:
-              <span className="mx-2 my-3 font-bold">
-                {userInfo ? userInfo.classRoomTeacher : ""}
-              </span>
+              <span className="mx-2 my-3 font-bold">{userInfo ? userInfo.classRoomTeacher : ""}</span>
             </p>
           </div>
         </div>
       </div>
       <div className="mt-3">
-        <WeekGoalCard
-          thisWeekGoalContent={userInfo ? userInfo.thisWeekGoalContent : ""}
-        />
+        <WeekGoalCard thisWeekGoalContent={userInfo ? userInfo.thisWeekGoalContent : ""} />
       </div>
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className="bg-green-100 rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2 text-green-900">
-            나의 학교 생활
-          </h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="flex flex-col items-center bg-green-400 rounded-xl p-2">
-              <span className="text-sm mt-1 text-green-50">
-                학교와 함께한 시간
-              </span>
-              <span className="font-semibold text-white">3</span>
-            </div>
+          <h3 className="text-lg font-semibold mb-2 text-green-900">나의 학교 생활</h3>
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center bg-green-400 rounded-xl p-2">
               <span className="text-sm mt-1 text-green-50">총 학습시간</span>
-              <span className="font-semibold text-white">3</span>
+              <span className="font-semibold text-white">{userInfo?.lectureCnt}</span>
             </div>
             <div className="flex flex-col items-center bg-green-400 rounded-xl p-2">
               <span className="text-sm mt-1 text-green-50">학습한 과목 수</span>
-              <span className="font-semibold text-white">3</span>
+              <span className="font-semibold text-white">{userInfo?.totalLectureTime}</span>
             </div>
           </div>
         </div>
         <div className="bg-green-100 rounded-lg p-4">
-          <h3 className="text-lg font-semibold mb-2 text-green-900">
-            가장 좋아하는 과목!
-          </h3>
+          <h3 className="text-lg font-semibold mb-2 text-green-900">가장 좋아하는 과목!</h3>
           <ul className="flex flex-col space-y-1">
-            <li className="font-semibold text-large">
-              1위 {userInfo ? userInfo.favoriteClassFirst : ""}
-            </li>
-            <li className="font-semibold text-large">
-              2위 {userInfo ? userInfo.favoriteClassSecond : ""}
-            </li>
-            <li className="font-semibold text-large">
-              3위 {userInfo ? userInfo.favoriteClassThird : ""}
-            </li>
+            <li className="font-semibold text-large">1위 {userInfo ? userInfo.favoriteClassFirst : ""}</li>
+            <li className="font-semibold text-large">2위 {userInfo ? userInfo.favoriteClassSecond : ""}</li>
+            <li className="font-semibold text-large">3위 {userInfo ? userInfo.favoriteClassThird : ""}</li>
           </ul>
         </div>
       </div>
@@ -448,29 +362,18 @@ const Mypage = () => {
             {userInfo == null
               ? null
               : userInfo.myBadges.map((badge) => (
-                <Image
-                    key={badge.badgeId}
-                    width={100}
-                    height={100}
-                    alt="badge"
-                    src={badge.badgeUrl}
-                  />
+                  <Image key={badge.badgeId} width={100} height={100} alt="badge" src={badge.badgeUrl} />
                 ))}
           </div>
         </div>
       </div>
       <div className="mt-4 gap-4 w-full">
         <div className="bg-green-100 rounded-lg p-4 w-full">
-          <h3 className="text-lg font-semibold text-green-900 mb-3">
-            내가 작성한 게시글
-          </h3>
+          <h3 className="text-lg font-semibold text-green-900 mb-3">내가 작성한 게시글</h3>
           <ul>
             {userInfo?.myFiveArticles.map((article) => (
               <li key={article.articleId} className=" cursor-pointer text-lg font-semibold ">
-                <a
-                  className="hover:text-green-500 hover:font-bold"
-                  onClick={() => goArticleDetail(article.articleId)}
-                >
+                <a className="hover:text-green-500 hover:font-bold" onClick={() => goArticleDetail(article.articleId)}>
                   {article.title}
                 </a>
               </li>
