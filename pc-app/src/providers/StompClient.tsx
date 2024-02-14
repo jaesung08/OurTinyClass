@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { chatListAtom, currentRoomIdAtom, roomList, subscribeListAtom } from "@/atoms/chatRoom";
 import { userState } from "@/atoms/user";
 import { Chat } from "@/feature/chat/types";
@@ -17,7 +17,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 	const userInfo = useRecoilValue(userState);
 	const currentRoomId = useRecoilValue(currentRoomIdAtom);
 	const [chatList, setChatList] = useRecoilState(chatListAtom);
-	const setChatRoomList = useSetRecoilState(roomList);
+	const [chatRoomList, setChatRoomList] = useRecoilState(roomList);
 	const [subscribeList, setSubscribeList] = useRecoilState(subscribeListAtom);
 	useSubscription(subscribeList, (message: IMessage) => recevHandler(message));
 
@@ -50,12 +50,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 				},
 			]);
 		} else {
-			if (Notification.permission === "granted") {
-				// 알림 생성
-				new window.Notification(message.senderName, { body: message.message });
-			} else {
-				console.log("이 시스템에서는 알림이 지원되지 않습니다.");
-			}
+			new Notification(message.senderName, { body: message.message });
 		}
 	}
 
@@ -70,18 +65,10 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 	}
 
 	useEffect(() => {
-		if (Notification.permission !== "granted") {
-			Notification.requestPermission();
-		} else {
-			new window.Notification("Tㅁㄴㅇ", { body: "Aaa" });
-		}
-	}, []);
-
-	useEffect(() => {
 		if (userInfo && !subscribeList.length) {
 			setSubscribeList(["/sub/room/" + userInfo.memberId]);
 		}
-	}, [setSubscribeList, subscribeList.length, userInfo]);
+	}, [userInfo]);
 
 	useEffect(() => {
 		const fetchChatRoomList = async () => {
@@ -94,7 +81,11 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 			}
 		};
 		fetchChatRoomList();
-	}, [setChatRoomList, setSubscribeList, userInfo.memberId]);
+	}, []);
+
+	useEffect(() => {
+		setSubscribeList(["/sub/room/" + userInfo.memberId, ...chatRoomList.map((chatRoom) => "/sub/room/" + chatRoom.roomId)]);
+	}, [chatRoomList]);
 
 	return <>{children}</>;
 };

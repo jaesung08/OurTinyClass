@@ -98,11 +98,19 @@
     "vite": "^5.0.8"
   },
   "build": {
-    "appId": "com.devname.package",
-    "productName": "OurTinyClassroom",
+    "appId": "com.otc.package",
+    "productName": "우리들의 작은 교실",
     "copyright": "Copyright © 2023 OTC",
-    "mac": {
-      "category": "public.app-category.utilities"
+    "win": {
+      "target": "nsis",
+      "appUserModelId": "com.otc.package",
+      "extraResources": [
+        {
+          "from": "./src/ToastActivator/",
+          "to": "ToastActivator/",
+          "filter": ["**/*"]
+        }
+      ]
     },
     "nsis": {
       "oneClick": false,

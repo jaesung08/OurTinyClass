@@ -142,20 +142,25 @@ const ChatHome = () => {
 
 	useEffect(() => {
 		if (chatRoomList.length) {
-			if (currentRoomId) {
-				setCurrentRoom(chatRoomList.find((room) => room.roomId === currentRoomId));
-			} else {
+			if (!currentRoomId) {
 				setCurrentRoom(chatRoomList[0]);
 				setCurrentRoomId(chatRoomList[0].roomId);
 			}
 		}
+	}, [chatRoomList]);
+
+	useEffect(() => {
+		if (chatRoomList.length && currentRoomId) {
+			setCurrentRoom(chatRoomList.find((_room) => _room.roomId === currentRoomId));
+		}
+	}, [currentRoomId]);
+
+	useEffect(() => {
 		return () => {
 			setCurrentRoom(undefined);
 			setCurrentRoomId(undefined);
-			setChatList(undefined);
 		};
-	}, [chatRoomList, currentRoomId, setCurrentRoom, setCurrentRoomId]);
-
+	}, []);
 	useEffect(() => {
 		const fetchChatList = async () => {
 			try {

@@ -19,25 +19,27 @@ registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
 const queryClient = new QueryClient();
 type AppProviderProps = {
-  children: React.ReactNode;
+	children: React.ReactNode;
 };
-
+if (Notification.permission !== "granted") {
+	Notification.requestPermission();
+}
 export const AppProvider = ({ children }: AppProviderProps) => {
-  return (
-    <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
-        <React.Suspense
-          fallback={
-            <div className="flex items-center justify-center w-screen h-screen">
-              <Spinner size="xl" />
-            </div>
-          }
-        >
-          <NextUIProvider>
-            <Router>{children}</Router>
-          </NextUIProvider>
-        </React.Suspense>
-      </QueryClientProvider>
-    </RecoilRoot>
-  );
+	return (
+		<RecoilRoot>
+			<QueryClientProvider client={queryClient}>
+				<React.Suspense
+					fallback={
+						<div className="flex items-center justify-center w-screen h-screen">
+							<Spinner size="xl" />
+						</div>
+					}
+				>
+					<NextUIProvider>
+						<Router>{children}</Router>
+					</NextUIProvider>
+				</React.Suspense>
+			</QueryClientProvider>
+		</RecoilRoot>
+	);
 };
