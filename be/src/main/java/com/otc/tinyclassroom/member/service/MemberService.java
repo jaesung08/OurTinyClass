@@ -3,6 +3,7 @@ package com.otc.tinyclassroom.member.service;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
+import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.Role;
@@ -96,6 +97,15 @@ public class MemberService {
     }
 
     /**
+     * 멤버 전체 목록 조회 메서드 pk Id 사용.
+     */
+    @Transactional
+    public List<AdminMemberPkIdResponseDto> getMemberPkIdList() {
+        List<Member> members = memberRepository.findAll();
+        return members.stream().map(AdminMemberPkIdResponseDto::from).collect(Collectors.toList());
+    }
+
+    /**
      * 멤버 삭제 메서드.
      */
     @Transactional
@@ -148,4 +158,6 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.NO_AUTHORITY);
         }
     }
+
+
 }

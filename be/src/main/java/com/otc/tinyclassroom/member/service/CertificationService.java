@@ -55,6 +55,7 @@ public class CertificationService {
         MentorRoleUpdateRequest mentorRoleUpdateRequest
             = MentorRoleUpdateRequest.of(member, dto.belong(), originalFiles, savedFiles);
         mentorRoleUpdateRepository.save(mentorRoleUpdateRequest);
+        member.setRole(Role.ROLE_WAITING);
     }
 
     /**
@@ -71,7 +72,7 @@ public class CertificationService {
         StudentRoleUpdateRequest studentRoleUpdateRequest
             = StudentRoleUpdateRequest.of(member, dto.beforeSchoolType(), dto.quitReason(), dto.beforeSchool(), originalFiles, savedFiles);
         studentRoleUpdateRepository.save(studentRoleUpdateRequest);
-
+        member.setRole(Role.ROLE_WAITING);
     }
 
     /**
