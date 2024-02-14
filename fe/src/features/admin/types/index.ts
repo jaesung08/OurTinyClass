@@ -12,6 +12,7 @@ export interface fetchUserListResponse extends BaseResponse {
   data: User[];
 }
 export interface User {
+  userId: number;
   memberId: string;
   classRooms: ClassRoom | null;
   email: string;

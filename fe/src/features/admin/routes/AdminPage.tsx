@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminNavBar from "../components/AdminNavBar";
 import AdminAccept from "../components/AdminAccept";
-import AdminClass from "../components/AdminClass";
 import AdminUserBody from "../components/AdminUserBody";
 import { userState } from "@/atoms/user";
 import { useRecoilValue } from "recoil";
@@ -21,8 +20,6 @@ const AdminPage = () => {
         return <AdminUserBody />;
       case "accept":
         return <AdminAccept />;
-      case "class":
-        return <AdminClass />;
       default:
         return null;
     }

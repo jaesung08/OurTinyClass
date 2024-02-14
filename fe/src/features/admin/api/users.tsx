@@ -36,3 +36,9 @@ export const requestCreateClassroom = (
     number,
   });
 };
+
+export const requestClassAssignment = (userIdList: number[]) => {
+  return commonAxios.post("/classrooms/ramdomAssignment", {
+    userIdList,
+  });
+};

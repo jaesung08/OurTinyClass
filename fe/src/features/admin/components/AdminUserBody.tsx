@@ -19,10 +19,12 @@ import { useEffect, useState } from "react";
 import { User } from "../types";
 import {
   fetchUserList,
+  requestClassAssignment,
   requestCreateClassroom,
   requestEditUserClass,
   requestEditUserInfo,
 } from "../api/users";
+import Swal from "sweetalert2";
 
 type UserEditModal = {
   isOpen: boolean;
@@ -176,7 +178,7 @@ const AddClassroomModal = ({
 
 const AdminUserBody = () => {
   const [userList, setUserList] = useState<User[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set([]));
+  const [selectedKeys, setSelectedKeys] = useState<Set<number>>(new Set([]));
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [modal, setModal] = useState("");
@@ -191,14 +193,14 @@ const AdminUserBody = () => {
   };
 
   const onSelectionChange = (keys: "all" | Set<string | number>) => {
-    if (keys !== "all" && isStringSet(keys)) {
+    if (keys !== "all" && isNumberSet(keys)) {
       setSelectedKeys(keys);
     }
   };
 
-  function isStringSet(set: Set<string | number>): set is Set<string> {
+  function isNumberSet(set: Set<string | number>): set is Set<number> {
     for (const item of set) {
-      if (typeof item !== "string") {
+      if (typeof item !== "number") {
         return false; // 요소 중에 문자열이 아닌 것이 있으면 false 반환
       }
     }
@@ -216,9 +218,14 @@ const AdminUserBody = () => {
     onOpen();
   };
 
-  useEffect(() => {
-    console.log(selectedKeys);
-  }, [selectedKeys]);
+  const onClickClassAssignment = async () => {
+    try {
+      await requestClassAssignment(Array.from(selectedKeys));
+      setSelectedKeys(new Set([]));
+    } catch {
+      Swal.fire("에러", "반 배정에 실패하였습니다.", "error");
+    }
+  };
 
   useEffect(() => {
     getUserList();
@@ -228,9 +235,14 @@ const AdminUserBody = () => {
     <section className="w-10/12 flex flex-col mx-auto py-10">
       <div className="flex justify-between">
         <p className="my-5 text-2xl">유저 관리</p>
-        <Button onPress={onOpenAddClassroomModal} color="primary">
-          방 추가
-        </Button>
+        <div className="flex gap-4">
+          <Button onPress={onClickClassAssignment} color="secondary">
+            반 자동 배정
+          </Button>
+          <Button onPress={onOpenAddClassroomModal} color="primary">
+            반 추가
+          </Button>
+        </div>
       </div>
       <div className="flex gap-10">
         <Table
@@ -241,7 +253,8 @@ const AdminUserBody = () => {
           selectedKeys={selectedKeys}
           onSelectionChange={onSelectionChange}>
           <TableHeader>
-            <TableColumn key="memberId">ID</TableColumn>
+            {/* <TableColumn key="userId">계정</TableColumn> */}
+            <TableColumn key="memberId">계정</TableColumn>
             <TableColumn key="name">이름</TableColumn>
             <TableColumn key="grade">학년</TableColumn>
             <TableColumn key="class">반</TableColumn>
@@ -253,6 +266,7 @@ const AdminUserBody = () => {
           <TableBody items={userList}>
             {(user) => (
               <TableRow key={user.memberId}>
+                {/* <TableCell>{user.userId}</TableCell> */}
                 <TableCell>{user.memberId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.classRooms?.grade ?? ""}</TableCell>
