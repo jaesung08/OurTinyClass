@@ -136,7 +136,7 @@ public class MyPageService {
 
         if (dto.newPassword() != null && !dto.newPassword().isEmpty()) {
             if (!encoder.matches(dto.beforePassword(), member.getPassword())) {
-                throw new MemberException(MemberErrorCode.PASSWORD_NOT_MATCHES);
+                throw new MemberException(MemberErrorCode.PASSWORD_NOT_MATCH);
             }
             // 비밀번호 검증 로직
             if (!isValidPassword(dto.newPassword())) {
