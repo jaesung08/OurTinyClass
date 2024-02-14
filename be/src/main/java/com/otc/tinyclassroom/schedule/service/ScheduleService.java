@@ -50,9 +50,9 @@ public class ScheduleService {
      * @return 스케줄 리스트 반환.
      */
     @Transactional(readOnly = true)
-    public ScheduleListResponseDto getScheduleList(Long memberId, LocalDate scheduleDate) {
+    public ScheduleListResponseDto getScheduleList(String memberId, LocalDate scheduleDate) {
         // 멤버 검증
-        Member member = getMemberById(memberId);
+        Member member = getMemberByMemberId(memberId);
         // 가장 최근의 멤버 클래스룸 검증 및 선생님 확인
         Member teacher = getClassroomTeacher(member);
         // 스케줄 리스트 가져오기
@@ -99,7 +99,7 @@ public class ScheduleService {
 
         // 시간표에 있는지 확인하기.
         scheduleRepository.findScheduleByMemberIdAndScheduleDateAndTimeTable(
-                member.getId(),
+                member.getMemberId(),
                 teacher.getMemberId(),
                 requestDto.scheduleDate(),
                 requestDto.timeTable()
@@ -111,7 +111,7 @@ public class ScheduleService {
                 member,
                 lecture,
                 requestDto.scheduleDate(),
-                requestDto.scheduleDate().getDayOfWeek().getValue(),
+                requestDto.scheduleDate().getDayOfWeek().getValue()-1,
                 requestDto.timeTable(),
                 deletable
         );
@@ -151,8 +151,13 @@ public class ScheduleService {
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_LECTURE));
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
+    private Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_SCHEDULE));
+    }
+
+    private Member getMemberByMemberId(String memberId) {
+        return memberRepository.findByMemberId(memberId)
             .orElseThrow(() -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_MEMBER));
     }
 
