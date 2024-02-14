@@ -25,7 +25,7 @@ function CommentInput({ articleId, commentList, setList }: Comment) {
       } else {
         Swal.fire({
           icon: "error",
-          title: "저런...",
+          title: "실패!!",
           text: "댓글을 작성하세요",
         });
         inputFocus.current?.focus();

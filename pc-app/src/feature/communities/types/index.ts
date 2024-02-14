@@ -11,9 +11,10 @@ export interface Board {
 export interface Comment {
   id: number;
   content: string;
-  createdAt: string;
+  createdAt?: string;
   modifiedAt: string;
   name: string;
+  isEdit?: boolean;
 }
 
 export interface BoardDetail extends Board {
