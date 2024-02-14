@@ -37,17 +37,23 @@ public class ArticleController {
     private final ArticleService articleService;
 
     /**
-     * 전체 커뮤니티의 게시글 목록 조회.
+     * 지정 커뮤니티의 게시글 목록 조회.
      */
     @GetMapping("/articles")
-    public BaseResponse<Page<ArticleResponseDto>> getArticleList(
-        @RequestParam(required = true) String boardType,
+    public BaseResponse<?> getArticleList(
+        @RequestParam(required = false) String boardType,
         @RequestParam(required = false) String searchType,
         @RequestParam(required = false) String searchValue,
         @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
-        return BaseResponse.success(HttpStatus.OK.value(), "게시글 목록 반환 성공",
-            articleService.searchArticles(null, ArticleType.fromString(boardType), SearchType.fromString(searchType), searchValue, pageable).map(ArticleResponseDto::from));
+        if (boardType != null) {
+            // 특정 커뮤니티의 게시글 목록을 처리합니다.
+            return BaseResponse.success(HttpStatus.OK.value(), "게시글 목록 반환 성공",
+                articleService.searchArticles(null, ArticleType.fromString(boardType), SearchType.fromString(searchType), searchValue, pageable).map(ArticleResponseDto::from));
+        } else {
+            // 모든 게시물을 처리합니다.
+            return BaseResponse.success(HttpStatus.OK.value(), "전체 게시물을 조회했습니다.", articleService.getArticleList());
+        }
     }
 
     /**

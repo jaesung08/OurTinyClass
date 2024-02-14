@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.community.dto.ArticleDto;
 import com.otc.tinyclassroom.community.dto.ArticleWithCommentDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleCreateRequestDto;
 import com.otc.tinyclassroom.community.dto.request.ArticleUpdateRequestDto;
+import com.otc.tinyclassroom.community.dto.response.ArticleListResponseDto;
 import com.otc.tinyclassroom.community.entity.Article;
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.community.entity.type.SearchType;
@@ -15,7 +16,9 @@ import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.repository.ClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -174,4 +177,15 @@ public class ArticleService {
     public Long getCurrentMemberId() {
         return jwtProvider.getCurrentMemberId();
     }
+
+    /**
+     * 전체 게시판 목록을 불러온다.
+     */
+    public List<ArticleListResponseDto> getArticleList() {
+        List<Article> articles = articleRepository.findAll();
+        return articles.stream()
+            .map(ArticleListResponseDto::from)
+            .collect(Collectors.toList());
+    }
+
 }
