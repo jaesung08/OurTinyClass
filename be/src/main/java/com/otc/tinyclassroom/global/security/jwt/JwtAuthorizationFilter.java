@@ -50,6 +50,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
         if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join")) {
             chain.doFilter(request, response);
+        } else if (servletPath.equals("/stomp/chat")) {
+            // 채팅 소켓 연결이라면 토큰 검사하지 않음.
+            chain.doFilter(request, response);
         } else if (header == null || !header.startsWith("Bearer ")) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
             log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
