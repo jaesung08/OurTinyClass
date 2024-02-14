@@ -4,7 +4,7 @@ export interface UserState {
   memberId: string;
   name: string;
   point: number;
-  role: number;
+  role: string;
 }
 
 const { persistAtom } = recoilPersist(); // atom을 localStorage에 저장하기 위한 라이브러리
