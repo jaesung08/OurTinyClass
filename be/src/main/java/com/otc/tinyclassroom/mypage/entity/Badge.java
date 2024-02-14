@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.mypage.entity;
 
-import com.otc.tinyclassroom.member.entity.ClassRoomMember;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
