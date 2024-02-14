@@ -33,6 +33,17 @@ public class MemberClassRoomRepositoryCustomImpl implements MemberClassRoomRepos
     }
 
     @Override
+    public List<Member> findMemberByClassRoomId(Long classRoomId) {
+        QMemberClassRoom qMemberClassRoom = QMemberClassRoom.memberClassRoom;
+
+        return queryFactory
+            .select(qMemberClassRoom.member)
+            .from(qMemberClassRoom)
+            .where(qMemberClassRoom.classRoom.id.eq(classRoomId))
+            .fetch();
+    }
+
+    @Override
     public List<ClassRoom> findClassRoomByMemberId(Long memberId) {
         QMemberClassRoom qMemberClassRoom = QMemberClassRoom.memberClassRoom;
         return queryFactory

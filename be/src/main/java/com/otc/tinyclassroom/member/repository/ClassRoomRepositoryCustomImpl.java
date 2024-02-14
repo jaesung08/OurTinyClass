@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.QClassRoom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,16 @@ public class ClassRoomRepositoryCustomImpl implements ClassRoomRepositoryCustom 
                     .and(classRoom.year.eq(year))
                     .and(classRoom.number.gt(0)))
             .fetch();
+    }
+
+    @Override
+    public Optional<ClassRoom> findTempClassRoomByGrade(int grade) {
+        QClassRoom classRoom = QClassRoom.classRoom;
+        ClassRoom result = queryFactory.selectFrom(classRoom)
+            .where(classRoom.grade.eq(grade)
+                .and(classRoom.year.eq(0))
+                .and(classRoom.number.eq(0)))
+            .fetchOne();
+        return Optional.ofNullable(result);
     }
 }

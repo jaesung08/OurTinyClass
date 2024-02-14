@@ -12,5 +12,7 @@ public interface MemberClassRoomRepositoryCustom {
 
     List<Member> findMemberByClassRoomIdAndRole(Long classRoomId, Role role);
 
+    List<Member> findMemberByClassRoomId(Long classRoomId);
+
     List<ClassRoom> findClassRoomByMemberId(Long memberId);
 }

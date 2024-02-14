@@ -206,5 +206,14 @@ public class ClassAssignmentService {
         return memberRepository.findById(memberId).orElseThrow(() -> new ClassAssignmentException(
             ClassAssignmentErrorCode.MEMBER_NOT_FOUND));
     }
+
+    public void tempAssignClassRoom(Long memberId, int grade) {
+        Member member = getMemberById(memberId);
+        ClassRoom classRoom = classRoomRepository.findTempClassRoomByGrade(grade).orElseThrow(
+            () -> new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_FOUND)
+        );
+        MemberClassRoom memberClassRoom = MemberClassRoom.of(member, classRoom);
+        memberClassRoomRepository.save(memberClassRoom);
+    }
 }
 

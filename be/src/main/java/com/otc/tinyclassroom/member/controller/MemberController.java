@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
 import com.otc.tinyclassroom.media.service.MediaService;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
@@ -9,12 +10,14 @@ import com.otc.tinyclassroom.member.dto.request.MentorRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.request.StudentRoleUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
+import com.otc.tinyclassroom.member.dto.response.MemberProfileDto;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.MemberService;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -63,6 +66,15 @@ public class MemberController {
         refreshTokenService.deleteRefreshToken(refreshToken);
 
         return BaseResponse.success(HttpStatus.OK.value(), "로그아웃 성공!", memberId);
+    }
+
+    /**
+     * 우리반 멤버 조회 (선생님 포함).
+     */
+    @GetMapping("/myClass")
+    public BaseResponse<List<MemberProfileDto>> getMyClassRoomMember(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        List<MemberProfileDto> result = memberService.getMyClassRoomMember(principalDetails.getMember());
+        return BaseResponse.success(HttpStatus.OK.value(), "같은 반 멤버 조회 성공", result);
     }
 
 

@@ -1,18 +1,21 @@
 package com.otc.tinyclassroom.member.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.member.dto.request.TempAssignRequestDto;
 import com.otc.tinyclassroom.member.dto.response.MentorRoleUpdateDetailResponseDto;
 import com.otc.tinyclassroom.member.dto.response.RoleUpdateListResponseDto;
 import com.otc.tinyclassroom.member.dto.response.RoleUpdateResponseDto;
 import com.otc.tinyclassroom.member.dto.response.StudentRoleUpdateDetailResponseDto;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.service.CertificationService;
+import com.otc.tinyclassroom.member.service.ClassAssignmentService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CertificationController {
 
     private final CertificationService certificationService;
+    private final ClassAssignmentService classAssignmentService;
 
     //TODO: 권한이 없을때 보여줄 페이지를 구현해야 함.
     /**
@@ -77,8 +81,9 @@ public class CertificationController {
      * 학생 등업 승인.
      */
     @PostMapping("/student/{articleId}/approve")
-    public BaseResponse<RoleUpdateResponseDto> approveStudentRoleUpdate(@PathVariable(name = "articleId") Long articleId) {
+    public BaseResponse<RoleUpdateResponseDto> approveStudentRoleUpdate(@PathVariable(name = "articleId") Long articleId, @RequestBody TempAssignRequestDto request) {
         Long studentId = certificationService.findStudentIdByArticleId(articleId);
+        classAssignmentService.tempAssignClassRoom(studentId, request.grade());
         RoleUpdateResponseDto result = certificationService.updateRole(studentId, Role.valueOf("ROLE_STUDENT"));
         certificationService.deleteStudentArticleByArticleId(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "학생 등업 성공", result);

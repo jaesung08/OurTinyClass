@@ -5,11 +5,18 @@ import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
+import com.otc.tinyclassroom.member.dto.response.MemberProfileDto;
+import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
+import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentErrorCode;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
+import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +38,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final MemberClassRoomRepository memberClassRoomRepository;
 
     /**
      * 회원가입을 수행한다.
@@ -48,7 +56,7 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.INVALID_MEMBER_ID);
         }
         // 아이디 중복 확인
-        memberRepository.findByMemberIdAndDeletedAtIsNotNull(request.memberId()).ifPresent(member -> {
+        memberRepository.findMemberByMemberId(request.memberId()).ifPresent(member -> {
             throw new MemberException(MemberErrorCode.DUPLICATED_USER_NAME);
         });
 
@@ -159,5 +167,17 @@ public class MemberService {
         }
     }
 
-
+    /**
+     * 같은 반의 멤버를(선생님 포함) 조회한다.
+     */
+    public List<MemberProfileDto> getMyClassRoomMember(Member member) {
+        List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
+        if (memberClassRooms.isEmpty()) {
+            throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
+        }
+        MemberClassRoom memberClassRoom = memberClassRooms.get(memberClassRooms.size() - 1);
+        ClassRoom classRoom = memberClassRoom.getClassRoom();
+        List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoom.getId());
+        return members.stream().map(MemberProfileDto::from).collect(Collectors.toCollection(ArrayList::new));
+    }
 }
