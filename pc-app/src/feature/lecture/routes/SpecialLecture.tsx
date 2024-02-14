@@ -10,8 +10,6 @@ import { userState } from "@/atoms/user";
 import { Lecture } from "../types";
 import { LectureCategory, SearchLecturesOptions } from "../assets/textContent";
 
-// TODO : 특강페이지 할일
-
 // 검색기능
 
 interface SearchBarProps {
@@ -58,11 +56,10 @@ function SearchBar({ searchKeyword, setSearchKeyword, searchType, setSearchType,
 export function SpecialLecture() {
 	const [totalList, setTotalList] = useState<Lecture[]>([]);
 	const userInfo = useRecoilState(userState);
-	// TODO : Array type 으로 변경해야함
 	const [lectureLists, setLectureLists] = useState<Lecture[]>([]);
 	const [searchType, setSearchType] = useState<string>(SearchLecturesOptions[0].value);
 	const [searchKeyword, setSearchKeyword] = useState<string>("");
-
+	console.log(userInfo);
 	const navigator = useNavigate();
 	// 특강 목록 조회
 	useEffect(() => {
@@ -141,7 +138,7 @@ export function SpecialLecture() {
 									key={category.id}
 									onClick={() => filterCategory(category.id)}
 								>
-									<Avatar src="https://i.pravatar.cc/150?u=a04258114e29026708c" className="w-20 h-20 text-large" />
+									<Avatar src={category.image} className="w-20 h-20 text-large" />
 									<p>{category.name}</p>
 								</div>
 							);
@@ -162,13 +159,15 @@ export function SpecialLecture() {
 					)}
 				</div>
 			</section>
-			<button
-				className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
-				aria-label="특강 등록"
-				onClick={() => navigator("./create")}
-			>
-				<EditIcon />
-			</button>
+			{userInfo[0].role === "MENTOR" ? (
+				<button
+					className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
+					aria-label="특강 등록"
+					onClick={() => navigator("./create")}
+				>
+					<EditIcon />
+				</button>
+			) : null}
 		</>
 	);
 }

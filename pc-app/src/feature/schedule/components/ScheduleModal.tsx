@@ -1,8 +1,9 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input } from "@nextui-org/react";
 import { useEffect, useState } from "react";
-import { SelectCategories } from "../assets/textContents";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { createSchedule, getSpecialLecture, getFreeLecture } from "../api/createSchedule";
+import Swal from "sweetalert2";
+import { AxiosError } from "axios";
 
 type CreateScheduleProps = {
 	isOpen: boolean;
@@ -28,11 +29,15 @@ type ResponseLecture = {
 	title: string;
 };
 
+type FreeLectureState = {
+	[key: string]: ResponseLecture[];
+};
+
 export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, fetchScheduleList }: CreateScheduleProps) {
 	const [todoSchedule, setTodoSchedule] = useState<string>("");
 	const [currentLecture, setCurrentLecture] = useState<number>(1);
 	const [specialLecture, setSpecialLecture] = useState<ResponseLecture[]>([]);
-	const [freeLecture, setFreeLecture] = useState<object[] | any>([]);
+	const [freeLecture, setFreeLecture] = useState<FreeLectureState>({});
 	const [isSpecial, setIsSpecial] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -61,7 +66,6 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 				} else {
 					setIsSpecial(false);
 				}
-				console.log(responseSpecial.data);
 			} catch (error) {
 				console.error(error);
 			}
@@ -73,8 +77,13 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 		try {
 			await createSchedule(lectureId, date, dayOfWeek);
 			fetchScheduleList();
-		} catch (error) {
-			console.error(error);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		} catch (e: any) {
+			Swal.fire({
+				title: "Oops",
+				text: `${e.response.data.message}`,
+				icon: "error",
+			});
 		}
 	};
 
@@ -110,11 +119,11 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 								</div>
 								<div className="flex">
 									<div className="flex flex-col w-full overflow-y-scroll h-52 gap-5 scrollbar-hide">
-										{Object.keys(freeLecture).map((item, index) => {
+										{Object.keys(freeLecture).map((item: string, index: number) => {
 											return (
 												<Accordion key={index}>
 													<AccordionItem className="border-1 rounded-xl px-5" key={`${index}`} aria-label={item} title={item}>
-														{freeLecture[item].map((info: { title: string; id: number }) => {
+														{freeLecture[item].map((info: ResponseLecture) => {
 															return (
 																<p
 																	className="p-5 cursor-pointer"
