@@ -41,6 +41,10 @@ public class ChatPreHandler implements ChannelInterceptor {
             log.info("Authorization : {}", accessToken.substring(7));
         }
 
+        if (StompCommand.SUBSCRIBE.equals(headerAccessor.getCommand())) {
+            log.info("SUBSCRIBE >> sessionId : {}", headerAccessor.getSessionId());
+        }
+
         return message;
     }
 }

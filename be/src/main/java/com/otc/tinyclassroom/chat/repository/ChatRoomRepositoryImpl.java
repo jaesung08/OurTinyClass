@@ -3,17 +3,15 @@ package com.otc.tinyclassroom.chat.repository;
 import static com.otc.tinyclassroom.chat.entity.QChatMessage.chatMessage;
 import static com.otc.tinyclassroom.chat.entity.QChatRoom.chatRoom;
 import static com.otc.tinyclassroom.chat.entity.QChatRoomMember.chatRoomMember;
-import static com.otc.tinyclassroom.member.entity.QMember.member;
 
 import com.otc.tinyclassroom.chat.dto.ChatRoomDto;
-import com.otc.tinyclassroom.chat.dto.RoomMemberDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 채팅룸 repository 구현체.
+ * ChatRoomRepository 구현체.
  */
 @RequiredArgsConstructor
 public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
@@ -38,18 +36,18 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepositoryCustom {
     }
 
     @Override
-    public List<RoomMemberDto> findAllRoomMemberByRoomId(String roomId) {
+    public ChatRoomDto findChatRoomDetail(String roomId) {
         return jpaQueryFactory
                 .select(Projections.constructor(
-                        RoomMemberDto.class,
-                        member.id,
-                        member.memberId,
-                        member.name,
-                        member.email
+                        ChatRoomDto.class,
+                        chatRoom.id,
+                        chatMessage.id,
+                        chatMessage.message
                 ))
                 .from(chatRoomMember)
-                .join(chatRoomMember.member, member)
-                .where(chatRoomMember.chatRoom.id.eq(roomId))
-                .fetch();
+                .join(chatRoomMember.chatRoom, chatRoom)
+                .leftJoin(chatRoom.lastChatMessage, chatMessage)
+                .where(chatRoom.id.eq(roomId))
+                .fetchFirst();
     }
 }

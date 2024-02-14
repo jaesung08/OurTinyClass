@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.chat.dto;
 
 import com.otc.tinyclassroom.chat.entity.ChatMessage;
+import com.otc.tinyclassroom.chat.entity.type.ChatMessageType;
 import com.otc.tinyclassroom.member.dto.MemberDto;
 
 /**

@@ -1,6 +1,6 @@
 package com.otc.tinyclassroom.chat.entity;
 
-import com.otc.tinyclassroom.chat.dto.ChatMessageType;
+import com.otc.tinyclassroom.chat.entity.type.ChatMessageType;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

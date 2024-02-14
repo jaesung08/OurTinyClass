@@ -11,7 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 채팅 메세지 repository 구현체.
+ * ChatMessageRepository 구현체.
  */
 @RequiredArgsConstructor
 public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
@@ -20,14 +20,16 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
 
     @Override
     public List<ChatMessageResponseDto> findAllChatByRoomId(String roomId) {
-        List<ChatMessageResponseDto> execute = jpaQueryFactory
+        return jpaQueryFactory
                 .select(Projections.constructor(
                         ChatMessageResponseDto.class,
                         chatMessage.id,
                         chatRoom.id,
                         member.memberId,
+                        member.name,
                         chatMessage.message,
-                        chatMessage.createdAt
+                        chatMessage.createdAt,
+                        chatMessage.chatMessageType
                 ))
                 .from(chatMessage)
                 .leftJoin(chatMessage.chatRoom, chatRoom)
@@ -36,7 +38,5 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepositoryCustom {
                 .orderBy(chatMessage.createdAt.asc())
                 .limit(100)
                 .fetch();
-
-        return execute;
     }
 }

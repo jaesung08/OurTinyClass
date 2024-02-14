@@ -1,6 +1,5 @@
 package com.otc.tinyclassroom.chat.service;
 
-import com.otc.tinyclassroom.chat.dto.ChatMessageType;
 import com.otc.tinyclassroom.chat.dto.ChatRoomDto;
 import com.otc.tinyclassroom.chat.dto.request.ChatMessageCreateRequestDto;
 import com.otc.tinyclassroom.chat.dto.request.ChatRoomCreateRequestDto;
@@ -9,6 +8,7 @@ import com.otc.tinyclassroom.chat.dto.response.ChatRoomResponseDto;
 import com.otc.tinyclassroom.chat.entity.ChatMessage;
 import com.otc.tinyclassroom.chat.entity.ChatRoom;
 import com.otc.tinyclassroom.chat.entity.ChatRoomMember;
+import com.otc.tinyclassroom.chat.entity.type.ChatMessageType;
 import com.otc.tinyclassroom.chat.exception.ChatErrorCode;
 import com.otc.tinyclassroom.chat.exception.ChatException;
 import com.otc.tinyclassroom.chat.repository.ChatMessageRepository;
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 채팅룸 서비스.
  */
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -43,7 +45,6 @@ public class ChatService {
     /**
      * 채팅방을 만들고 roomId 값을 반환하는 메서드.
      */
-    @Transactional
     public ChatRoomResponseDto createChatRoom(ChatRoomCreateRequestDto dto) {
         String currentUserId = jwtProvider.getCurrentUserId();
         Member fromMember = memberRepository.findById(Long.valueOf(currentUserId))
@@ -63,23 +64,25 @@ public class ChatService {
                         null,
                         chatRoom.getId(),
                         fromMember.getMemberId(),
+                        fromMember.getName(),
                         "채팅방에 초대되었습니다.",
                         LocalDateTime.now(),
                         ChatMessageType.SUBSCRIBE
-                ));
+                )
+        );
 
         return ChatRoomResponseDto.of(
                 chatRoom.getId(),
-                chatRoomRepository.findAllRoomMemberByRoomId(chatRoom.getId()),
+                chatRoomMemberRepository.findAllRoomMemberByRoomId(chatRoom.getId()),
                 null,
-                null
+                null,
+                new ArrayList<ChatMessageResponseDto>()
         );
     }
 
     /**
      * 유저가 속해 있는 모든 채팅방을 가져오는 메서드.
      */
-    @Transactional
     public List<ChatRoomResponseDto> findAllSubscribedChatRoom() {
 
         String currentUserId = jwtProvider.getCurrentUserId();
@@ -91,9 +94,10 @@ public class ChatService {
         for (ChatRoomDto dto : chatRoomList) {
             chatRoomResponseList.add(ChatRoomResponseDto.of(
                     dto.roomId(),
-                    chatRoomRepository.findAllRoomMemberByRoomId(dto.roomId()),
+                    chatRoomMemberRepository.findAllRoomMemberByRoomId(dto.roomId()),
                     dto.lastChatId(),
-                    dto.lastMessage()
+                    dto.lastMessage(),
+                    new ArrayList<ChatMessageResponseDto>()
             ));
         }
 
@@ -101,9 +105,24 @@ public class ChatService {
     }
 
     /**
+     * 채팅룸 정보를 가져오는 메서드.
+     */
+    @Transactional(readOnly = true)
+    public ChatRoomResponseDto findSubscribedChatRoomDetail(String roomId) {
+
+        ChatRoomDto chatRoomDetail = chatRoomRepository.findChatRoomDetail(roomId);
+        return ChatRoomResponseDto.of(
+                chatRoomDetail.roomId(),
+                chatRoomMemberRepository.findAllRoomMemberByRoomId(chatRoomDetail.roomId()),
+                chatRoomDetail.lastChatId(),
+                chatRoomDetail.lastMessage(),
+                new ArrayList<ChatMessageResponseDto>()
+        );
+    }
+
+    /**
      * 채팅 메세지를 저장하는 메서드.
      */
-    @Transactional
     public ChatMessageResponseDto saveChatMessage(ChatMessageCreateRequestDto dto) {
 
         ChatRoom chatRoom = chatRoomRepository.findById(dto.roomId())
@@ -112,7 +131,7 @@ public class ChatService {
         Member member = memberRepository.findByMemberId(dto.senderId())
                 .orElseThrow(() -> new ChatException(ChatErrorCode.NOT_FOUND_MEMBER, "존재하지 않는 유저 이름입니다."));
 
-        ChatMessage chatMessage = ChatMessage.of(chatRoom, member, dto.message(), ChatMessageType.STANDARD);
+        ChatMessage chatMessage = ChatMessage.of(chatRoom, member, dto.message(), ChatMessageType.MESSAGE);
         ChatMessage saveMessage = chatMessageRepository.save(chatMessage);
 
         // 해당 채팅방의 마지막 채팅 변경.
@@ -123,6 +142,7 @@ public class ChatService {
                 saveMessage.getId(),
                 saveMessage.getChatRoom().getId(),
                 saveMessage.getMember().getMemberId(),
+                saveMessage.getMember().getName(),
                 saveMessage.getMessage(),
                 saveMessage.getCreatedAt(),
                 saveMessage.getChatMessageType()
@@ -136,4 +156,5 @@ public class ChatService {
     public List<ChatMessageResponseDto> findAllChatMessage(String roomId) {
         return chatMessageRepository.findAllChatByRoomId(roomId);
     }
+
 }

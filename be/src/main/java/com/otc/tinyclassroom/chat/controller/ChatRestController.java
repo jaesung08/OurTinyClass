@@ -7,6 +7,7 @@ import com.otc.tinyclassroom.chat.service.ChatService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 채팅룸 컨트롤러.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/chatrooms")
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class ChatRestController {
     /**
      * 채팅 방에 입장하면 지금까지의 채팅 메세지를 읽어오는 메서드.
      */
-    @GetMapping("{roomId}")
+    @GetMapping("/{roomId}")
     public BaseResponse<?> findChatMessage(@PathVariable("roomId") String roomId) {
 
         List<ChatMessageResponseDto> messageList = chatService.findAllChatMessage(roomId);
@@ -58,4 +60,12 @@ public class ChatRestController {
         return new BaseResponse<>(HttpStatus.OK.value(), "해당 채팅 방의 메세지 리스트가 반환되었습니다.", messageList);
     }
 
+    /**
+     * roomId에 해당하는 채팅방에 대한 정보를 읽어오는 메서드.
+     */
+    @GetMapping("/detail/{roomId}")
+    public BaseResponse<?> findChatRoomDetail(@PathVariable("roomId") String roomId) {
+        ChatRoomResponseDto chatRoomDetail = chatService.findSubscribedChatRoomDetail(roomId);
+        return new BaseResponse<>(HttpStatus.OK.value(), "채팅방 정보가 반환되었습니다.", chatRoomDetail);
+    }
 }

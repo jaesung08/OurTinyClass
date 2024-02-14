@@ -4,7 +4,7 @@ import com.otc.tinyclassroom.chat.dto.response.ChatMessageResponseDto;
 import java.util.List;
 
 /**
- * QueryDsl을 사용하기 위한 repository interface.
+ * QueryDsl을 사용하는 ChatMessageRepository Interface.
  */
 public interface ChatMessageRepositoryCustom {
     List<ChatMessageResponseDto> findAllChatByRoomId(String roomId);

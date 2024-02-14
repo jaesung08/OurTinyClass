@@ -1,8 +1,8 @@
-package com.otc.tinyclassroom.chat.dto;
+package com.otc.tinyclassroom.chat.entity.type;
 
 /**
  * Chat Message 타입을 위한 Enum 클래스.
  */
 public enum ChatMessageType {
-    STANDARD, SUBSCRIBE
+    MESSAGE, SUBSCRIBE
 }
