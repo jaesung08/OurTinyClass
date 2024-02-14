@@ -28,7 +28,7 @@ public class ClassRoom {
     private int year; // 해당 년도
     @Column(nullable = false)
     private int grade; // 학년
-    @Column
+    @Column(nullable = false)
     private int number; // 반
     @Column
     private String roomUrl;

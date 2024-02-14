@@ -1,8 +1,11 @@
 package com.otc.tinyclassroom.schedule.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.lecture.entity.Lecture;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,10 +29,10 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     private Lecture lecture;
 
     @NotNull

@@ -10,19 +10,23 @@ import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import com.otc.tinyclassroom.mypage.event.LectureBadgeEvent;
 import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
+import com.otc.tinyclassroom.schedule.entity.MemberSchedule;
 import com.otc.tinyclassroom.schedule.entity.Schedule;
 import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
 import com.otc.tinyclassroom.schedule.exception.ScheduleException;
+import com.otc.tinyclassroom.schedule.repository.MemberScheduleRepository;
 import com.otc.tinyclassroom.schedule.repository.ScheduleRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +44,8 @@ public class ScheduleService {
     private final MemberRepository memberRepository;
     private final MemberClassRoomRepository memberClassRoomRepository;
     private final ScheduleRepository scheduleRepository;
+    private final MemberScheduleRepository memberScheduleRepository;
+    private final ApplicationEventPublisher publisher;
     private final JwtProvider jwtProvider;
 
     /**
@@ -117,6 +123,9 @@ public class ScheduleService {
         );
 
         scheduleRepository.save(schedule);
+        memberScheduleRepository.save(MemberSchedule.of(member, schedule));
+        // schedule type에 따라 count 하는 것 querydsl로 만들기
+        publisher.publishEvent(new LectureBadgeEvent(currentUserId));
     }
 
     /**
@@ -144,6 +153,8 @@ public class ScheduleService {
         }
 
         scheduleRepository.deleteScheduleById(id);
+        memberScheduleRepository.deleteByMemberIdAndScheduleId(currentUserId, id);
+
     }
 
     private Lecture getLectureById(Long lectureId) {

@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.attendance.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.attendance.entity.type.AttendanceStatus;
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Column;
@@ -24,7 +26,7 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //db 번호
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = LAZY)
     private Member member; // 유저 id
 
     @Column

@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.community.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.community.entity.type.ArticleType;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
@@ -36,11 +38,11 @@ public class Article extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = true)
+    @ManyToOne(fetch = LAZY)
     private Member member;
     // 몇 반 게시판에 들어가는 지 여부
     // 자유 게시판인 경우 null 값
-    @ManyToOne(optional = true)
+    @ManyToOne(fetch = LAZY)
     private ClassRoom classRoom;
 
     @Setter

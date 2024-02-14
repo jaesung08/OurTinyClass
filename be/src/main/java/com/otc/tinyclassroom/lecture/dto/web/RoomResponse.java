@@ -22,3 +22,4 @@ public record RoomResponse(@JsonProperty("id") String id, @JsonProperty("name") 
 
     }
 }
+

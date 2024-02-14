@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             response.setStatus(HttpServletResponse.SC_NOT_FOUND); // Set 400 status code
 
             // 클라이언트에게 전달할 오류 메시지 설정
-            BaseResponse<String> errorResponse = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "유효하지 않은 로그인 정보입니다.", null);
+            BaseResponse<String> errorResponse = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "아이디 혹은 비밀번호가 틀렸습니다.", null);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             try {
@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+
             return null;
 
         } catch (Exception e) {
