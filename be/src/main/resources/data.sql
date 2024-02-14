@@ -62,40 +62,30 @@ values (19, 2024, 4, 2);
 insert into classroom (id, year, grade, number)
 values (20, 2024, 4, 3);
 
+-- 자유강의
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '모션 그래픽 공부', '모션 그래픽', 'ART', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '한시간동안 기타 연습', '기타 연주', 'MUSIC', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '백준에서 실버 한문제 풀기', '알고리즘', 'MATH', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '체스를 같이 할 친구가 있으신가요?', '체스', 'HOBBY', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '네일아트 공부', '네일아트', 'ART', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '피아노피아노', '피아노', 'MUSIC', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '꽃꽃꽃꽃', '꽃꽂이', 'ART', 'FREE_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '진로탐색진로탐색', '진로탐색', 'CAREER', 'FREE_LECTURE', 'APPROVED');
 
--- 강의
-INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`)
-VALUES ('1', '1', '3', 'lecture1', '수학', 'MATH', 'FREE_LECTURE');
-INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`)
-VALUES ('2', '4', '3', 'lecture2', '영어', 'ENGLISH', 'REGULAR_LECTURE');
-INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`)
-VALUES ('3', '5', '3', 'lecture3', '역사', 'NO_CATEGORY', 'SPECIAL_LECTURE');
+-- 정규강의
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '수학수학', '수학', 'MATH', 'REGULAR_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '영어영어', '영어', 'ENGLISH', 'REGULAR_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '도덕도덕', '도덕', 'ETHICS', 'REGULAR_LECTURE', 'APPROVED');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '국어', '진로탐색', 'KOREAN', 'REGULAR_LECTURE', 'APPROVED');
 
--- 시간표
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-11', '1', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-12', '2', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-14', '1', '3', false);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-11', '3', '3', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-13', '2', '2', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-12', '1', '2', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-13', '1', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-13', '3', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-01-14', '2', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-02-05', '1', '1', true);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-02-06', '2', '1', false);
-INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`)
-VALUES ('2024-02-07', '3', '1', true);
+-- 특수강의
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '0', '3', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-12');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '1', '4', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-13');
+
+-- 스케줄
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '10', '2', false, '2', '3');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '11', '2', false, '2', '4');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-13', '9', '2', false, '1', '3');
 
 -- 게시글
 insert into article (id, member_id, class_room_id, title, content, article_type, created_at, modified_at, hit)

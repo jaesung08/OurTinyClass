@@ -44,8 +44,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                 lecture.lectureType,
                 lecture.lectureCategoryType,
                 schedule.scheduleDate,
-                lecture.dayOfWeek,
-                lecture.timeTable,
+                schedule.dayOfWeek,
+                schedule.timeTable,
                 schedule.deletable
             ))
             .from(schedule)
@@ -102,12 +102,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                     schedule.id,
                     member.id,
                     schedule.scheduleDate,
-                    lecture.dayOfWeek,
-                    lecture.timeTable,
+                    schedule.dayOfWeek,
+                    schedule.timeTable,
                     schedule.deletable
                 ))
                 .from(schedule)
-                .join(schedule.lecture, lecture)
                 .join(schedule.member, member)
                 .where(
                     schedule.id.eq(scheduleId),
@@ -130,25 +129,24 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(
         Long memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
-            jpaQueryFactory
-                .select(Projections.constructor(ScheduleCheckDto.class,
-                    schedule.id,
-                    member.id,
-                    schedule.scheduleDate,
-                    lecture.dayOfWeek,
-                    lecture.timeTable,
-                    schedule.deletable
-                ))
-                .from(schedule)
-                .join(schedule.lecture, lecture)
-                .join(schedule.member, member)
-                .where(
-                    studentAndTeacherNameEq(memberId, teacherMemberId),
-                    schedule.scheduleDate.eq(scheduleDate),
-                    lecture.timeTable.eq(timeTable),
-                    schedule.deletedAt.isNull()
-                )
-                .fetchFirst()
+                jpaQueryFactory
+                        .select(Projections.constructor(ScheduleCheckDto.class,
+                                schedule.id,
+                                member.id,
+                                schedule.scheduleDate,
+                                schedule.dayOfWeek,
+                                schedule.timeTable,
+                                schedule.deletable
+                        ))
+                        .from(schedule)
+                        .join(schedule.member, member)
+                        .where(
+                                studentAndTeacherNameEq(memberId, teacherMemberId),
+                                schedule.scheduleDate.eq(scheduleDate),
+                                schedule.timeTable.eq(timeTable),
+                                schedule.deletedAt.isNull()
+                        )
+                        .fetchFirst()
         );
     }
 
