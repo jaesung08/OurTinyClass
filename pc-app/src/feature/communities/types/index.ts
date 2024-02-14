@@ -12,7 +12,7 @@ export interface Comment {
   id: number;
   content: string;
   createdAt?: string;
-  modifiedAt: string;
+  modifiedAt?: string;
   name: string;
   isEdit?: boolean;
 }

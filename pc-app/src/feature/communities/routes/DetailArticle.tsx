@@ -13,19 +13,16 @@ import dayjs from "dayjs";
 import CommentsList from "../components/CommentsList";
 import Parser from "html-react-parser";
 import CommentInput from "../components/CommentInput";
-
-interface Comment {
-  id: number;
-  name: string;
-  content: string;
-  isEdit: boolean;
-}
+import { Comment } from "../types";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 function DetailArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState<Comment[]>([]);
   const [boardDetails, setBoardDetails] = useState<null | BoardDetail>(null);
   const { articleId } = useParams();
+  const user = useRecoilValue(userState)
   const navigator = useNavigate();
 
   // 렌더링 시 데이터 불러오는 부분
@@ -47,13 +44,10 @@ function DetailArticle() {
     renderDetail();
   }, [articleId]);
 
-  useEffect(() => {
-    console.log(commentList);
-  }, [commentList]);
   // 수정 중인지 체크하는 변수 추가 함수
 
-  const propertyAddHandler = (probsComments: Comment[]): Comment[] => {
-    return probsComments.map((comment) => ({
+  const propertyAddHandler = (propsComments: Comment[]) => {
+    return propsComments.map((comment) => ({
       ...comment,
       isEdit: false,
     }));
@@ -71,16 +65,16 @@ function DetailArticle() {
 
   // 댓글 수정 함수
   const commentEdit = (
-    commentId: number | undefined,
-    content: string | undefined
+    commentId: number,
+    content: string,
   ) => {
     try {
       editComment(commentId, content);
+
     } catch (error) {
       console.error(error);
     }
   };
-
   const goEditArticle = () => {
     navigator(`/communities/write/${articleId}`);
   };
@@ -119,7 +113,9 @@ function DetailArticle() {
                         : ""}
                     </span>
                   </div>
-                  <Button
+                  {
+                    user.memberId === boardDetails?.name
+                    ?<Button
                     onClick={goEditArticle}
                     variant="ghost"
                     color="success"
@@ -127,6 +123,9 @@ function DetailArticle() {
                   >
                     수정
                   </Button>
+                  : null
+                  }
+                  
                 </div>
               </Skeleton>
             </div>

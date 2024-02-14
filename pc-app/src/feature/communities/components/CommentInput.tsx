@@ -3,14 +3,17 @@ import { useState, useRef } from "react";
 import { newComment } from "../api/comments";
 import { Input } from "@nextui-org/react";
 import Swal from "sweetalert2";
-
-interface Comment {
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
+import { Comment } from "..";
+interface CommentProps {
   articleId: number;
-  commentList: object[];
-  setList: React.Dispatch<React.SetStateAction<object[]>>;
+  commentList: Comment[];
+  setList: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
-function CommentInput({ articleId, commentList, setList }: Comment) {
+function CommentInput({ articleId, commentList, setList }: CommentProps) {
+  const user = useRecoilValue(userState)
   const [createComment, setCreateComment] = useState<string>("");
   const inputFocus = useRef<HTMLInputElement | null>(null);
   const commentHandler = async () => {
@@ -19,8 +22,8 @@ function CommentInput({ articleId, commentList, setList }: Comment) {
         const commentId = await newComment(articleId, createComment);
         setCreateComment("");
         setList([
+          { id: commentId.data, content: createComment, name: user.name },
           ...commentList,
-          { id: commentId.data, content: createComment },
         ]);
       } else {
         Swal.fire({

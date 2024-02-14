@@ -206,7 +206,7 @@ function Community() {
       const data = res.data;
       if (currentPage === res.data.number) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages);
+        setTotalPage(data.totalPages-1);
       }
     } catch (e) {
       console.error(e);

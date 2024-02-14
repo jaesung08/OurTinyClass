@@ -5,8 +5,8 @@ import { Comment } from "..";
 interface CommentsListProps {
   commentList: Comment[];
   remove: (id: number | undefined) => void;
-  edit: (id: number | undefined, content: string | undefined) => void;
-  setList: React.Dispatch<React.SetStateAction<object[]>>;
+  edit: (id: number, content: string) => void;
+  setList: React.Dispatch<React.SetStateAction<Comment[]>>;
 }
 
 function CommentsList({
@@ -15,7 +15,7 @@ function CommentsList({
   edit,
   setList,
 }: CommentsListProps) {
-  const [comments, setComments] = useState<Comment[]>(commentList);
+  const [comments, setComments] = useState<Comment[] | JSX.Element[]>(commentList);
 
   const removeHandler = (commentId: number | undefined): void => {
     remove(commentId);
@@ -23,12 +23,12 @@ function CommentsList({
       return preComments.filter((comment) => comment.id !== commentId);
     });
   };
-  const editHandler = (commentId: number | undefined) => {
-    console.log(commentId);
+  const editHandler = (commentId: number, content?:string) => {
     setList(
-      commentList.map((comment) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      commentList.map((comment: any) => {
         return comment.id === commentId
-          ? { ...comment, isEdit: !comment.isEdit }
+          ? { ...comment, isEdit: !comment.isEdit, content: content}
           : comment;
       })
     );
@@ -38,14 +38,14 @@ function CommentsList({
 
   useEffect(() => {
     if (commentList) {
-      // todo : type 수정해야함
-      const showList = commentList.map((comment: Comment, index: number) => {
+      const showList:JSX.Element[] = commentList.map((comment: Comment, index: number) => {
         return (
           <CommentRender
             key={index}
             comment={comment}
             editHandler={editHandler}
             edit={edit}
+            removeHandler={removeHandler}
           />
         );
       });
