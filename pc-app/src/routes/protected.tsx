@@ -16,7 +16,7 @@ import Mypage from "@/feature/users/routes/Mypage";
 const App = () => {
 	return (
 		<StompSessionProvider
-			url={`ws://${SOCKET_URL}/stomp/chat`}
+			url={`ws://${SOCKET_URL}/ws/chat`}
 			connectHeaders={{
 				Authorization: localStorage.getItem("accessToken") ?? "",
 			}}

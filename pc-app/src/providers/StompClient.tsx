@@ -55,7 +55,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 	}
 
 	async function onRecevRoomInvite(roomId: string) {
-		setSubscribeList((beforeList) => [...beforeList, "/sub/room/" + roomId]);
+		setSubscribeList((beforeList) => [...beforeList, "/ws/sub/room/" + roomId]);
 		try {
 			const res = await getChatRoom(roomId);
 			setChatRoomList((_roomList) => [..._roomList, res.data]);
@@ -66,7 +66,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 
 	useEffect(() => {
 		if (userInfo && !subscribeList.length) {
-			setSubscribeList(["/sub/room/" + userInfo.memberId]);
+			setSubscribeList(["/ws/sub/room/" + userInfo.memberId]);
 		}
 	}, [userInfo]);
 
@@ -75,7 +75,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 			try {
 				const res = await getChatRoomList();
 				setChatRoomList(res.data);
-				setSubscribeList(["/sub/room/" + userInfo.memberId, ...res.data.map((chatRoom) => "/sub/room/" + chatRoom.roomId)]);
+				setSubscribeList(["/ws/sub/room/" + userInfo.memberId, ...res.data.map((chatRoom) => "/ws/sub/room/" + chatRoom.roomId)]);
 			} catch (e) {
 				console.error(e);
 			}
@@ -84,7 +84,7 @@ export const StompClientProvider = ({ children }: StompClientProps) => {
 	}, []);
 
 	useEffect(() => {
-		setSubscribeList(["/sub/room/" + userInfo.memberId, ...chatRoomList.map((chatRoom) => "/sub/room/" + chatRoom.roomId)]);
+		setSubscribeList(["/ws/sub/room/" + userInfo.memberId, ...chatRoomList.map((chatRoom) => "/ws/sub/room/" + chatRoom.roomId)]);
 	}, [chatRoomList]);
 
 	return <>{children}</>;
