@@ -2,7 +2,6 @@ import { Button, Input } from "@nextui-org/react";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 
-// todo : Types 폴더로 이동 예정
 interface CommentsListProps {
   commentList: object[];
   remove: (id: number | undefined) => void;
@@ -25,7 +24,7 @@ function CommentsList({
   setList,
 }: CommentsListProps) {
   const [comments, setComments] = useState<object[]>([]);
-
+	const [editingComment, setEditingComment] = useState<string>("")
   const removeHandler = (commentId: number | undefined): void => {
     remove(commentId);
     setList((preComments: Comment[]) => {
@@ -33,7 +32,8 @@ function CommentsList({
     });
   };
 
-  const editHandler = (commentId: number | undefined) => {
+  const editHandler = (commentId: number | undefined, commentContent: string) => {
+    setEditingComment(commentContent)
     setList((preComments: object[]) =>
       preComments.map((comment: Comment) => {
         return commentId === comment.id
@@ -48,20 +48,17 @@ function CommentsList({
     content: string | undefined
   ): void => {
     edit(commentId, content);
-    editHandler(commentId);
+    setList((preComments: object[]) =>
+    preComments.map((comment: Comment) => {
+      return commentId === comment.id
+        ? { ...comment, isEdit: !comment.isEdit }
+        : comment;
+    })
+  );
   };
 
   // 댓글 값 변경하는 함수
-  const commentChangeHandler = (
-    commentId: number | undefined,
-    newContent: string | undefined
-  ) => {
-    setList((preComments: object[]) =>
-      preComments.map((comment: Comment) =>
-        comment.id === commentId ? { ...comment, content: newContent } : comment
-      )
-    );
-  };
+
 
   useEffect(() => {
     if (commentList) {
@@ -83,7 +80,7 @@ function CommentsList({
                       variant="ghost"
                       isIconOnly
                       onClick={() =>
-                        completeHandler(comment.id, comment.content)
+                        completeHandler(comment.id, editingComment)
                       }
                     >
                       <EditIcon className="h-6 w-6" />
@@ -94,7 +91,7 @@ function CommentsList({
                       className="ml-auto"
                       size="lg"
                       variant="ghost"
-                      onClick={() => editHandler(comment.id)}
+                      onClick={() => editHandler(comment.id, comment.content)}
                       isIconOnly
                     >
                       <PencilIcon className="h-4 w-4" />
@@ -116,10 +113,10 @@ function CommentsList({
                     className="bg-white w-4/6"
                     type="text"
                     size="sm"
-                    value={comment.content}
-                    onChange={(e) =>
-                      commentChangeHandler(comment.id, e.target.value)
-                    }
+                    onChange={(e) => {
+                      setEditingComment(e.target.value)
+                      console.log(editingComment)
+                    }}
                   />
                 ) : (
                   <div className="w-full text-lg">{comment.content}</div>
@@ -143,12 +140,12 @@ function EditIcon(props: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
     >
       <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
       />
     </svg>

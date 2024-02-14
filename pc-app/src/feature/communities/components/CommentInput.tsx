@@ -2,6 +2,7 @@ import { Button } from "@nextui-org/button";
 import { useState, useRef } from "react";
 import { newComment } from "../api/comments";
 import { Input } from "@nextui-org/react";
+import Swal from "sweetalert2";
 
 interface Comment {
   articleId: number;
@@ -22,8 +23,11 @@ function CommentInput({ articleId, commentList, setList }: Comment) {
           { id: commentId.data, content: createComment },
         ]);
       } else {
-        // todo : sweetalert 부분으로 변경해야함
-        alert("댓글을 작성하세요");
+        Swal.fire({
+          icon: "error",
+          title: "저런...",
+          text: "댓글을 작성하세요",
+        });
         inputFocus.current?.focus();
       }
     } catch (error) {

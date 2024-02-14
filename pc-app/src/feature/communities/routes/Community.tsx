@@ -43,7 +43,6 @@ interface SearchBarProps {
 	setSearchKeyword: (searchKeyword: string) => void;
 	searchType: string;
 	setSearchType: (searchType: string) => void;
-
 	onSubmit: () => void;
 }
 
@@ -162,7 +161,7 @@ function Community() {
 				page: currentPage,
 			});
 			const data = res.data;
-			if (currentPage === res.data.number + 1) {
+			if (currentPage === res.data.number) {
 				setBoardList(data.content);
 				setTotalPage(data.totalPages);
 			}

@@ -13,6 +13,7 @@ function DetailArticle() {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const [commentList, setCommentList] = useState<object[]>([]);
 	const [boardDetails, setBoardDetails] = useState<null | BoardDetail>(null);
+	const [editingComment, setEditingComment] = useState<string>("")
 	const { articleId } = useParams();
 	const navigator = useNavigate();
 
@@ -79,7 +80,7 @@ function DetailArticle() {
 							<BreadcrumbItem>게시글 조회</BreadcrumbItem>
 						</Breadcrumbs>
 						<Skeleton isLoaded={isLoaded} className="rounded-lg w-full">
-							<h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl xl:text-4xl lg:leading-[3.5rem] w-full">
+							<h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl xl:text-4xl lg:leading-[3.5rem] w-full truncate">
 								{boardDetails ? boardDetails.title : ""}
 							</h1>
 						</Skeleton>
@@ -109,7 +110,7 @@ function DetailArticle() {
 						<p>{boardDetails ? Parser(boardDetails.content) : ""}</p>
 					</Skeleton>
 					<CommentInput articleId={articleId ? +articleId : -1} commentList={commentList} setList={setCommentList} />
-					<CommentsList commentList={commentList} remove={commentRemove} edit={commentEdit} setList={setCommentList} />
+					<CommentsList commentList={commentList} remove={commentRemove} edit={commentEdit} setList={setCommentList}/>
 				</div>
 			</div>
 		</article>
