@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,22 +50,5 @@ public class Goal {
         this.week = week;
         this.content = content;
         this.achievement = achievement;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Goal goal = (Goal) o;
-        return year == goal.year && week == goal.week && Objects.equals(member, goal.member);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(member, year, week);
     }
 }
