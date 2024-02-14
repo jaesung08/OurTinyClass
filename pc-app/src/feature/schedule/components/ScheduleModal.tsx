@@ -80,7 +80,7 @@ export default function ScheduleModal({ isOpen, onOpenChange, date, dayOfWeek, f
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (e: any) {
 			Swal.fire({
-				title: "Oops",
+				title: "실패!!",
 				text: `${e.response.data.message}`,
 				icon: "error",
 			});
