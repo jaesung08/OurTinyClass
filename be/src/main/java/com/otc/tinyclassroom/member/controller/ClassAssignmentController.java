@@ -6,6 +6,7 @@ import com.otc.tinyclassroom.member.dto.ClassRoomDto;
 import com.otc.tinyclassroom.member.dto.request.AssignmentMembersRequestDto;
 import com.otc.tinyclassroom.member.dto.request.RandomAssignmentMemberRequestDto;
 import com.otc.tinyclassroom.member.dto.request.UpdateMemberClassRequestDto;
+import com.otc.tinyclassroom.member.dto.request.UserListRandomAssignmentMemberRequestDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.service.ClassAssignmentService;
 import java.util.List;
@@ -76,5 +77,14 @@ public class ClassAssignmentController {
     public BaseResponse<List<MemberClassRoomResponseDto>> randomAssignmentClassRooms(@RequestBody RandomAssignmentMemberRequestDto dto) {
         List<MemberClassRoomResponseDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.classRoomId());
         return BaseResponse.success(HttpStatus.OK.value(), "랜덤으로 반을 부여하였습니다!", updatedMembers);
+    }
+
+    /**
+     * 해당하는 유저만 랜덤으로 반 편성하기
+     */
+    @PatchMapping("/user-list-random-assignment")
+    public BaseResponse<List<MemberClassRoomResponseDto>> userListRandomAssignment(@RequestBody UserListRandomAssignmentMemberRequestDto dto) {
+        List<MemberClassRoomResponseDto> updatedMembers = classFormationService.userListRandomAssignment(dto);
+        return BaseResponse.success(HttpStatus.OK.value(), "주어진 리스트에 대해 랜덤으로 반을 부여하였습니다!", updatedMembers);
     }
 }

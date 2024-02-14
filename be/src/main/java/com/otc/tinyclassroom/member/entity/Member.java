@@ -1,24 +1,19 @@
 package com.otc.tinyclassroom.member.entity;
 
-import static jakarta.persistence.FetchType.LAZY;
-
-import com.otc.tinyclassroom.community.entity.AuditingFields;
 import com.otc.tinyclassroom.community.entity.Heart;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -43,9 +38,6 @@ public class Member {
 
     @Column(nullable = false, unique = true)
     private String memberId; // 유저 id
-
-    @ManyToOne(fetch = LAZY)
-    private ClassRoom classRoom;
 
     @Column(nullable = false)
     private String password; // 비밀번호
