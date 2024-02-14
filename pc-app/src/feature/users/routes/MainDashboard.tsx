@@ -3,7 +3,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader } from "@nextui-org/reac
 import dayjs from "dayjs";
 import { useCallback, useEffect, useState } from "react";
 import { checkIn } from "../../attendance/api/checkIn";
-import { Attendance } from "@/feature/attendance";
+import { Attendance, attnedanceMap } from "@/feature/attendance";
 import { getTodayAttendance } from "@/feature/attendance/api/getAttendance";
 import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
@@ -25,9 +25,9 @@ interface AttendanceCardProps {
 }
 
 //입실, 퇴실 정보를 조회하고 입, 퇴실을 할 수 있는 기능을 가진 카드
-function AttendanceCard({ todayDate, checkIn, checkOut, doCheckIn, doCheckOut }: AttendanceCardProps) {
+function AttendanceCard({ todayDate, checkIn, checkOut, doCheckIn, doCheckOut, status }: AttendanceCardProps) {
 	return (
-		<div className="bg-green-400 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
+		<div className="bg-lime-200 p-4 shadow flex flex-col gap-3 space-y-4 rounded w-4/12 h-full">
 			<h2 className="text-lg font-bold">출석체크 현황</h2>
 			<div className="flex items-center space-x-2 justify-between w-full ">
 				<div className="flex flex-col gap">
@@ -37,9 +37,9 @@ function AttendanceCard({ todayDate, checkIn, checkOut, doCheckIn, doCheckOut }:
 				</div>
 				<div className="flex h-16 gap-4">
 					{checkIn ? (
-						<div className="p-2 flex flex-col items-center bg-zinc-500 justify-evenly">
-							<span className="text-white h-8">{dayjs(checkIn).format("hh:mm")}</span>
-							<span className="text-white text-xs">정상 출석</span>
+						<div className="p-2 w-20 flex flex-col items-center bg-zinc-500 justify-evenly">
+							<span className="text-white h-8">{dayjs(checkIn).format("HH:MM")}</span>
+							<span className="text-white text-xs">{status ? attnedanceMap.get(status) : ""}</span>
 						</div>
 					) : (
 						<Button
@@ -83,6 +83,11 @@ function NoticeListCard() {
 		});
 		setNotices(response.data.content);
 	};
+	const navigator = useNavigate();
+
+	const goArticleDetail = (articleId: number) => {
+		navigator("/communities/detail/" + articleId);
+	};
 
 	useEffect(() => {
 		getNotices();
@@ -92,7 +97,12 @@ function NoticeListCard() {
 			<h2 className="text-lg font-semibold mb-4">공지사항</h2>
 			<ul className="space-y-2">
 				{notices.slice(0, 3).map((notice) => (
-					<li id={notice.id.toString()} key={notice.id} className="flex">
+					<li
+						id={notice.id.toString()}
+						key={notice.id}
+						className="flex cursor-pointer hover:text-green-500"
+						onClick={() => goArticleDetail(notice.id)}
+					>
 						<span className="text-sm mr-4 text-green-500 ">{notice.name}</span>
 						<span className="text-sm truncate w-4/5">{notice.title}</span>
 					</li>
