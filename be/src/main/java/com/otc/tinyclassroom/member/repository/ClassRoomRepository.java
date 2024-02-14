@@ -1,7 +1,6 @@
 package com.otc.tinyclassroom.member.repository;
 
 import com.otc.tinyclassroom.member.entity.ClassRoom;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,5 +1,7 @@
 package com.otc.tinyclassroom.community.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 import com.otc.tinyclassroom.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,9 +26,9 @@ public class ArticleComment extends AuditingFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = LAZY)
     private Member member; // 회원
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = LAZY)
     private Article article; // 게시글
     @Setter
     @Column(length = 1000)

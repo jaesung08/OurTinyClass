@@ -7,5 +7,21 @@ import lombok.Getter;
  */
 @Getter
 public enum LectureCategoryType {
-    NO_CATEGORY, KOREAN, MATH, SCIENCE, ENGLISH, MUSIC, ART, ETHICS, HOME_ECONOMICS, CAREER, HOBBY;
+    NO_CATEGORY("기타"),
+    KOREAN("국어"),
+    MATH("수학"),
+    SCIENCE("과학"),
+    ENGLISH("영어"),
+    MUSIC("음악"),
+    ART("미술"),
+    ETHICS("도덕"),
+    HOME_ECONOMICS("기술가정"),
+    CAREER("진로"),
+    HOBBY("취미");
+
+    private final String korName;
+
+    LectureCategoryType(String korName) {
+        this.korName = korName;
+    }
 }

@@ -74,7 +74,6 @@ public class LectureService {
      */
     public List<LectureResponseDto> getLectureList() {
         Specification<Lecture> spec = buildApprovedLecturesSpecification();
-        System.out.println("spec = " + spec);
 
         List<Lecture> lectures = lectureRepository.findAll(spec, Sort.by(Sort.Direction.ASC, "lectureCategoryType"));
 

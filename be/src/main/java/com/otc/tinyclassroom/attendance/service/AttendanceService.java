@@ -14,6 +14,7 @@ import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,6 +50,9 @@ public class AttendanceService {
     @Transactional
     public AttendanceCheckInResponseDto checkIn() {
         LocalDateTime now = LocalDateTime.now();
+        if (now.toLocalDate().getDayOfWeek() == DayOfWeek.SATURDAY || now.toLocalDate().getDayOfWeek() == DayOfWeek.SUNDAY) {
+            throw new AttendanceException(AttendanceErrorCode.WEEKEND_CHECKOUT_NOT_ALLOWED);
+        }
         Long memberId = jwtProvider.getCurrentMemberId();
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         // 회원이 오늘 이미 등교한 경우 예외 처리
@@ -187,6 +191,32 @@ public class AttendanceService {
      */
     @Transactional
     public MonthlyAttendanceResponseDto getAttendanceTimeOnMonth(String memberId, int year, int month) {
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        LocalDateTime endOfMonth = startOfMonth.plusMonths(1);
+        List<Attendance> monthlyAttendanceList = attendanceRepository.findByMemberIdAndCheckInBetweenMonth(
+            memberId,
+            startOfMonth,
+            endOfMonth
+        );
+
+        List<MonthlyAttendanceResponseDto.AttendanceMonthInfo> attendanceList = new ArrayList<>();
+        for (Attendance attendance : monthlyAttendanceList) {
+            LocalDateTime checkIn = attendance.getCheckIn();
+            LocalDateTime checkOut = attendance.getCheckOut() != null ? attendance.getCheckOut() : null;
+            int status = attendance.getStatus().ordinal();
+            LocalDate date = checkIn.toLocalDate();
+            MonthlyAttendanceResponseDto.AttendanceMonthInfo attendanceMonthInfo = new MonthlyAttendanceResponseDto.AttendanceMonthInfo(date, checkIn, checkOut, status);
+            attendanceList.add(attendanceMonthInfo);
+        }
+
+        return new MonthlyAttendanceResponseDto(attendanceList);
+    }
+
+    /**
+     * 출석률을 구한다.
+     */
+    @Transactional
+    public MonthlyAttendanceResponseDto getAttendanceRate(String memberId, int year, int month) {
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
         LocalDateTime endOfMonth = startOfMonth.plusMonths(1);
         List<Attendance> monthlyAttendanceList = attendanceRepository.findByMemberIdAndCheckInBetweenMonth(

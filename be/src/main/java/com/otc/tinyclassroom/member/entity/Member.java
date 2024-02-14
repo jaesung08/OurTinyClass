@@ -1,19 +1,27 @@
 package com.otc.tinyclassroom.member.entity;
 
+import static jakarta.persistence.FetchType.LAZY;
+
+import com.otc.tinyclassroom.community.entity.AuditingFields;
+import com.otc.tinyclassroom.community.entity.Heart;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -36,6 +44,9 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String memberId; // 유저 id
 
+    @ManyToOne(fetch = LAZY)
+    private ClassRoom classRoom;
+
     @Column(nullable = false)
     private String password; // 비밀번호
     @Setter
@@ -52,7 +63,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Setter
     @Column
-    private Role role; // 권환 ( 유저, 학생, 멘토, 선생님, 관리자)
+    private Role role; // 권한 ( 유저, 학생, 멘토, 선생님, 관리자)
+    @Column
+    @Setter
+    private String profileUrl;
+    @OneToMany(mappedBy = "member")
+    private Set<Heart> hearts = new HashSet<>();
 
     @Column
     private LocalDateTime deletedAt; // 삭제 여부
@@ -66,7 +82,7 @@ public class Member {
     /**
      * 파라미터 생성자.
      */
-    private Member(String memberId, String password, String name, String email, LocalDate birthday, int point) {
+    private Member(String memberId, String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
         this.memberId = memberId;
         this.password = password;
         this.name = name;
@@ -75,14 +91,15 @@ public class Member {
         this.point = point;
         // TODO : 실제 배포시에는 Role.ROLE_USER 로 바꿀것!
         this.role = Role.ROLE_ADMIN;
-        this.deletedAt = null; // 기본값으로 삭제되지 않은 상태로 설정
+        this.profileUrl = profileUrl;
+        this.deletedAt = null; 
     }
 
     /**
      * 파라미터로부터 멤버 엔티티 객체를 생성하는 함수.
      */
-    public static Member of(String memberId, String password, String name, String email, LocalDate birthday, int point) {
-        return new Member(memberId, password, name, email, birthday, point);
+    public static Member of(String memberId,String password, String name, String email, LocalDate birthday, int point, String profileUrl) {
+        return new Member(memberId, password, name, email, birthday, point, profileUrl);
     }
 
     @Override
@@ -99,6 +116,14 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(memberId);
+    }
+
+    public void updatePassword(String encryptPassword) {
+        this.password = encryptPassword;
+    }
+
+    public void updateName(String name) {
+        this.name = name;
     }
 }
 
