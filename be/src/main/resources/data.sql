@@ -19,6 +19,13 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 values (9, 'f', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
 insert into member (id, member_id, password, name, email, birthday, point, role)
 values (10, 'g', 'kH8}osxJQ#p\6', 'Fyers', 'lfyers3@wsj.com', '2023-06-04', 95, 'ROLE_USER');
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (11, 'ssafy1234', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_STUDENT',
+        "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (12, 'ssafy12345', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_MENTOR',
+        "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+
 
 
 insert into attendance (status, check_in, check_out, id, member_id) values (0, '2024-02-22 09:48:34', '2024-02-22 18:48:34', 1, 4);
@@ -93,6 +100,7 @@ INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '5');
 INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '6');
 INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '7');
 INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '8');
+INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '11');
 
 -- 자유강의
 INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '모션 그래픽 공부', '모션 그래픽', 'ART', 'FREE_LECTURE', 'APPROVED');
@@ -111,8 +119,10 @@ INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `t
 INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`) VALUES ('0', '0', '1', '국어', '진로탐색', 'KOREAN', 'REGULAR_LECTURE', 'APPROVED');
 
 -- 특수강의
-INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '0', '3', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-12');
-INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`) VALUES ('0', '1', '4', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-13');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`)
+VALUES ('0', '0', '3', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-12');
+INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`)
+VALUES ('0', '1', '4', '국어', '진로탐색', 'KOREAN', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-13');
 
 -- 스케줄
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`) VALUES ('2024-02-14', '10', '2', false, '2', '3');
