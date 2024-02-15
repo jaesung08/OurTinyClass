@@ -163,9 +163,9 @@ function Community() {
         page: currentPage,
       });
       const data = res.data;
-      if (currentPage === res.data.number + 1) {
+      if (currentPage === res.data.number+1) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages);
+        setTotalPage(data.totalPages-1);
       }
     } catch (e) {
       console.error(e);

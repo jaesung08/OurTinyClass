@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { LoginFormProps } from "../types";
 import KakaoLogin from "react-kakao-login";
 import { KAKAO_CLIENT_ID } from "@/config";
+import KAKAOIMAGE from "@/assets/img/kakoLogin.png"
 
 interface KakaoLoginResponse {
     token_type: string;
