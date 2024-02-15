@@ -2,6 +2,7 @@ package com.otc.tinyclassroom.media.controller;
 
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.media.service.MediaService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class MediaController {
      * 다중 파일 업로드.
      * 업로드 시 UUID로 파일명 변경.
      */
+    @Operation(summary = "다중 파일 업로드", description = "여러 개의 파일 업로드합니다.", tags = { "파일" })
     @PostMapping("/images")
     public BaseResponse<?> uploadImages(@RequestPart("image") List<MultipartFile> multipartFiles) {
 
@@ -36,8 +38,8 @@ public class MediaController {
     /**
      * 다중 파일 업로드.
      * 업로드 시 UUID로 파일명 변경.
-     * TODO: 프론트와 협업시 본래 파일명 또한 리턴해줄 것.
      */
+    @Operation(summary = "다중 파일 업로드 & 원본 파일 이름 저장", description = "여러 개의 파일 업로드하고 원본 파일 이름을 같이 보내줍니다.", tags = { "파일" })
     @PostMapping("/imagesWithOriginName")
     public BaseResponse<?> uploadImagesWithOriginalName(@RequestPart("image") List<MultipartFile> multipartFiles) {
         Map<String, List<String>> result = mediaService.storeImagesWithOriginalName(multipartFiles);

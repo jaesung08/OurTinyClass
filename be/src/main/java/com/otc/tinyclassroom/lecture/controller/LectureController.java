@@ -7,6 +7,7 @@ import com.otc.tinyclassroom.lecture.entity.type.LectureApprovalStatusType;
 import com.otc.tinyclassroom.lecture.entity.type.LectureCategoryType;
 import com.otc.tinyclassroom.lecture.entity.type.LectureType;
 import com.otc.tinyclassroom.lecture.service.LectureService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
@@ -38,6 +39,7 @@ public class LectureController {
      * @param request 입력받은 강의 정보
      * @return 생성한 강의 정보
      */
+    @Operation(summary = "강의 생성", description = "강의를 생성합니다.", tags = { "강의" })
     @PostMapping("")
     public BaseResponse<LectureResponseDto> createLecture(@Valid @RequestBody LectureCreateUpdateRequestDto request) {
         LectureResponseDto createdLecture = lectureService.createLecture(request);
@@ -49,6 +51,7 @@ public class LectureController {
      *
      * @return 조회한 강의들.
      */
+    @Operation(summary = "강의 조회", description = "필터에 맞게 강의를 조회합니다.", tags = { "강의" })
     @GetMapping("")
     public BaseResponse<?> getLecturesList(
         @RequestParam(required = false) Long memberId,
@@ -82,6 +85,7 @@ public class LectureController {
      * @param lectureId 조회할 강의 Id
      * @return 조회한 강의의 정보
      */
+    @Operation(summary = "강의 상세 조회", description = "강의를 상세조회합니다.", tags = { "강의" })
     @GetMapping("/{lectureId}")
     public BaseResponse<LectureResponseDto> getLecture(@PathVariable Long lectureId) {
         LectureResponseDto lecture = lectureService.getLecture(lectureId);
@@ -96,6 +100,7 @@ public class LectureController {
      * @param request   수정될 강의 정보
      * @return 수정한 후 강의 정보
      */
+    @Operation(summary = "강의 수정", description = "강의를 수정합니다.", tags = { "강의" })
     @PatchMapping("/{lectureId}")
     public BaseResponse<LectureResponseDto> updateLecture(@PathVariable Long lectureId,
         @RequestBody LectureCreateUpdateRequestDto request) {
@@ -108,6 +113,7 @@ public class LectureController {
      *
      * @param lectureId 삭제할 강의Id
      */
+    @Operation(summary = "강의 삭제", description = "강의를 삭제합니다.", tags = { "강의" })
     @DeleteMapping("/{lectureId}")
     public BaseResponse<Void> deleteLecture(@PathVariable Long lectureId) {
         lectureService.deleteLecture(lectureId);
@@ -115,12 +121,14 @@ public class LectureController {
     }
 
     // 특강 기능 추가
+    @Operation(summary = "특강 추가", description = "특별 강의를 추가합니다.", tags = { "강의" })
     @PatchMapping("/{lectureId}/approve")
     public BaseResponse<Void> approveSpecialLecture(@PathVariable Long lectureId) {
         lectureService.approveSpecialLecture(lectureId);
         return BaseResponse.success(HttpStatus.OK.value(), "특강을 승인하였습니다.", null);
     }
 
+    @Operation(summary = "특강 거절", description = "특별 강의 요청을 거절합니다.", tags = { "강의" })
     @PatchMapping("{lectureId}/reject")
     public BaseResponse<Void> rejectSpecialLecture(@PathVariable Long lectureId) {
         lectureService.rejectSpecialLecture(lectureId);

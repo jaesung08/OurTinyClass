@@ -1,11 +1,11 @@
 package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
-import com.otc.tinyclassroom.member.controller.MemberClassRoomNumberResponseDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
+import com.otc.tinyclassroom.member.dto.response.MemberClassRoomNumberResponseDto;
 import com.otc.tinyclassroom.member.dto.response.MemberProfileDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;

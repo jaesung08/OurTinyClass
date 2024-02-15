@@ -9,6 +9,7 @@ import com.otc.tinyclassroom.member.dto.response.StudentRoleUpdateDetailResponse
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.service.CertificationService;
 import com.otc.tinyclassroom.member.service.ClassAssignmentService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,10 +31,10 @@ public class CertificationController {
     private final CertificationService certificationService;
     private final ClassAssignmentService classAssignmentService;
 
-    //TODO: 권한이 없을때 보여줄 페이지를 구현해야 함.
     /**
      * 학생 등업 리스트 조회.
      */
+    @Operation(summary = "학생 등업 리스트 조회", description = "학생 등업 리스트를 조회합니다.", tags = { "등업" })
     @GetMapping("/student")
     public BaseResponse<List<RoleUpdateListResponseDto>> getStudentUpdateRequestList() {
 
@@ -49,6 +50,7 @@ public class CertificationController {
     /**
      * 멘토 등업 리스트 조회.
      */
+    @Operation(summary = "멘토 등업 리스트 조회", description = "멘토 등업 리스트를 조회합니다.", tags = { "등업" })
     @GetMapping("/mentor")
     public BaseResponse<List<RoleUpdateListResponseDto>> getMentorUpdateRequestList() {
         List<RoleUpdateListResponseDto> listResult =
@@ -62,6 +64,7 @@ public class CertificationController {
     /**
      * 학생 등업글 상세 조회.
      */
+    @Operation(summary = "학생 등업글 상세 조회", description = "학생 등업요청 게시글을 상세조회합니다.", tags = { "등업" })
     @GetMapping("/student/{articleId}")
     public BaseResponse<StudentRoleUpdateDetailResponseDto> getStudentUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
         StudentRoleUpdateDetailResponseDto dto = certificationService.findStudentUpdateRequestDto(articleId);
@@ -71,6 +74,7 @@ public class CertificationController {
     /**
      * 멘토 등업글 상세 조회.
      */
+    @Operation(summary = "멘토 등업글 상세 조회", description = "멘토 등업요청 게시글을 상세조회합니다.", tags = { "등업" })
     @GetMapping("/mentor/{articleId}")
     public BaseResponse<MentorRoleUpdateDetailResponseDto> getMentorUpdateRequestDetail(@PathVariable(name = "articleId") Long articleId) {
         MentorRoleUpdateDetailResponseDto dto = certificationService.findMentorUpdateRequestDto(articleId);
@@ -80,6 +84,7 @@ public class CertificationController {
     /**
      * 학생 등업 승인.
      */
+    @Operation(summary = "학생 등업 승인", description = "학생 등업요청을 승인합니다.", tags = { "등업" })
     @PostMapping("/student/{articleId}/approve")
     public BaseResponse<RoleUpdateResponseDto> approveStudentRoleUpdate(@PathVariable(name = "articleId") Long articleId, @RequestBody TempAssignRequestDto request) {
         Long studentId = certificationService.findStudentIdByArticleId(articleId);
@@ -92,6 +97,7 @@ public class CertificationController {
     /**
      * 멘토 등업 승인.
      */
+    @Operation(summary = "멘토 등업 승인", description = "멘토 등업요청을 승인합니다.", tags = { "등업" })
     @PostMapping("/mentor/{articleId}/approve")
     public BaseResponse<RoleUpdateResponseDto> approveMentorRoleUpdate(@PathVariable(name = "articleId") Long articleId) {
         Long mentorId = certificationService.findMentorIdByArticleId(articleId);
@@ -102,20 +108,22 @@ public class CertificationController {
     }
 
     /**
-     * 멘토 등업 거절.
-     */
-    @PostMapping("/mentor/{articleId}/deny")
-    public BaseResponse<Long> denyMentorRoleUpdate(@PathVariable(name = "articleId") Long articleId) {
-        certificationService.deleteMentorArticleByArticleId(articleId);
-        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업 거절. 요청 삭제.", articleId);
-    }
-
-    /**
      * 학생 등업 거절.
      */
+    @Operation(summary = "학생 등업 거절", description = "학생 등업요청을 거절합니다.", tags = { "등업" })
     @PostMapping("/student/{articleId}/deny")
     public BaseResponse<Long> denyStudentRoleUpdate(@PathVariable(name = "articleId") Long articleId) {
         certificationService.deleteStudentArticleByArticleId(articleId);
         return BaseResponse.success(HttpStatus.OK.value(), "학생 등업 거절. 요청 삭제.", articleId);
+    }
+
+    /**
+     * 멘토 등업 거절.
+     */
+    @Operation(summary = "멘토 등업 거절", description = "멘토 등업요청을 거절합니다.", tags = { "등업" })
+    @PostMapping("/mentor/{articleId}/deny")
+    public BaseResponse<Long> denyMentorRoleUpdate(@PathVariable(name = "articleId") Long articleId) {
+        certificationService.deleteMentorArticleByArticleId(articleId);
+        return BaseResponse.success(HttpStatus.OK.value(), "멘토 등업 거절. 요청 삭제.", articleId);
     }
 }

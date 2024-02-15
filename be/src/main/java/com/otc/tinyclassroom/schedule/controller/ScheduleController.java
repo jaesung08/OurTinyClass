@@ -4,6 +4,7 @@ import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
 import com.otc.tinyclassroom.schedule.service.ScheduleService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class ScheduleController {
     /**
      * 스케줄을 조회하여 해당 주의 스케줄 리스트 반환하는 메서드.
      */
+    @Operation(summary = "특정 주 시간표 조회", description = "특정 주의 시간표를 조회합니다.", tags = { "시간표" })
     @GetMapping("/{memberId}")
     public BaseResponse<?> findScheduleList(@PathVariable("memberId") String memberId, @RequestParam("scheduleDate") LocalDate scheduleDate) {
         ScheduleListResponseDto scheduleList = scheduleService.getScheduleList(memberId, scheduleDate);
@@ -40,6 +42,7 @@ public class ScheduleController {
     /**
      * 스케줄 삽입 메서드.
      */
+    @Operation(summary = "시간표 생성", description = "시간표를 만듭니다.", tags = { "시간표" })
     @PostMapping("/insert")
     public BaseResponse<?> insertSchedule(@RequestBody ScheduleInsertRequestDto requestDto) {
 
@@ -50,6 +53,7 @@ public class ScheduleController {
     /**
      * 스케줄 삭제 메서드.
      */
+    @Operation(summary = "시간표 삭제", description = "시간표를 삭제합니다.", tags = { "시간표" })
     @DeleteMapping("/delete/{id}")
     public BaseResponse<?> deleteSchedule(@PathVariable("id") Long id) {
         scheduleService.deleteSchedule(id);

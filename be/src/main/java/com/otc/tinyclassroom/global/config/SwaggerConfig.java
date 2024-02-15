@@ -1,22 +1,28 @@
 package com.otc.tinyclassroom.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import lombok.RequiredArgsConstructor;
+import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Swagger Config .
- */
 @OpenAPIDefinition(
-    info = @Info(title = "우리들의 작은 교실",
-        description = "우작교 API 명세서",
-        contact = @Contact(
-            name = "우리들의 작은교실"
-        )
-    )
-)
+    info = @Info(title = "Our Tiny ClassRoom API 명세서",
+        description = "Our Tiny ClassRoom API 명세서 입니다.",
+        version = "v1.0.0"))
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
+    @Bean
+    public GroupedOpenApi customTestOpenAPi() {
+        String[] paths = {"/api/**"};
+
+        return GroupedOpenApi
+            .builder()
+            .group("Our Tiny ClassRoom API")
+            .pathsToMatch(paths)
+            .build();
+    }
 }

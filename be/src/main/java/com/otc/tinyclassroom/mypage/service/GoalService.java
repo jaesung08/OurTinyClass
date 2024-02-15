@@ -66,9 +66,9 @@ public class GoalService {
         Optional<Goal> existingGoal = goalRepository.findByMemberIdAndYearAndWeek(currentMemberId, year, week);
 
         if (existingGoal.isPresent()) {
-            return GoalResponseDto.of(existingGoal.get().getContent(), existingGoal.get().getAchievement());
+            return GoalResponseDto.of(existingGoal.get().getContent(), existingGoal.get().getAchievement(), year, week);
         } else {
-            return GoalResponseDto.of("", 0);
+            return GoalResponseDto.of("", 0, 0, 0);
         }
     }
 
@@ -92,6 +92,6 @@ public class GoalService {
             () -> new MyPageException(MyPageErrorCode.NO_GOAL_FOUND)
         );
 
-        return GoalResponseDto.of(lastGoal.getContent(), lastGoal.getAchievement());
+        return GoalResponseDto.of(lastGoal.getContent(), lastGoal.getAchievement(), year, week);
     }
 }
