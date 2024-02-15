@@ -25,7 +25,6 @@ import {
   requestStudentCertChange,
 } from "../api/users";
 import { StudentCertDetail } from "../types";
-import dayjs from "dayjs";
 
 type StudentDetailProps = {
   isOpen: boolean;
@@ -54,14 +53,11 @@ const StudentDetailModal = ({
   const sendResult = async (isApprove: boolean) => {
     if (articleId) {
       try {
-        const res = await requestStudentCertChange(
-          articleId,
-          isApprove,
-          +grade
-        );
-        console.log(res);
+        await requestStudentCertChange(articleId, isApprove, +grade);
       } catch (error) {
         console.error(error);
+      } finally {
+        onClose();
       }
     }
   };
@@ -84,50 +80,38 @@ const StudentDetailModal = ({
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        {(onClose) => (
-          <>
-            <ModalHeader className="flex flex-col gap-1">
-              학생 신청 상세 조회
-            </ModalHeader>
-            <ModalBody>
-              <div className="h-max-[70vh] overflow-y-auto flex flex-col gap-5">
-                <Input label="이름" value={student?.memberName} size="sm" />
-                <Input
-                  label="생일"
-                  value={student?.birthday ?? ""}
-                  readOnly></Input>
-                <Input
-                  label="이전 학교 구분"
-                  value={schoolTypeMap()}
-                  readOnly
-                />
-                <Textarea
-                  label="자퇴 사유"
-                  value={student?.quitReason}
-                  readOnly
-                />
-                <Input label="이전 학교" value={student?.beforeSchool} />
-                <Input
-                  label="임시 학년"
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                />
-                <Image
-                  alt="자퇴 사유 파일"
-                  src={student?.quitConfirmationPaths[0] ?? ""}
-                />
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="danger" onPress={() => sendResult(false)}>
-                거절
-              </Button>
-              <Button color="primary" onPress={() => sendResult(true)}>
-                승인
-              </Button>
-            </ModalFooter>
-          </>
-        )}
+        <ModalHeader className="flex flex-col gap-1">
+          학생 신청 상세 조회
+        </ModalHeader>
+        <ModalBody>
+          <div className="h-max-[70vh] overflow-y-auto flex flex-col gap-5">
+            <Input label="이름" value={student?.memberName} size="sm" />
+            <Input
+              label="생일"
+              value={student?.birthday ?? ""}
+              readOnly></Input>
+            <Input label="이전 학교 구분" value={schoolTypeMap()} readOnly />
+            <Textarea label="자퇴 사유" value={student?.quitReason} readOnly />
+            <Input label="이전 학교" value={student?.beforeSchool} />
+            <Input
+              label="임시 학년"
+              value={grade}
+              onChange={(e) => setGrade(e.target.value)}
+            />
+            <Image
+              alt="자퇴 사유 파일"
+              src={student?.quitConfirmationPaths[0] ?? ""}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" onPress={() => sendResult(false)}>
+            거절
+          </Button>
+          <Button color="primary" onPress={() => sendResult(true)}>
+            승인
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
