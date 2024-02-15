@@ -12,21 +12,21 @@ export const fetchUserList = (): Promise<fetchUserListResponse> => {
 };
 
 export const requestEditUserInfo = (
-  memberId: string,
+  userId: number,
   name: string,
   email: string,
   role: string
 ) => {
-  return commonAxios.patch("/members/" + memberId, {
+  return commonAxios.patch("/members/" + userId, {
     name,
     email,
     role,
   });
 };
 
-export const requestEditUserClass = (memberId: string, classRoomId: number) => {
+export const requestEditUserClass = (userId: number, classRoomId: number) => {
   return commonAxios.patch("/classrooms/member/updateClass", {
-    memberId,
+    memberId: userId,
     classRoomId,
   });
 };
@@ -43,9 +43,11 @@ export const requestCreateClassroom = (
   });
 };
 
-export const requestClassAssignment = (userIdList: number[]) => {
-  return commonAxios.post("/classrooms/ramdomAssignment", {
-    userIdList,
+export const requestClassAssignment = (
+  userList: Array<{ id: number; grade: number }>
+) => {
+  return commonAxios.patch("/classrooms/user-list-random-assignment", {
+    userList,
   });
 };
 

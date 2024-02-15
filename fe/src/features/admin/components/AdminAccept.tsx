@@ -94,7 +94,7 @@ const StudentDetailModal = ({
                 <Input label="이름" value={student?.memberName} size="sm" />
                 <Input
                   label="생일"
-                  value={dayjs(student?.memberName).format("YYYY년 MM월 DD일")}
+                  value={student?.birthday ?? ""}
                   readOnly></Input>
                 <Input
                   label="이전 학교 구분"

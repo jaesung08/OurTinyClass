@@ -58,16 +58,22 @@ const UserEditModal = ({
 
   const editUserInfo = async () => {
     if (user) {
-      if (user.classRooms?.id !== +inputClassId) {
-        await requestEditUserClass(user.memberId, +inputClassId);
+      try {
+        if (user.classRooms?.id || user.classRooms?.id !== +inputClassId) {
+          await requestEditUserClass(user.userId, +inputClassId);
+        }
+        await requestEditUserInfo(
+          user.userId,
+          inputName,
+          inputEmail,
+          inputRole
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        Swal.fire("에러", e.response.data.message, "error");
+      } finally {
+        onClose();
       }
-      await requestEditUserInfo(
-        user.memberId,
-        inputName,
-        inputEmail,
-        inputRole
-      );
-      onClose();
     }
   };
 
@@ -178,7 +184,7 @@ const AddClassroomModal = ({
 
 const AdminUserBody = () => {
   const [userList, setUserList] = useState<User[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<Set<number>>(new Set([]));
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set([]));
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [modal, setModal] = useState("");
@@ -198,9 +204,9 @@ const AdminUserBody = () => {
     }
   };
 
-  function isNumberSet(set: Set<string | number>): set is Set<number> {
+  function isNumberSet(set: Set<string | number>): set is Set<string> {
     for (const item of set) {
-      if (typeof item !== "number") {
+      if (typeof item !== "string") {
         return false; // 요소 중에 문자열이 아닌 것이 있으면 false 반환
       }
     }
@@ -220,8 +226,15 @@ const AdminUserBody = () => {
 
   const onClickClassAssignment = async () => {
     try {
-      await requestClassAssignment(Array.from(selectedKeys));
+      const selectedUserList = userList
+        .filter((user) => selectedKeys.has(user.memberId))
+        .map((user) => ({
+          id: user.userId,
+          grade: user?.classRooms?.grade ?? 1,
+        }));
+      await requestClassAssignment(selectedUserList);
       setSelectedKeys(new Set([]));
+      Swal.fire("성공", "반 자동 배정에 성공하였습니다.", "success");
     } catch {
       Swal.fire("에러", "반 배정에 실패하였습니다.", "error");
     }
@@ -253,7 +266,7 @@ const AdminUserBody = () => {
           selectedKeys={selectedKeys}
           onSelectionChange={onSelectionChange}>
           <TableHeader>
-            {/* <TableColumn key="userId">계정</TableColumn> */}
+            <TableColumn key="userId">UID</TableColumn>
             <TableColumn key="memberId">계정</TableColumn>
             <TableColumn key="name">이름</TableColumn>
             <TableColumn key="grade">학년</TableColumn>
@@ -266,7 +279,7 @@ const AdminUserBody = () => {
           <TableBody items={userList}>
             {(user) => (
               <TableRow key={user.memberId}>
-                {/* <TableCell>{user.userId}</TableCell> */}
+                <TableCell>{user.userId}</TableCell>
                 <TableCell>{user.memberId}</TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.classRooms?.grade ?? ""}</TableCell>
