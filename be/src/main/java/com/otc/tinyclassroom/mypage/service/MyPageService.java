@@ -101,7 +101,7 @@ public class MyPageService {
 
         String classRoomTeacher = "";
         if (classNumber != 0) {
-            memberService.getMyTeacher(recentClass.getClassRoom().getId());
+            classRoomTeacher = memberService.getMyTeacher(recentClass.getClassRoom().getId());
         }
 
         // 이번주 목표 가져오기
