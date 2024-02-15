@@ -3,22 +3,22 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 
 -- 조원 데이터
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (2, 'tjgml1 ', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '정서희', 'tjgml1@naver.com', '2023-06-04', 128, 'ROLE_STUDENT',
+values (2, 'tjgml1 ', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '정서희', 'tjgml1@naver.com', '1999-04-04', 128, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (3, 'rmsdud1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '최근영', 'rmsdud1@naver.com', '2023-06-04', 65, 'ROLE_USER',
+values (3, 'rmsdud1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '최근영', 'rmsdud1@naver.com', '1996-05-04', 65, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (4, 'dudqls1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '전영빈', 'dudqls1@naver.com', '2023-06-04', 888, 'ROLE_STUDENT',
+values (4, 'dudqls1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '전영빈', 'dudqls1@naver.com', '1998-02-16', 888, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (5, 'wotjd1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '장재성', 'wotjd1@naver.com', '2023-06-04', 751, 'ROLE_USER',
+values (5, 'wotjd1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '장재성', 'wotjd1@naver.com', '1998-11-10', 751, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (6, 'wotjs1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '박재선', 'wotjs1@naver.com', '2023-06-04', 654, 'ROLE_STUDENT',
+values (6, 'wotjs1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '박재선', 'wotjs1@naver.com', '1995-09-04', 654, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
-values (7, 'ckdgh1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '최창호', 'ckdgh1@naver.com', '2023-06-04', 456, 'ROLE_USER',
+values (7, 'ckdgh1', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', '최창호', 'ckdgh1@naver.com', '1994-06-04', 456, 'ROLE_STUDENT',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 
 -- 선생님
@@ -207,28 +207,30 @@ VALUES ('0', '0', '1', '국어', '고전문학', 'KOREAN', 'REGULAR_LECTURE', 'A
 
 -- 특수강의
 INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`)
-VALUES ('4', '0', '9', '갈등 해결을 위한 대화법', '갈등해결을 위한 대화기술', 'NO_CATEGORY', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-15');
+VALUES ('3', '5', '9', '갈등 해결을 위한 대화법', '갈등해결을 위한 대화기술', 'NO_CATEGORY', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-15');
 INSERT INTO lecture (`day_of_week`, `time_table`, `member_id`, `description`, `title`, `lecture_category_type`, `lecture_type`, `approved`, `date`)
-VALUES ('4', '1', '10', '신뢰를 얻는 대화법', '대화의 심리학: 소통에서 신뢰로', 'NO_CATEGORY', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-16');
+VALUES ('4', '5', '10', '신뢰를 얻는 대화법', '대화의 심리학: 소통에서 신뢰로', 'NO_CATEGORY', 'SPECIAL_LECTURE', 'APPROVED', '2024-02-16');
 
 -- 스케줄
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`)
-VALUES ('2024-02-14', '10', '8', false, '2', '3');
+VALUES ('2024-02-14', '12', '8', false, '2', '3');
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`)
 VALUES ('2024-02-14', '11', '8', false, '2', '4');
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`)
-VALUES ('2024-02-13', '1', '8', false, '1', '3');
+VALUES ('2024-02-13', '13', '8', false, '1', '3');
 INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`)
-VALUES ('2024-02-13', '2', '8', false, '1', '4');
+VALUES ('2024-02-13', '14', '8', false, '1', '4');
+INSERT INTO schedule (`schedule_date`, `lecture_id`, `member_id`, `deletable`, `day_of_week`, `time_table`)
+VALUES ('2024-02-15', '15', '8', false, '3', '5');
 
 
 -- 멤버 스케줄
 INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`)
-values ('MATH', '8', '1');
+values ('MATH', '4', '1');
 INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`)
-values ('ENGLISH', '8', '2');
+values ('ENGLISH', '4', '2');
 INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`)
-values ('ETHICS', '8', '3');
+values ('ETHICS', '4', '3');
 INSERT INTO member_schedule (`lecture_category_type`, `member_id`, `schedule_id`)
-values ('KOREAN', '8', '4');
+values ('KOREAN', '4', '4');
 
