@@ -1,18 +1,15 @@
 package com.otc.tinyclassroom.member.entity;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 사용자 ROLE 을 정의한 Enum.
  */
 @Getter
+@RequiredArgsConstructor
 public enum Role {
+    ROLE_USER("USER"), ROLE_STUDENT("STUDENT"), ROLE_TEACHER("TEACHER"), ROLE_MENTOR("MENTOR"), ROLE_ADMIN("ADMIN"), ROLE_WAITING("WAITING");
 
-    ROLE_STUDENT(1), ROLE_TEACHER(2), ROLE_MENTOR(3), ROLE_ADMIN(4);
-
-    private final int value;
-
-    Role(int value) {
-        this.value = value;
-    }
+    private final String value;
 }

@@ -5,6 +5,7 @@ import com.otc.tinyclassroom.global.security.refreshtoken.dto.request.RefreshReq
 import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.ReIssueResponseDto;
 import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.RefreshResponseDto;
 import com.otc.tinyclassroom.global.security.refreshtoken.service.RefreshTokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class RefreshTokenController {
     /**
      * memberId(Long)에 해당하는 Refresh Token 의 TTL(Time to Live)을 조회.
      */
+    @Operation(summary = "토큰 TTL 조회", description = "memberId(Long)에 해당하는 Refresh Token 의 TTL(Time to Live)을 조회합니다.", tags = { "리프레시 토큰" })
     @GetMapping("/ttl/{refreshToken}")
     public BaseResponse<?> findTtlByMemberId(@PathVariable("refreshToken") Long refreshToken) {
         Long restTtl = refreshTokenService.getTtlByRefreshToken(String.valueOf(refreshToken));
@@ -46,6 +48,7 @@ public class RefreshTokenController {
     /**
      * Access Token 및 Refresh Token 을 사용하여 새로운 Access Token 을 발급.
      */
+    @Operation(summary = "Access Token 재발급", description = "Access Token 및 Refresh Token 을 사용하여 새로운 Access Token 을 발급합니다.", tags = { "리프레시 토큰" })
     @PostMapping("/refresh")
     public ResponseEntity<BaseResponse<?>> refresh(@RequestBody RefreshRequestDto requestDto) {
         ReIssueResponseDto responseDto = refreshTokenService.reIssue(requestDto.refreshToken());

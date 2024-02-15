@@ -38,9 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws IOException, ServletException {
 
         String servletPath = request.getServletPath();
@@ -48,20 +46,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         BaseResponse<Void> responseDto = null;
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
-        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join")) {
+        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join") || servletPath.equals("/api/members/kakao")|| servletPath.startsWith("/swagger-ui") || servletPath.startsWith("/v3")) {
+            chain.doFilter(request, response);
+        } else if (servletPath.equals("/ws/chat")) {
+            // 채팅 소켓 연결이라면 토큰 검사하지 않음.
             chain.doFilter(request, response);
         } else if (header == null || !header.startsWith("Bearer ")) {
             // 토큰값이 없거나 정상적이지 않다면 400 오류
             log.info("CustomAuthorizationFilter : JWT Token 이 존재하지 않습니다.");
 
-            responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "access token 이 존재하지 않음.", null);
-
+            responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "access token 이 존재하지 않음.", null);
+            response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
         } else {
             try {
-
                 String token = jwtProvider.resolveAccessToken(request);
                 /*
                  * Expired 되었을 경우
@@ -70,12 +70,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 Long memberId = jwtProvider.getMemberIdByAccessToken(token);
                 if (memberId != null) {
                     Member member = memberRepository.findById(memberId).orElse(null);
-
                     if (member != null) {
                         // Access Token이 재발급되었으므로 사용자 정보를 업데이트
                         PrincipalDetails principalDetails = new PrincipalDetails(member);
                         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            memberId,
+                            principalDetails,
                             null,
                             principalDetails.getAuthorities()
                         );
@@ -96,16 +95,21 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
 
+            } catch (NullPointerException e) {
+                responseDto = new BaseResponse<>(HttpStatus.NOT_FOUND.value(), "해당 객체를 찾을 수 없습니다.", null);
 
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
             } catch (Exception e) {
-                responseDto = new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), "잘못된 Access Token입니다.", null);
+                log.info("AuthorizationFilter에서 에러 : {} ", e.toString());
+                responseDto = new BaseResponse<>(HttpStatus.NOT_ACCEPTABLE.value(), "잘못된 Access Token입니다.", null);
 
                 response.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(new ObjectMapper().writeValueAsString(responseDto));
-
-
             }
         }
     }

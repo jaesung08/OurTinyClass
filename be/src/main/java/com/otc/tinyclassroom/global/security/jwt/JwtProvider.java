@@ -2,6 +2,7 @@ package com.otc.tinyclassroom.global.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.otc.tinyclassroom.global.security.auth.PrincipalDetails;
 import com.otc.tinyclassroom.member.entity.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -88,14 +89,13 @@ public class JwtProvider {
 
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
-
-            if (principal instanceof UserDetails) {
-                String memberId = ((UserDetails) principal).getUsername();
-                return Long.valueOf(memberId);
+            if (principal instanceof PrincipalDetails) {
+                return ((PrincipalDetails) principal).getMember().getId();
+            } else if (principal instanceof UserDetails) {
+                return Long.valueOf(((UserDetails) principal).getUsername());
             } else {
-                // 만약 principal UserDetails 아닌 다른 타입이면, 해당 타입에 맞게 처리
-                String objId = principal.toString();
-                return Long.valueOf(objId);
+                // 만약 principal이 UserDetails가 아닌 다른 타입이면, 해당 타입에 맞게 처리
+                return Long.valueOf(principal.toString());
             }
         }
         return null; // 인증된 사용자가 없는 경우

@@ -3,10 +3,14 @@ package com.otc.tinyclassroom.global.security.refreshtoken.service;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.global.security.refreshtoken.dto.response.ReIssueResponseDto;
 import com.otc.tinyclassroom.global.security.refreshtoken.entity.RefreshToken;
+import com.otc.tinyclassroom.global.security.refreshtoken.exception.RefreshTokenErrorCode;
+import com.otc.tinyclassroom.global.security.refreshtoken.exception.RefreshTokenException;
 import com.otc.tinyclassroom.global.security.refreshtoken.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -66,12 +70,25 @@ public class RefreshTokenService {
     }
 
     /**
-     * 회원 아이디로부터 리프레시토큰 삭제.
-     *
-     * @param refreshToken 리프레쉬토큰
+     * 현재 로그인한 사용자의 Refresh Token 을 찾음.
      */
-    public void deleteRefreshToken(Long refreshToken) {
-        redisTemplate.delete(String.valueOf(refreshToken));
+    public String getRefreshTokenByUserId(Long memberId) {
+        String stringMemberId = memberId.toString();
+
+        Optional<String> refreshToken = Optional.ofNullable(redisTemplate.keys("*"))
+            .stream().flatMap(Collection::stream)
+            .map(key -> redisTemplate.opsForValue().get(key))
+            .filter(stringMemberId::equals)
+            .findFirst();
+
+        return refreshToken.orElseThrow(() -> new RefreshTokenException(RefreshTokenErrorCode.NOT_EXIST_TOKEN));
+    }
+
+    /**
+     * refreshToken 삭제.
+     */
+    public void deleteRefreshToken(String refreshToken) {
+        redisTemplate.delete(refreshToken);
     }
 
     /**

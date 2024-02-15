@@ -1,11 +1,13 @@
 package com.otc.tinyclassroom.global.config;
 
+import com.otc.tinyclassroom.global.security.auth.KakaoAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthenticationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtAuthorizationFilter;
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.global.security.refreshtoken.repository.RefreshTokenRepository;
 import com.otc.tinyclassroom.member.entity.Role;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import com.otc.tinyclassroom.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -39,10 +40,8 @@ public class WebSecurityConfig {
 
     private final MemberRepository memberRepository;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final MemberService memberService;
+
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
@@ -68,16 +67,21 @@ public class WebSecurityConfig {
             // httpBasic 인증 방식 해제.
             .httpBasic(AbstractHttpConfigurer::disable)
 
+
             // 로그인 이전에 access token을 처리할 jwt 인가 필터 추가.
             .addFilterBefore(new JwtAuthorizationFilter(memberRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)
-
             // jwt 인증 필터 추가.
-            .addFilter(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository, jwtProvider))
+            .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(), refreshTokenRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class)
+            // kakao 인증 필터 추가.
+            .addFilterBefore(new KakaoAuthenticationFilter(authenticationManager(), refreshTokenRepository, jwtProvider, memberService), UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests((authorizerRequests) -> authorizerRequests
                 .requestMatchers(("/api/members/join")).permitAll()
                 .requestMatchers("/api/members/login").permitAll()
                 .requestMatchers("/api/members/currentMember").hasAuthority(Role.ROLE_ADMIN.name())
-                .requestMatchers("/api/attendances/**").authenticated()
+                .requestMatchers("/api/attendances/**").permitAll()
+                .requestMatchers("/api/community/**").permitAll()
+                .requestMatchers("/api/classrooms/**").permitAll()
+                .requestMatchers("/api/lectures/**").permitAll()
                 //.requestMatchers("/student/**").hasAuthority("ROLE_STUDENT")
                 //.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().permitAll()
