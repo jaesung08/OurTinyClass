@@ -65,6 +65,7 @@ public class ScheduleController {
     /**
      * 현재 참여해야 할 강의 정보 반환 메서드.
      */
+    @Operation(summary = "현재 참여할 강의 조회", description = "현재 참여할 강의를 조회합니다.", tags = { "시간표" })
     @GetMapping("/detail/current")
     public BaseResponse<?> getCurrentSchedule() {
 

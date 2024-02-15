@@ -81,7 +81,7 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 
 insert into member (id, member_id, password, name, email, birthday, point, role) values (38, 'Dae1', 'cH8\1,y`D|z', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 insert into member (id, member_id, password, name, email, birthday, point, role) values (39, 'Dae2', 'cH8\1,y`D|z', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
-insert into member (id, member_id, password, name, email, birthday, point, role) values (40, 'teacher', '$2a$10$tJSm6EfLNxha1.8CrAnJIOeaeC7oUo518GYPJKZiC3rx3rjg41KJa', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
+insert into member (id, member_id, password, name, email, birthday, point, role) values (40, 'Dae3', 'cH8\1,y`D|z', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 insert into member (id, member_id, password, name, email, birthday, point, role) values (41, 'Dae4', 'cH8\1,y`D|z', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 insert into member (id, member_id, password, name, email, birthday, point, role) values (42, 'Dae5', 'cH8\1,y`D|z', '김대성', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 
@@ -133,8 +133,12 @@ insert into member (id, member_id, password, name, email, birthday, point, role)
 insert into member (id, member_id, password, name, email, birthday, point, role) values (81, 'son4', 'cH8\1,y`D|z', '손민흥', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 insert into member (id, member_id, password, name, email, birthday, point, role) values (82, 'son5', 'cH8\1,y`D|z', '손민흥', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_TEACHER');
 
--- 관리자
-insert into member (id, member_id, password, name, email, birthday, point, role) values (84, 'admin', '$2a$10$tJSm6EfLNxha1.8CrAnJIOeaeC7oUo518GYPJKZiC3rx3rjg41KJa', '관리자', 'unabbs1@sfgate.com', '2023-09-08', 53, 'ROLE_ADMIN');
+-- 발표용 계정
+insert into member (id, member_id, password, name, email, birthday, point, role) values (84, 'sonny215', '$2a$10$aJg9IYJ2MnpiaGvrfSE7tuEMevGDBUWoxZngwDkpSy.u1Z9PxL0HC', '손민흥', 'sonny215@naver.com', '2007-02-16', 0, 'ROLE_USER');
+insert into member (id, member_id, password, name, email, birthday, point, role) values (85, 'gangin717', '$2a$10$7lr0rEnVTt8YbitX30IpZek5WRgZGNLHN8hf7Q2Z1nu/lct/LqSDi', '이민재', 'unabbs1@sfgate.com', '2010-09-07', 132, 'ROLE_STUDENT');
+insert into member (id, member_id, password, name, email, birthday, point, role) values (86, 'frankly12', '$2a$10$r8gyGiY6dWS24DMeUr4yquX5AFTovDtU9mARkwf8zAdq06ZGy.vqG', '김강민', 'unabbs1@sfgate.com', '2002-05-03', 613, 'ROLE_MENTOR');
+insert into member (id, member_id, password, name, email, birthday, point, role) values (87, 'toughman311', '$2a$10$/unO5KTdaM0wQs6NGvbSSu6bJkV1Y2ZxAccL8tuhcB4GSL/IZ8Drm', '정서희', 'unabbs1@sfgate.com', '1990-05-14', 1785, 'ROLE_TEACHER');
+insert into member (id, member_id, password, name, email, birthday, point, role) values (88, 'admin', '$2a$10$tJSm6EfLNxha1.8CrAnJIOeaeC7oUo518GYPJKZiC3rx3rjg41KJa', '관리자', 'admin@google.com', '1996-02-16', 99999, 'ROLE_ADMIN');
 
 insert into attendance (status, check_in, check_out, id, member_id)
 values (0, '2024-02-01 09:48:34', '2024-02-01 18:48:34', 1, 4);
