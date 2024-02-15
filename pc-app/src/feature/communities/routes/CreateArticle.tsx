@@ -51,7 +51,7 @@ function CreateArticle() {
   const userInfo = useRecoilValue(userState);
   const quillRef = useRef<ReactQuill | null>(null);
   const [articleCategory, setArticleCategory] = useState(
-    userInfo.role === "ADMIN" ? CATEGORYLISTS[0].value : USERCATEGORLISTS[0].value
+    userInfo.role === "ADMIN" || userInfo.role === "TEACHER" ? CATEGORYLISTS[0].value : USERCATEGORLISTS[0].value
   );
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -191,13 +191,17 @@ function CreateArticle() {
                   className="bg-white w-1/6 rounded-xl"
                   size="sm"
                   aria-label="어떤 카테고리에 글을 작성할지 선택해주세요."
-                  defaultSelectedKeys={userInfo.role === "ADMIN" ? [CATEGORYLISTS[0].value] : [USERCATEGORLISTS[0].value]}
+                  defaultSelectedKeys={
+                    userInfo.role === "ADMIN" || userInfo.role === "TEACHER"
+                      ? [CATEGORYLISTS[0].value]
+                      : [USERCATEGORLISTS[0].value]
+                  }
                   onChange={(e) => {
                     selectCategory(e);
                   }}
                   isDisabled={isModify}
                 >
-                  {userInfo.role === "ADMIN"
+                  {userInfo.role === "ADMIN" || userInfo.role === "TEACHER"
                     ? CATEGORYLISTS.map((item: { category: string; value: string }) => (
                         <SelectItem key={item.value} value={item.value}>
                           {item.category}

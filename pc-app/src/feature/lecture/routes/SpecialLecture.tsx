@@ -55,7 +55,6 @@ function SearchBar({ searchKeyword, setSearchKeyword, searchType, setSearchType,
 
 export function SpecialLecture() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [totalList, setTotalList] = useState<Lecture[]>([]);
   const userInfo = useRecoilState(userState);
   const [lectureLists, setLectureLists] = useState<Lecture[]>([]);
   const [searchType, setSearchType] = useState<string>(SearchLecturesOptions[0].value);
@@ -68,7 +67,6 @@ export function SpecialLecture() {
       try {
         const lectures = await getAddAbleSpecialLectures();
         setLectureLists(lectures.data);
-        setTotalList(lectures.data);
       } catch (error) {
         console.error(error);
       }
