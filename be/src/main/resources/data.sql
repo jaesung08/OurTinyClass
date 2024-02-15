@@ -25,6 +25,9 @@ values (11, 'ssafy1234', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsT
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
 values (12, 'ssafy12345', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_MENTOR',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (13, 'ssafy123', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN',
+        "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 
 
 
@@ -91,6 +94,8 @@ insert into classroom (id, year, grade, number)
 values (19, 2024, 4, 2);
 insert into classroom (id, year, grade, number)
 values (20, 2024, 4, 3);
+insert into classroom (id, year, grade, number)
+values (21, 2024, 4, 0);
 
 -- 반 매핑
 INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '2');
@@ -3897,3 +3902,15 @@ values (999, 2, 49,
 insert into article_comment (id, member_id, article_id, content, created_at, modified_at)
 values (1000, 3, 31, 'Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', '2023-05-21 21:46:44', '2023-06-14 12:07:02');
 
+-- 학생 등업
+insert into student_role_update_request(member_id, before_school, original_file_names, quit_confirmation_paths, before_school_type, quit_reason)
+values (2, '양재초', '["asdfqasdf.png"]', '["https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png"]', 1, "그냥");
+
+insert into student_role_update_request(member_id, before_school, original_file_names, quit_confirmation_paths, before_school_type, quit_reason)
+values (5, '양재초', '["asdfqasdf.png"]', '["https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png"]', 3, "힘들어요");
+
+insert into mentor_role_update_request(member_id, belong, belong_document_paths, original_file_names)
+values (6, '한국대', '["https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png"]', '["asdfqasdf.png"]');
+
+insert into mentor_role_update_request(member_id, belong, belong_document_paths, original_file_names)
+values (7, '지잡대', '["https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/e1393253-70bb-43df-91c0-eb08cf940141.png"]', '["asdfqasdf.png"]');

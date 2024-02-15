@@ -131,6 +131,14 @@ public class MemberController {
     }
 
     /**
+     * 특정 멤버의 반을 조회한다.
+     */
+    @GetMapping("/class-room-number/{memberId}")
+    public BaseResponse<MemberClassRoomNumberResponseDto> getMemberClassRoomNumber(@PathVariable String memberId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        return BaseResponse.success(HttpStatus.OK.value(), "멤버의 반을 조회하였습니다.", memberService.getMemberClassRoomNumber(memberId));
+    }
+
+    /**
      * 멤버 정보 수정 메서드(관리자).
      */
     @PatchMapping("/{memberId}")

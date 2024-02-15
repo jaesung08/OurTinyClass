@@ -3,6 +3,7 @@ package com.otc.tinyclassroom.member.repository;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.QClassRoom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class ClassRoomRepositoryCustomImpl implements ClassRoomRepositoryCustom 
         QClassRoom classRoom = QClassRoom.classRoom;
         ClassRoom result = queryFactory.selectFrom(classRoom)
             .where(classRoom.grade.eq(grade)
-                .and(classRoom.year.eq(0))
+                .and(classRoom.year.eq(LocalDateTime.now().getYear()))
                 .and(classRoom.number.eq(0)))
             .fetchOne();
         return Optional.ofNullable(result);
