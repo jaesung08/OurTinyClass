@@ -1,1 +1,1 @@
-export const API_URL = "http://i10a405.p.ssafy.io/api";
+export const API_URL = "https://i10a405.p.ssafy.io/api";
