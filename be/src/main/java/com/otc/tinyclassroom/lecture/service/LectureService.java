@@ -2,6 +2,7 @@ package com.otc.tinyclassroom.lecture.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
 import com.otc.tinyclassroom.lecture.dto.request.LectureCreateUpdateRequestDto;
+import com.otc.tinyclassroom.lecture.dto.request.RoomCreateRequestDto;
 import com.otc.tinyclassroom.lecture.dto.response.LectureResponseDto;
 import com.otc.tinyclassroom.lecture.entity.Lecture;
 import com.otc.tinyclassroom.lecture.entity.type.LectureApprovalStatusType;
@@ -16,13 +17,18 @@ import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 /**
  * Lecture 관련 서비스.
@@ -35,6 +41,7 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
+    private final WebClientService webClientService;
 
     /**
      * 강의 생성.
@@ -45,9 +52,7 @@ public class LectureService {
     public LectureResponseDto createLecture(LectureCreateUpdateRequestDto request) {
         checkTeacherOrAdmin();
         Member member = getMemberByMemberId(request.memberId());
-
-        // validateMemberRole(member.getRole());
-
+        String lectureUrl = createUrlIfSpecialLecture(request);
         // 요청에서 제공된 데이터를 사용하여 새로운 Lecture 엔터티를 생성합니다.
         Lecture newLecture = Lecture.of(
             member,
@@ -57,9 +62,9 @@ public class LectureService {
             request.timeTable(),
             request.lectureType(),
             request.lectureCategoryType(),
-            request.lectureUrl(),
+            lectureUrl,
             // SPECIAL_LECTURE일 경우 WAITING, 아닐 경우 APPROVED
-            request.lectureType() == LectureType.SPECIAL_LECTURE ? LectureApprovalStatusType.WAITING : LectureApprovalStatusType.APPROVED,
+            LectureApprovalStatusType.APPROVED,
             request.date()
         );
         lectureRepository.save(newLecture);
@@ -251,4 +256,18 @@ public class LectureService {
             .orElseThrow(() -> new LectureException(LectureErrorCode.NOT_FOUND_LECTURE));
     }
 
+    private String createUrlIfSpecialLecture(LectureCreateUpdateRequestDto requestDto) {
+        if (requestDto.lectureType() != LectureType.SPECIAL_LECTURE) {
+            return null;
+        }
+        LocalDateTime nbfTime = LocalDateTime.of(requestDto.date(), LocalTime.of(9, 0));
+        long nbf = nbfTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+        LocalDateTime expTime = LocalDateTime.of(requestDto.date(), LocalTime.of(17, 0));
+        long exp = expTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+        int maxParticipants = 30;
+        String identifier = String.valueOf(UUID.randomUUID());
+        Mono<String> urlMono = webClientService.createClassRoomUrl(RoomCreateRequestDto.of(identifier, nbf, exp, maxParticipants));
+        // Mono<String>을 String으로 동기적으로 변환
+        return urlMono.block();
+    }
 }

@@ -17,6 +17,8 @@ import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
+import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -171,7 +173,6 @@ public class MemberService {
     /**
      * 같은 반의 멤버를(선생님 포함) 조회한다.
      */
-    @Transactional(readOnly = true)
     public List<MemberProfileDto> getMyClassRoomMember(Member member) {
         List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
         if (memberClassRooms.isEmpty()) {
@@ -183,6 +184,9 @@ public class MemberService {
         return members.stream().map(MemberProfileDto::from).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * 멤버의 현재 반을 넘겨준다.
+     */
     @Transactional
     public MemberClassRoomNumberResponseDto getMemberClassRoomNumber(String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(
@@ -191,11 +195,23 @@ public class MemberService {
 
         List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
 
-        if(memberClassRooms.isEmpty()) {
+        if (memberClassRooms.isEmpty()) {
             throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
         }
         MemberClassRoom memberClassRoom = memberClassRooms.get(memberClassRooms.size() - 1);
         ClassRoom classRoom = memberClassRoom.getClassRoom();
         return MemberClassRoomNumberResponseDto.of(classRoom.getId(), classRoom.getGrade(), classRoom.getNumber(), classRoom.getYear());
+    }
+
+    /**
+     * 같은 반의 담임선생님을 조회한다.
+     */
+    @Transactional(readOnly = true)
+    public String getMyTeacher(Long classRoomId) {
+        List<Member> teachers = memberClassRoomRepository.findMemberByClassRoomIdAndRole(classRoomId, Role.ROLE_TEACHER);
+        Member teacher = teachers.stream().findFirst().orElseThrow(
+            () -> new ScheduleException(ScheduleErrorCode.NOT_EXIST_TEACHER)
+        );
+        return teacher.getName();
     }
 }
