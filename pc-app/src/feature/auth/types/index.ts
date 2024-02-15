@@ -1,13 +1,7 @@
 import { BaseResponse } from "@/types/BaseResponse";
 
 export interface JoinFormProps {
-  onSubmit: (
-    id: string,
-    password: string,
-    name: string,
-    email: string,
-    birthday: string
-  ) => void;
+  onSubmit: (id: string, password: string, name: string, email: string, birthday: string) => void;
 }
 
 export interface JoinResponse extends BaseResponse {
@@ -21,12 +15,14 @@ export interface JoinResponse extends BaseResponse {
 
 export interface LoginFormProps {
   onSubmit: (id: string, password: string) => void;
+  onKakaoSuccess: (accessToken: string) => void;
 }
 
 export interface LoginResponse extends BaseResponse {
   data: {
+    userId: number;
     name: string;
-    role: number;
+    role: "ADMIN" | "TEACHER" | "MENTOR" | "STUDENT" | "USER" | "WAITING";
     memberId: string;
     point: number;
     refreshToken: string;

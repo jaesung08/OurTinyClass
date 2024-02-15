@@ -1,9 +1,5 @@
-import {
-  BoardCategoriesMap,
-  CommunityHeaderContents,
-  SearchArticlesOptions,
-} from "../assets/textContent";
-import { Board, TYPE } from "../types";
+import { BoardCategoriesMap, ClassCategoriesMap, CommunityHeaderContents, SearchArticlesOptions } from "../assets/textContent";
+import { Board } from "../types";
 import {
   Button,
   Divider,
@@ -21,10 +17,13 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { searchBoard } from "../api/freeBoard";
+import { searchBoard } from "../api/communityBoard";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { getPathInfo } from "../utils/getPathInfo";
 import EditIcon from "@/assets/img/EditIcon";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
+import { CODE } from "@/types/Code";
 
 interface CommunityHeaderProps {
   boardCategory: number;
@@ -34,12 +33,8 @@ function CommunityHeader({ boardCategory }: CommunityHeaderProps) {
   return (
     <div>
       <div className="flex w-full px-10 py-5 items-center">
-        <p className="text-2xl w-2/12 f">
-          {CommunityHeaderContents[boardCategory]?.title}
-        </p>
-        <p className="w-10/12">
-          {CommunityHeaderContents[boardCategory]?.content}
-        </p>
+        <p className="text-2xl w-2/12 f">{CommunityHeaderContents[boardCategory]?.title}</p>
+        <p className="w-10/12">{CommunityHeaderContents[boardCategory]?.content}</p>
       </div>
       <Divider />
     </div>
@@ -55,18 +50,9 @@ interface SearchBarProps {
   onSubmit: () => void;
 }
 
-function SearchBar({
-  searchKeyword,
-  setSearchKeyword,
-  searchType,
-  setSearchType,
-  onSubmit,
-}: SearchBarProps) {
+function SearchBar({ searchKeyword, setSearchKeyword, searchType, setSearchType, onSubmit }: SearchBarProps) {
   return (
-    <form
-      className="w-full flex justify-between items-center"
-      onSubmit={onSubmit}
-    >
+    <form className="w-full flex justify-between items-center" onSubmit={onSubmit}>
       <Select
         className="ml-5 bg-white w-1/6 rounded-xl"
         size="sm"
@@ -75,11 +61,7 @@ function SearchBar({
         value={searchType}
       >
         {SearchArticlesOptions.map((item) => (
-          <SelectItem
-            key={item.name}
-            value={item.value}
-            onClick={() => setSearchType(item.value)}
-          >
+          <SelectItem key={item.name} value={item.value} onClick={() => setSearchType(item.value)}>
             {item.name}
           </SelectItem>
         ))}
@@ -92,11 +74,7 @@ function SearchBar({
         value={searchKeyword}
         onChange={(e) => setSearchKeyword(e.target.value)}
       />
-      <Button
-        className="w-1/12 text-white text-xl rounded-xl bg-lime-500 shadow"
-        size="lg"
-        onClick={onSubmit}
-      >
+      <Button className="w-1/12 text-white text-xl rounded-xl bg-lime-500 shadow" size="lg" onClick={onSubmit}>
         검색
       </Button>
     </form>
@@ -111,14 +89,7 @@ interface CommunityBoardProps {
   loading: boolean;
   navigator: NavigateFunction;
 }
-function CommunityBoardTable({
-  boardList,
-  totalPage,
-  currentPage,
-  setCurrentPage,
-  loading,
-  navigator,
-}: CommunityBoardProps) {
+function CommunityBoardTable({ boardList, totalPage, currentPage, setCurrentPage, loading, navigator }: CommunityBoardProps) {
   return (
     <Table
       aria-label="커뮤니티 게시판"
@@ -146,18 +117,9 @@ function CommunityBoardTable({
         <TableColumn key="createdAt">날짜</TableColumn>
         <TableColumn key="hit">조회수</TableColumn>
       </TableHeader>
-      <TableBody
-        items={boardList}
-        loadingState={loading ? "loading" : "idle"}
-        loadingContent={<Spinner />}
-      >
+      <TableBody items={boardList} loadingState={loading ? "loading" : "idle"} loadingContent={<Spinner />}>
         {(board) => (
-          <TableRow
-            key={board.id}
-            onClick={() =>
-              navigator("/communities/detail", { state: board.id })
-            }
-          >
+          <TableRow key={board.id} onClick={() => navigator("/communities/detail/" + board.id)}>
             <TableCell>{board.id}</TableCell>
             <TableCell
               className="cursor-pointer"
@@ -181,33 +143,40 @@ function CommunityBoardTable({
   );
 }
 function Community() {
-  const [searchType, setSearchType] = useState<string>(
-    SearchArticlesOptions[0].value
-  );
+  const userInfo = useRecoilValue(userState);
+  const [searchType, setSearchType] = useState<string>(SearchArticlesOptions[0].value);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [boardList, setBoardList] = useState<Board[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [boardCategory, setBoardCategory] = useState(
-    TYPE.BOARD_CATEGORY.NOTICE
-  );
   const location = useLocation();
+  const [typeBoard, setBoardType] = useState<number>(getPathInfo(location.pathname).boardType);
+  const [boardCategory, setBoardCategory] = useState(CODE.BOARD_CATEGORY.NOTICE);
+
   useEffect(() => {
-    const { boardCategory } = getPathInfo(location.pathname);
+    const { boardType, boardCategory } = getPathInfo(location.pathname);
+    setBoardType(boardType);
     setBoardCategory(boardCategory);
+    setCurrentPage(1);
   }, [location]);
   const navigator = useNavigate();
-
   const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await searchBoard({
-        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
-        page: currentPage,
-      });
+      const res =
+        typeBoard === 0
+          ? await searchBoard({
+              boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+            })
+          : await searchBoard({
+              boardType: ClassCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+              classRoomId: userInfo.classRoomId,
+            });
       const data = res.data;
-      if (currentPage === res.data.number) {
+      if (currentPage === res.data.number + 1) {
         setBoardList(data.content);
         setTotalPage(data.totalPages);
       }
@@ -216,20 +185,32 @@ function Community() {
     } finally {
       setLoading(false);
     }
-  }, [boardCategory, currentPage]);
+  }, [boardCategory, currentPage, typeBoard]);
 
   const searchArticles = async () => {
     try {
       setLoading(true);
-      const res = await searchBoard({
-        searchType: searchType,
-        searchValue: searchKeyword,
-        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
-        page: currentPage,
-      });
+      const res =
+        typeBoard === 0
+          ? await searchBoard({
+              searchType: searchType,
+              searchValue: searchKeyword,
+              boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+            })
+          : await searchBoard({
+              searchType: searchType,
+              searchValue: searchKeyword,
+              boardType: ClassCategoriesMap.get(boardCategory) ?? "notice",
+              classRoomId: userInfo.classRoomId,
+              page: currentPage,
+            });
       const data = res.data;
-      setBoardList(data.content);
-      setTotalPage(data.totalPages - 1);
+
+      if (currentPage === res.data.number + 1) {
+        setBoardList(data.content);
+        setTotalPage(data.totalPages);
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -250,8 +231,13 @@ function Community() {
     await searchArticles();
   };
 
-  const goCreateBoard = () => {
-    navigator("/communities/write/new");
+  const goCreateBoard = (boardType?: number, boardCategory?: number) => {
+    navigator("/communities/write/new", {
+      state: {
+        boardType,
+        boardCategory,
+      },
+    });
   };
 
   return (
@@ -277,7 +263,7 @@ function Community() {
       <button
         className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
         aria-label="게시글 작성"
-        onClick={goCreateBoard}
+        onClick={() => goCreateBoard(typeBoard, boardCategory)}
       >
         <EditIcon />
       </button>

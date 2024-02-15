@@ -5,7 +5,7 @@ type CommunityLayoutProps = {
 };
 function CommunityLayout({ children }: CommunityLayoutProps) {
   return (
-    <section className="w-screen min-h-screen flex">
+    <section className="min-h-screen flex h-full">
       <CommunitySideBar />
       {children}
     </section>

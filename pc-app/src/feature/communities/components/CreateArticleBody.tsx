@@ -1,7 +1,7 @@
 import { Button, Select, SelectItem, Input } from "@nextui-org/react";
 import { useState, useRef, useMemo } from "react";
 import ReactQuill from "react-quill";
-import { API_FILE_URL } from "@/config";
+import { API_URL } from "@/config";
 import { useNavigate } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
 import { fileAxios } from "@/lib/fileAxios";
@@ -66,7 +66,7 @@ function CreateArticleBody() {
         try {
           const result = await fileAxios.post(
             // todo : 임시로 영빈이랑 테스트 하기 위해 넣어둔 API 추후에 수정해야함
-            `${API_FILE_URL}media/images`,
+            `${API_URL}media/images`,
             formData
           );
           const IMG_URL = result.data[0];
@@ -134,14 +134,8 @@ function CreateArticleBody() {
           <p className="w-10/12">가슴속에 쌓아둔 이야기를 털어보세요</p>
         </div>
         <hr className="border-b-2" />
-        <div
-          className="w-full flex justify-center items-center"
-          style={{ height: "90%" }}
-        >
-          <div
-            className="w-5/6 flex flex-col  py-3 items-center"
-            style={{ height: "90%" }}
-          >
+        <div className="w-full flex justify-center items-center" style={{ height: "90%" }}>
+          <div className="w-5/6 flex flex-col  py-3 items-center" style={{ height: "90%" }}>
             <div className="w-full" style={{ height: "15%" }}>
               <form className="flex justify-between items-center">
                 <Select
@@ -170,11 +164,7 @@ function CreateArticleBody() {
                   onChange={(e) => setTitle(e.target.value)}
                 />
 
-                <Button
-                  className="w-1/12 text-white text-xl rounded-xl  bg-lime-500 shadow"
-                  size="lg"
-                  onClick={BoardCreate}
-                >
+                <Button className="w-1/12 text-white text-xl rounded-xl  bg-lime-500 shadow" size="lg" onClick={BoardCreate}>
                   작성
                 </Button>
               </form>

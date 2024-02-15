@@ -1,13 +1,21 @@
+import { Dayjs } from "dayjs";
+
 export interface Plan {
   id: number;
-  date: string;
-  scheduleList: Array<Schedule>;
+  date: Dayjs;
+  scheduleList: Array<Schedule | null>;
+  dayOfWeek: number;
 }
 
 export interface Schedule {
-  isMentoring: boolean;
-  addUserId: number;
-  isRegular: boolean;
-  title: string;
   lectureId: number;
+  scheduleId: number;
+  title: string;
+  scheduleDate: string;
+  dayOfWeek: 0 | 1 | 2 | 3 | 4;
+  memberId: number;
+  timeTable: number;
+  deletable: boolean;
+  lectureType: string;
+  lectureCategoryType: string;
 }

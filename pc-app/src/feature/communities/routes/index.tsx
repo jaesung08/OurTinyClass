@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import CreateArticle from "./CreateArticle";
-import FreeBoardPage from "./Community";
+import Community from "./Community";
 import DetailArticle from "./DetailArticle";
 import CommunityLayout from "../components/CommunityLayout";
 
@@ -16,7 +16,7 @@ export const CommunitiesRoutes = () => {
         }
       />
       <Route
-        path="detail"
+        path="detail/:articleId"
         element={
           <CommunityLayout>
             <DetailArticle />
@@ -27,7 +27,7 @@ export const CommunitiesRoutes = () => {
         path="/*"
         element={
           <CommunityLayout>
-            <FreeBoardPage />
+            <Community />
           </CommunityLayout>
         }
       />
