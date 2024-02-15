@@ -16,6 +16,7 @@ export default function Login() {
   const onLoginSuccess = (res: LoginResponse) => {
     if (res.data) {
       // 정상 로그인
+      console.log(res.data);
       setUserState({
         userId: res.data.userId,
         memberId: res.data.memberId,
