@@ -1,4 +1,4 @@
-import { BoardCategoriesMap, CommunityHeaderContents, SearchArticlesOptions } from "../assets/textContent";
+import { BoardCategoriesMap, ClassCategoriesMap, CommunityHeaderContents, SearchArticlesOptions } from "../assets/textContent";
 import { Board } from "../types";
 import {
   Button,
@@ -17,10 +17,12 @@ import {
 } from "@nextui-org/react";
 import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { searchBoard } from "../api/freeBoard";
+import { searchBoard } from "../api/communityBoard";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { getPathInfo } from "../utils/getPathInfo";
 import EditIcon from "@/assets/img/EditIcon";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 import { CODE } from "@/types/Code";
 
 interface CommunityHeaderProps {
@@ -141,52 +143,73 @@ function CommunityBoardTable({ boardList, totalPage, currentPage, setCurrentPage
   );
 }
 function Community() {
+  const userInfo = useRecoilValue(userState);
   const [searchType, setSearchType] = useState<string>(SearchArticlesOptions[0].value);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [boardList, setBoardList] = useState<Board[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [boardCategory, setBoardCategory] = useState(CODE.BOARD_CATEGORY.NOTICE);
   const location = useLocation();
+  const [typeBoard, setBoardType] = useState<number>(getPathInfo(location.pathname).boardType);
+  const [boardCategory, setBoardCategory] = useState(CODE.BOARD_CATEGORY.NOTICE);
+
   useEffect(() => {
-    const { boardCategory } = getPathInfo(location.pathname);
+    const { boardType, boardCategory } = getPathInfo(location.pathname);
+    setBoardType(boardType);
     setBoardCategory(boardCategory);
+    setCurrentPage(1);
   }, [location]);
   const navigator = useNavigate();
-
   const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await searchBoard({
-        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
-        page: currentPage,
-      });
+      const res =
+        typeBoard === 0
+          ? await searchBoard({
+              boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+            })
+          : await searchBoard({
+              boardType: ClassCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+              classRoomId: userInfo.classRoomId,
+            });
       const data = res.data;
-      if (currentPage === res.data.number+1) {
+      if (currentPage === res.data.number + 1) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages-1);
+        setTotalPage(data.totalPages);
       }
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
-  }, [boardCategory, currentPage]);
+  }, [boardCategory, currentPage, typeBoard]);
 
   const searchArticles = async () => {
     try {
       setLoading(true);
-      const res = await searchBoard({
-        searchType: searchType,
-        searchValue: searchKeyword,
-        boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
-        page: currentPage,
-      });
+      const res =
+        typeBoard === 0
+          ? await searchBoard({
+              searchType: searchType,
+              searchValue: searchKeyword,
+              boardType: BoardCategoriesMap.get(boardCategory) ?? "notice",
+              page: currentPage,
+            })
+          : await searchBoard({
+              searchType: searchType,
+              searchValue: searchKeyword,
+              boardType: ClassCategoriesMap.get(boardCategory) ?? "notice",
+              classRoomId: userInfo.classRoomId,
+              page: currentPage,
+            });
       const data = res.data;
+
       if (currentPage === res.data.number + 1) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages - 1);
+        setTotalPage(data.totalPages);
       }
     } catch (e) {
       console.error(e);
@@ -208,8 +231,13 @@ function Community() {
     await searchArticles();
   };
 
-  const goCreateBoard = () => {
-    navigator("/communities/write/new");
+  const goCreateBoard = (boardType?: number, boardCategory?: number) => {
+    navigator("/communities/write/new", {
+      state: {
+        boardType,
+        boardCategory,
+      },
+    });
   };
 
   return (
@@ -232,7 +260,11 @@ function Community() {
           navigator={navigator}
         />
       </div>
-      <button className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full" aria-label="게시글 작성" onClick={goCreateBoard}>
+      <button
+        className="fixed right-10 bottom-10 bg-lime-500 p-3 rounded-full"
+        aria-label="게시글 작성"
+        onClick={() => goCreateBoard(typeBoard, boardCategory)}
+      >
         <EditIcon />
       </button>
     </div>

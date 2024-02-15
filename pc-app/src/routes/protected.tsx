@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Spinner } from "@/components/Elements";
 import MainDashboard from "@/feature/users/routes/MainDashboard";
@@ -13,8 +13,31 @@ import { SOCKET_URL } from "@/config";
 import { StompClientProvider } from "@/providers/StompClient";
 import Mypage from "@/feature/users/routes/Mypage";
 import { LecturesRoutes } from "@/feature/lecture";
+import { useRecoilState } from "recoil";
+import { userState } from "@/atoms/user";
+import { getClass } from "@/feature/communities/api/communityBoard";
 
 const App = () => {
+  const [userInfo, setUserInfo] = useRecoilState(userState);
+  useEffect(() => {
+    const fetchData = async () => {
+      const getData = await getClass(userInfo.memberId);
+      const newData = {
+        userId: userInfo.userId,
+        name: userInfo.name,
+        memberId: userInfo.memberId,
+        point: userInfo.point,
+        role: userInfo.role,
+        grade: getData.data.grade,
+        classRoomId: getData.data.classRoomId,
+        class: getData.data.number,
+        year: getData.data.year,
+      };
+      setUserInfo(newData);
+    };
+    fetchData();
+  }, []);
+
   return (
     <StompSessionProvider
       url={`wss://${SOCKET_URL}/ws/chat`}

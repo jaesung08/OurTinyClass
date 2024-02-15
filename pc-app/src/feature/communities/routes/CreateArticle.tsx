@@ -1,7 +1,7 @@
 import { Button, Select, SelectItem, Input } from "@nextui-org/react";
 import { useState, useRef, useMemo, useEffect } from "react";
 import ReactQuill from "react-quill";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { createBoard } from "../api/createBoard";
 import { fileAxios } from "@/lib/fileAxios";
 import { editDetail, getDetail } from "../api/detailBoard";
@@ -47,15 +47,18 @@ const USERCATEGORLISTS = [
 
 function CreateArticle() {
   const navigator = useNavigate();
+  const location = useLocation();
+  const userInfo = useRecoilValue(userState);
   const quillRef = useRef<ReactQuill | null>(null);
-  const [articleCategory, setArticleCategory] = useState(CATEGORYLISTS[0].value);
+  const [articleCategory, setArticleCategory] = useState(
+    userInfo.role === "ADMIN" ? CATEGORYLISTS[0].value : USERCATEGORLISTS[0].value
+  );
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isModify, setIsModify] = useState(false);
   const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setArticleCategory(e.target.value);
   };
-  const user = useRecoilValue(userState)
   const { articleId } = useParams();
 
   useEffect(() => {
@@ -75,24 +78,30 @@ function CreateArticle() {
   }, [articleId]);
 
   const BoardCreate = async () => {
-    try {
-      if (isModify && articleId) {
-        // 게시글 수정인 경우
-        await editDetail(title, content, articleId);
-        Swal.fire("성공!", "게시글 수정이 성공하였습니다.", "success").then(() => {
-          navigator("/comunities/detail/" + articleId);
-        });
-      } else {
-        // 게시글 신규 작성인 경우
-        await createBoard(title, content, articleCategory);
-        Swal.fire("성공!", "게시글 작성이 성공하였습니다.", "success").then(() => {
-          navigator("/communities");
-        });
-      }
+    if (title.trim() && content.trim()) {
+      try {
+        if (isModify && articleId) {
+          // 게시글 수정인 경우
+          await editDetail(title, content, articleId);
+          Swal.fire("성공!", "게시글 수정이 성공하였습니다.", "success").then(() => {
+            navigator("/communities/detail/" + articleId);
+          });
+        } else {
+          // 게시글 신규 작성인 경우
+          location.state.boardType === 1
+            ? await createBoard(title, content, articleCategory, userInfo.classRoomId)
+            : await createBoard(title, content, articleCategory);
+          Swal.fire("성공!", "게시글 작성이 성공하였습니다.", "success").then(() => {
+            navigator("/communities");
+          });
+        }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      Swal.fire("에러 발생", error?.response.data?.message ?? "게시글 수정에 실패하였습니다.", "error");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        Swal.fire("에러 발생", error?.response.data?.message ?? "게시글 수정에 실패하였습니다.", "error");
+      }
+    } else {
+      Swal.fire("에러 발생", "게시글 작성에 실패하였습니다.", "error");
     }
   };
 
@@ -182,28 +191,23 @@ function CreateArticle() {
                   className="bg-white w-1/6 rounded-xl"
                   size="sm"
                   aria-label="어떤 카테고리에 글을 작성할지 선택해주세요."
-                  defaultSelectedKeys={
-                    user.role === "ADMIN"
-                      ? [CATEGORYLISTS[0].value]
-                      : [USERCATEGORLISTS[0].value]
-                  }
-                  onChange={(e) => selectCategory(e)}
-                  isDisabled={isModify}>
-                  {user.role === "ADMIN"
-                    ? CATEGORYLISTS.map(
-                        (item: { category: string; value: string }) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.category}
-                          </SelectItem>
-                        )
-                      )
-                    : USERCATEGORLISTS.map(
-                        (item: { category: string; value: string }) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.category}
-                          </SelectItem>
-                        )
-                      )}
+                  defaultSelectedKeys={userInfo.role === "ADMIN" ? [CATEGORYLISTS[0].value] : [USERCATEGORLISTS[0].value]}
+                  onChange={(e) => {
+                    selectCategory(e);
+                  }}
+                  isDisabled={isModify}
+                >
+                  {userInfo.role === "ADMIN"
+                    ? CATEGORYLISTS.map((item: { category: string; value: string }) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.category}
+                        </SelectItem>
+                      ))
+                    : USERCATEGORLISTS.map((item: { category: string; value: string }) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.category}
+                        </SelectItem>
+                      ))}
                 </Select>
                 <Input
                   className="bg-white w-4/6"
@@ -213,7 +217,6 @@ function CreateArticle() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-
                 <Button className="w-1/12 text-white text-xl rounded-xl  bg-lime-500 shadow" size="lg" onClick={BoardCreate}>
                   {!isModify ? "작성" : "수정"}
                 </Button>

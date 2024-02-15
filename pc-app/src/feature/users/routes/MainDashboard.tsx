@@ -12,7 +12,7 @@ import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import ScheduleBoard from "@/feature/schedule/components/ScheduleBoard";
-import { searchBoard } from "@/feature/communities/api/freeBoard";
+import { searchBoard } from "@/feature/communities/api/communityBoard";
 import { Board } from "@/feature/communities";
 import { CurrentLecture, requestCurrentSchedule } from "@/feature/schedule/api/getSchedule";
 

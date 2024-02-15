@@ -6,6 +6,10 @@ export interface UserState {
   name: string;
   point: number;
   role: "ADMIN" | "TEACHER" | "MENTOR" | "STUDENT" | "USER" | "WAITING";
+  classRoomId?: number;
+  grade?: number;
+  year?: number;
+  class?: number;
 }
 
 const { persistAtom } = recoilPersist(); // atom을 localStorage에 저장하기 위한 라이브러리

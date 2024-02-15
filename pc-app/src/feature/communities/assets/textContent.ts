@@ -27,11 +27,30 @@ export const CommunityHeaderContents = [
   },
 ];
 
+export const CommunityHeaderContentsClass = [
+  {
+    id: TYPE.CLASS_CATEGORY.NOTICE,
+    title: "공지사항 🔊",
+    content: "학교에서 공지사항을 안내해드립니다.",
+    location: "/notice",
+  },
+  {
+    id: TYPE.CLASS_CATEGORY.FREE,
+    title: "자유 게시판 ✨",
+    content: "어떤 생각이든 이야기든 자유롭게 공유해요",
+    location: "/free",
+  },
+];
+
 export const BoardCategoriesMap: Map<number, string> = new Map();
 BoardCategoriesMap.set(CODE.BOARD_CATEGORY.NOTICE, "notice");
 BoardCategoriesMap.set(CODE.BOARD_CATEGORY.FREE, "free");
 BoardCategoriesMap.set(CODE.BOARD_CATEGORY.COUNSELING, "counseling");
 BoardCategoriesMap.set(CODE.BOARD_CATEGORY.HOBBY, "hobby");
+
+export const ClassCategoriesMap: Map<number, string> = new Map();
+ClassCategoriesMap.set(TYPE.CLASS_CATEGORY.NOTICE, "notice");
+ClassCategoriesMap.set(TYPE.CLASS_CATEGORY.FREE, "free");
 
 export const SearchArticlesOptions = [
   {

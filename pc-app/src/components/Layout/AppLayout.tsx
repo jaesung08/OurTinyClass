@@ -9,12 +9,16 @@ import LogoutIcon from "@/assets/img/LogoutIcon";
 import { useCallback } from "react";
 import { logout } from "@/feature/auth/api/logout";
 import SpecialLecture from "@/assets/img/SpecialLecture";
+import ClassIcon from "@/assets/img/ClassIcon";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 type AppLayoutProps = {
   children: React.ReactNode;
 };
 
 function SideBar() {
+  const userInfo = useRecoilValue(userState);
   const navigate = useNavigate();
 
   const goLogin = useCallback(() => navigate("/auth/login"), [navigate]);
@@ -42,6 +46,10 @@ function SideBar() {
     navigate("/mypage");
   };
 
+  const goClass = () => {
+    navigate("/class");
+  };
+
   const onClickLogoutBtn = useCallback(async () => {
     try {
       await logout();
@@ -66,6 +74,13 @@ function SideBar() {
             <BoardIcon />
           </Button>
         </Tooltip>
+        {userInfo.grade ? (
+          <Tooltip color="success" content={"반별 게시판"} placement="right" className="capitalize">
+            <Button isIconOnly className="p-2 bg-lime-500" onClick={goClass} size="lg">
+              <ClassIcon />
+            </Button>
+          </Tooltip>
+        ) : null}
 
         <Tooltip color="success" content={"채팅"} placement="right" className="capitalize">
           <Button isIconOnly className="p-2 bg-lime-500" size="lg" onClick={goChat}>
@@ -101,12 +116,6 @@ function SideBar() {
 }
 
 function AppLayout({ children }: AppLayoutProps) {
-  return (
-    <div className="flex w-screen ">
-      <SideBar />
-      <div className=" flex-grow w-[92%]">{children}</div>
-    </div>
-  );
   return (
     <div className="flex w-screen ">
       <SideBar />
