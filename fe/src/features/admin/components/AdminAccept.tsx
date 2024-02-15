@@ -137,14 +137,18 @@ const MentorDetailModal = ({
   }, [isOpen, articleId]);
 
   const sendResult = async (isApprove: boolean) => {
-    if (articleId) {
-      try {
-        await requestMentorCertChange(articleId, isApprove);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        onClose();
+    try {
+      if (articleId) {
+        try {
+          await requestMentorCertChange(articleId, isApprove);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          onClose();
+        }
       }
+    } finally {
+      window.location.reload();
     }
   };
 
