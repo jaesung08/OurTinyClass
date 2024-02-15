@@ -37,7 +37,6 @@ type StudentDetailProps = {
 const StudentDetailModal = ({
   isOpen,
   onOpenChange,
-  onClose,
   articleId,
 }: StudentDetailProps) => {
   const [student, setStudent] = useState<StudentCertDetail>();
@@ -59,7 +58,7 @@ const StudentDetailModal = ({
       } catch (error) {
         console.error(error);
       } finally {
-        onClose();
+        window.location.reload();
       }
     }
   };
@@ -122,7 +121,6 @@ const StudentDetailModal = ({
 const MentorDetailModal = ({
   isOpen,
   onOpenChange,
-  onClose,
   articleId,
 }: StudentDetailProps) => {
   const [mentor, setMentor] = useState<MentorCertDetail>();
@@ -137,18 +135,14 @@ const MentorDetailModal = ({
   }, [isOpen, articleId]);
 
   const sendResult = async (isApprove: boolean) => {
-    try {
-      if (articleId) {
-        try {
-          await requestMentorCertChange(articleId, isApprove);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          onClose();
-        }
+    if (articleId) {
+      try {
+        await requestMentorCertChange(articleId, isApprove);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        window.location.reload();
       }
-    } finally {
-      window.location.reload();
     }
   };
 

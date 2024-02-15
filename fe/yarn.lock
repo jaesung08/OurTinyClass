@@ -6836,6 +6836,11 @@ filelist@^1.0.4:
   dependencies:
     minimatch "^5.0.1"
 
+filepond@^4.30.6:
+  version "4.30.6"
+  resolved "https://registry.yarnpkg.com/filepond/-/filepond-4.30.6.tgz#59ef22196f810be169c77f3f1fc1439931844a3a"
+  integrity sha512-gBsVKJgr5HFTkQSA/3R6utne4Qt6Pue0O3+k3IjjVBbaQxMgGMI0fXwoob9SdRRoULCs8BAhWjttM28hOAi/0w==
+
 fill-range@^7.0.1:
   version "7.0.1"
   resolved "https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz"
@@ -9498,6 +9503,11 @@ react-element-to-jsx-string@^15.0.0:
     "@base2/pretty-print-object" "1.0.1"
     is-plain-object "5.0.0"
     react-is "18.1.0"
+
+react-filepond@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/react-filepond/-/react-filepond-7.1.2.tgz#8f04d06396a59b5980dda479c095ed23e6d1f68b"
+  integrity sha512-vrlx9o/n+jGikh6jLey+PpUGYtEZn8MdeB6JFeX/5/N/Mu75IHG+MFQbv8R27bNXvS41mDtV9Fo5DG+s6siVIA==
 
 react-is@18.1.0:
   version "18.1.0"

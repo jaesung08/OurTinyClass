@@ -27,7 +27,7 @@ export interface LoginFormProps {
 export interface LoginResponse extends BaseResponse {
   data: {
     name: string;
-    role: number;
+    role: string;
     memberId: string;
     point: number;
     refreshToken: string;
