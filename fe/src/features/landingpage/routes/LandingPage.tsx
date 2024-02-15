@@ -33,6 +33,16 @@ export function LandingPage() {
     }
   };
 
+  function downloadFile() {
+    // `<a>` 요소 생성
+    const a = document.createElement("a");
+    a.href =
+      "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/OurTinyClassroom+Setup+0.0.0.exe"; // 다운로드할 파일의 URL 설정
+    document.body.appendChild(a); // `<a>` 요소를 DOM에 추가
+    a.click(); // 프로그램적으로 클릭 이벤트 발생
+    document.body.removeChild(a); // `<a>` 요소 제거
+  }
+
   const userInfo = useRecoilValue(userState);
   return (
     <section className="w-full h-lvh relative">
@@ -78,6 +88,7 @@ export function LandingPage() {
         </Navbar>
       </div>
       <Button
+        onPress={downloadFile}
         className="w-3/12 min-h-20 transform -translate-x-1/2 -translate-y-1/2 absolute bottom-24 left-1/2 text-3xl"
         color="primary">
         다운로드
