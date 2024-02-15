@@ -47,7 +47,7 @@ const CreateChatRoomModal = ({ isOpen, onOpenChange, onSubmit, isLoading }: Crea
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
   const selectedValue = useMemo(() => Array.from(selectedKeys).join(", "), [selectedKeys]);
   const [friendList, setFriendList] = useState<Array<ChatRoomMember>>([]);
-
+  const userInfo = useRecoilValue(userState);
   const onSelectItem = (key: string) => {
     setSelectedKeys(new Set([key]));
   };
@@ -55,7 +55,7 @@ const CreateChatRoomModal = ({ isOpen, onOpenChange, onSubmit, isLoading }: Crea
   useEffect(() => {
     const getUserList = async () => {
       const res = await requestGetClassroomMembers();
-      setFriendList(res.data);
+      setFriendList(res.data.filter((member) => member.memberId !== userInfo.memberId));
     };
     getUserList();
   }, []);

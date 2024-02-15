@@ -107,7 +107,6 @@ function Certification() {
   const [certificationStep, setCertificationStep] = useState(userInfo.role === "WAITING" ? 2 : 0);
   const [role, setRole] = useState<null | number>(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const onSelectRole = (selectedRole: number) => {
     setRole(selectedRole);
@@ -125,14 +124,12 @@ function Certification() {
 
     onSuccess: () => {
       // 회원 정보 등록 성공 처리
-      Swal.fire("성공!", "회원 정보 등록에 성공하였습니다.", "success").then(() => {
-        navigate("/auth/login");
-      });
+      Swal.fire("성공!", "회원 정보 등록에 성공하였습니다.", "success");
+      setCertificationStep(2);
       setLoading(false);
     },
     onError: (error: AxiosResponse) => {
       // 회원 정보 등록 실패 처리
-
       Swal.fire("에러 발생", error.data?.message ?? "회원 정보 등록에 실패하였습니다.", "error");
       setLoading(false);
     },
@@ -145,9 +142,8 @@ function Certification() {
 
     onSuccess: () => {
       // 회원 정보 등록 성공 처리
-      Swal.fire("성공!", "회원 정보 등록에 성공하였습니다.", "success").then(() => {
-        navigate("/auth/login");
-      });
+      Swal.fire("성공!", "회원 정보 등록에 성공하였습니다.", "success");
+      setCertificationStep(2);
       setLoading(false);
     },
     onError: (error: AxiosResponse) => {
@@ -191,7 +187,7 @@ function Certification() {
           loading={loading}
         />
       ) : null}
-      {certificationStep === 2 ? <WaitingConfirm /> : null}
+      {certificationStep === 2 || userInfo.role == "WAITING" ? <WaitingConfirm /> : null}
       <div className=" flex justify-center items-center mt-10">
         <Button className="text-white" onPress={onPressLogout} color="success">
           다른 계정으로 로그인하기
