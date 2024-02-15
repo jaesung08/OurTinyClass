@@ -28,6 +28,9 @@ values (12, 'ssafy12345', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJs
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
 values (13, 'ssafy123', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (14, 'admin', '$2a$10$WoExp6TLWrVwiNrtyD8Mh.4B9o2Kdjq9vtr2LhFwj1xiT3vVjto8C', '관리자', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN',
+        "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 
 
 
