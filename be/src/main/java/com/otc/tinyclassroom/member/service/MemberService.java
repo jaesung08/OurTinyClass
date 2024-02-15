@@ -1,6 +1,7 @@
 package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.member.controller.MemberClassRoomNumberResponseDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
@@ -170,6 +171,7 @@ public class MemberService {
     /**
      * 같은 반의 멤버를(선생님 포함) 조회한다.
      */
+    @Transactional(readOnly = true)
     public List<MemberProfileDto> getMyClassRoomMember(Member member) {
         List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
         if (memberClassRooms.isEmpty()) {
@@ -179,5 +181,21 @@ public class MemberService {
         ClassRoom classRoom = memberClassRoom.getClassRoom();
         List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoom.getId());
         return members.stream().map(MemberProfileDto::from).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Transactional
+    public MemberClassRoomNumberResponseDto getMemberClassRoomNumber(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(
+            () -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
+
+        if(memberClassRooms.isEmpty()) {
+            throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
+        }
+        MemberClassRoom memberClassRoom = memberClassRooms.get(memberClassRooms.size() - 1);
+        ClassRoom classRoom = memberClassRoom.getClassRoom();
+        return MemberClassRoomNumberResponseDto.of(classRoom.getId(), classRoom.getGrade(), classRoom.getNumber(), classRoom.getYear());
     }
 }
