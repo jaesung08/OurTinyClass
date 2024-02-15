@@ -5,6 +5,7 @@ import com.otc.tinyclassroom.chat.dto.response.ChatMessageResponseDto;
 import com.otc.tinyclassroom.chat.dto.response.ChatRoomResponseDto;
 import com.otc.tinyclassroom.chat.service.ChatService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class ChatRestController {
     /**
      * 채팅룸 생성 메서드.
      */
+    @Operation(summary = "채팅룸 생성", description = "채팅룸을 생성합니다.", tags = { "채팅" })
     @PostMapping("")
     public BaseResponse<?> createChatRoom(@RequestBody ChatRoomCreateRequestDto dto) {
 
@@ -41,6 +43,7 @@ public class ChatRestController {
     /**
      * 내가 구독하고 있는 채팅룸 리스트를 읽어오는 메서드.
      */
+    @Operation(summary = "채팅룸 리스트 조회", description = "내가 속한 모든 채팅룸 리스트를 가져옵니다.", tags = { "채팅" })
     @GetMapping("")
     public BaseResponse<?> findAllChatRoom() {
 
@@ -52,6 +55,7 @@ public class ChatRestController {
     /**
      * 채팅 방에 입장하면 지금까지의 채팅 메세지를 읽어오는 메서드.
      */
+    @Operation(summary = "기존 메세지 조회", description = "채팅 방에 입장하면 지금까지의 채팅 메세지를 가져옵니다.", tags = { "채팅" })
     @GetMapping("/{roomId}")
     public BaseResponse<?> findChatMessage(@PathVariable("roomId") String roomId) {
 
@@ -63,6 +67,7 @@ public class ChatRestController {
     /**
      * roomId에 해당하는 채팅방에 대한 정보를 읽어오는 메서드.
      */
+    @Operation(summary = "채팅방 정보 조회", description = "roomId를 전달하면 해당 채팅방 정보를 가져옵니다.", tags = { "채팅" })
     @GetMapping("/detail/{roomId}")
     public BaseResponse<?> findChatRoomDetail(@PathVariable("roomId") String roomId) {
         ChatRoomResponseDto chatRoomDetail = chatService.findSubscribedChatRoomDetail(roomId);

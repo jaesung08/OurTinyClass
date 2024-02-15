@@ -6,6 +6,7 @@ import com.otc.tinyclassroom.attendance.dto.response.DailyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.dto.response.MonthlyAttendanceResponseDto;
 import com.otc.tinyclassroom.attendance.service.AttendanceService;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class AttendanceController {
     /**
      * 등교시간 기록.
      */
+    @Operation(summary = "등교시간 기록", description = "체크인을 하여 등교시간이 기록됩니다.", tags = { "출석" })
     @PostMapping("")
     public BaseResponse<AttendanceCheckInResponseDto> checkIn() {
         AttendanceCheckInResponseDto result = attendanceService.checkIn();
@@ -41,6 +43,7 @@ public class AttendanceController {
     /**
      * 하교시간 기록.
      */
+    @Operation(summary = "하교시간 기록", description = "체크아웃을 하여 하교시간이 기록됩니다.", tags = { "출석" })
     @PatchMapping("/checkout")
     public BaseResponse<AttendanceCheckOutResponseDto> checkOut() {
         AttendanceCheckOutResponseDto result = attendanceService.checkOut();
@@ -50,6 +53,7 @@ public class AttendanceController {
     /**
      * 오늘 출석기록 조회.
      */
+    @Operation(summary = "오늘 출석기록 조회.", description = "오늘의 출석을 조회합니다.", tags = { "출석" })
     @GetMapping("/daily/{memberId}")
     public BaseResponse<DailyAttendanceResponseDto> getDailyAttendanceRecord(
         @PathVariable("memberId") String memberId
@@ -63,6 +67,7 @@ public class AttendanceController {
     /**
      * 한달치 출석기록 조회.
      */
+    @Operation(summary = "한 달 출석기록 조회.", description = "특정 달의 출석을 조회합니다.", tags = { "출석" })
     @GetMapping("/monthly/{memberId}")
     public BaseResponse<MonthlyAttendanceResponseDto> getMonthlyTotalAttendanceRecord(
         @PathVariable("memberId") String memberId,
