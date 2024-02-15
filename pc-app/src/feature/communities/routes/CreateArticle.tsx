@@ -7,6 +7,8 @@ import { fileAxios } from "@/lib/fileAxios";
 import { editDetail, getDetail } from "../api/detailBoard";
 import Swal from "sweetalert2";
 import { API_URL } from "@/config";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 // todo : 카테고리 결정될 경우 아래 데이터 값들 변경해줘야함
 const CATEGORYLISTS = [
@@ -14,6 +16,21 @@ const CATEGORYLISTS = [
     category: "공지사항",
     value: "notice",
   },
+  {
+    category: "자유 게시판",
+    value: "free",
+  },
+  {
+    category: "고민 나눔",
+    value: "counseling",
+  },
+  {
+    category: "취미 공유",
+    value: "hobby",
+  },
+];
+
+const USERCATEGORLISTS = [
   {
     category: "자유 게시판",
     value: "free",
@@ -38,6 +55,7 @@ function CreateArticle() {
   const selectCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setArticleCategory(e.target.value);
   };
+  const user = useRecoilValue(userState)
   const { articleId } = useParams();
 
   useEffect(() => {
@@ -163,21 +181,29 @@ function CreateArticle() {
                 <Select
                   className="bg-white w-1/6 rounded-xl"
                   size="sm"
-                  aria-label="어떤 카테고리에 글을 작성할지 선택해주세요. "
-                  defaultSelectedKeys={[CATEGORYLISTS[0].value]}
+                  aria-label="어떤 카테고리에 글을 작성할지 선택해주세요."
+                  defaultSelectedKeys={
+                    user.role === "ADMIN"
+                      ? [CATEGORYLISTS[0].value]
+                      : [USERCATEGORLISTS[0].value]
+                  }
                   onChange={(e) => selectCategory(e)}
-                  isDisabled={isModify}
-                >
-                  {CATEGORYLISTS.map(
-                    (
-                      item: { category: string; value: string }
-                      // index: number
-                    ) => (
-                      <SelectItem key={item.value} value={item.value}>
-                        {item.category}
-                      </SelectItem>
-                    )
-                  )}
+                  isDisabled={isModify}>
+                  {user.role === "ADMIN"
+                    ? CATEGORYLISTS.map(
+                        (item: { category: string; value: string }) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.category}
+                          </SelectItem>
+                        )
+                      )
+                    : USERCATEGORLISTS.map(
+                        (item: { category: string; value: string }) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.category}
+                          </SelectItem>
+                        )
+                      )}
                 </Select>
                 <Input
                   className="bg-white w-4/6"

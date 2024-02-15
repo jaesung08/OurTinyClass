@@ -1,5 +1,9 @@
-import { BoardCategoriesMap, CommunityHeaderContents, SearchArticlesOptions } from "../assets/textContent";
-import { Board, TYPE } from "../types";
+import {
+  BoardCategoriesMap,
+  CommunityHeaderContents,
+  SearchArticlesOptions,
+} from "../assets/textContent";
+import { Board } from "../types";
 import {
   Button,
   Divider,
@@ -21,6 +25,7 @@ import { searchBoard } from "../api/freeBoard";
 import { NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { getPathInfo } from "../utils/getPathInfo";
 import EditIcon from "@/assets/img/EditIcon";
+import { CODE } from "@/types/Code";
 
 interface CommunityHeaderProps {
   boardCategory: number;
@@ -146,7 +151,7 @@ function Community() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [boardCategory, setBoardCategory] = useState(TYPE.BOARD_CATEGORY.NOTICE);
+  const [boardCategory, setBoardCategory] = useState(CODE.BOARD_CATEGORY.NOTICE);
   const location = useLocation();
   useEffect(() => {
     const { boardCategory } = getPathInfo(location.pathname);
@@ -162,9 +167,9 @@ function Community() {
         page: currentPage,
       });
       const data = res.data;
-      if (currentPage === res.data.number + 1) {
+      if (currentPage === res.data.number+1) {
         setBoardList(data.content);
-        setTotalPage(data.totalPages);
+        setTotalPage(data.totalPages-1);
       }
     } catch (e) {
       console.error(e);
