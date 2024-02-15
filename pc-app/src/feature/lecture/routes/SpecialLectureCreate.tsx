@@ -6,18 +6,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../assets/datepicker.scss";
 import { createLecture } from "../api/lecture";
 import { useNavigate } from "react-router-dom";
+import { userState } from "@/atoms/user";
+import { useRecoilValue } from "recoil";
 
 export const SpecialLectureCreate = () => {
-  // TODO : user ID 가 아닌 id 값이필요함
-  // TODO : const userInfo = useRecoilState(userState);
+  const userInfo = useRecoilValue(userState);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   // TODO : 요일은 추후 파싱처리 필요
-  const [dayOfWeek, setDayOfWeek] = useState<number>(0);
-  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [dayOfWeek] = useState<number>(0);
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [lectureCategoryType, setLectureCategoryType] = useState<number>(0);
   // TODO : 강의 타입 특강은 2로 고정
-  const [lectureType, setLectureType] = useState<number>(2);
+  const [lectureType] = useState<number>(2);
   const [timeTable, setTimeTable] = useState<number>(0);
 
   const navigator = useNavigate();
@@ -31,25 +32,26 @@ export const SpecialLectureCreate = () => {
 
   const LectureCreate = async () => {
     try {
-      await createLecture(
-        // TODO : userId 바꿔줘야함
-        1,
-        title,
-        description,
-        dayOfWeek,
-        timeTable,
-        lectureType,
-        lectureCategoryType,
-        startDate
-      );
-      navigator("/lecture");
+      if (startDate != null) {
+        await createLecture(
+          userInfo.userId,
+          title,
+          description,
+          dayOfWeek,
+          timeTable,
+          lectureType,
+          lectureCategoryType,
+          startDate
+        );
+        navigator("/lecture");
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full  h-screen overflow-y-auto">
       <p className="text-2xl ml-12 my-5">특강 생성</p>
       <div className="flex flex-col ml-12 my-5 gap-5">
         <p className="text-lg">특강 분류</p>
@@ -118,10 +120,7 @@ export const SpecialLectureCreate = () => {
           </Select>
         </div>
       </div>
-      <Button
-        className="ml-12 my-5 w-2/12 bg-lime-500 text-white"
-        onClick={() => LectureCreate()}
-      >
+      <Button className="ml-12 my-5 w-2/12 bg-lime-500 text-white" onClick={() => LectureCreate()}>
         생성하기
       </Button>
     </section>

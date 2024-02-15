@@ -39,7 +39,7 @@ function SideBar() {
   };
 
   const goMyInfo = () => {
-    navigate("/user-info");
+    navigate("/mypage");
   };
 
   const onClickLogoutBtn = useCallback(async () => {

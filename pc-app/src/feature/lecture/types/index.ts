@@ -19,4 +19,5 @@ export interface Lecture {
 export interface LectureCardProps {
   lecture: Lecture;
   deleteHandler: (lectureId: number) => Promise<void>;
+  addLectureToSchedule: (lecture: Lecture) => Promise<void>;
 }

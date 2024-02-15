@@ -6,22 +6,23 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../assets/datepicker.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import { editLecture, getEditLecture } from "../api/lecture";
+import { useRecoilValue } from "recoil";
+import { userState } from "@/atoms/user";
 
 export const SpecialLectureEdit = () => {
   const navigator = useNavigate();
   const location = useLocation();
   const locationLength = location.pathname.split("/");
   const lectureId = locationLength[locationLength.length - 1];
-  // TODO : user ID 가 아닌 id 값이필요함
-  // TODO : const userInfo = useRecoilState(userState);
+  const userInfo = useRecoilValue(userState);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   // TODO : 요일은 추후 파싱처리 필요
-  const [dayOfWeek, setDayOfWeek] = useState<number>(0);
-  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [dayOfWeek] = useState<number>(0);
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [lectureCategoryType, setLectureCategoryType] = useState<number>(0);
   // TODO : 강의 타입 특강은 2로 고정
-  const [lectureType, setLectureType] = useState<number>(2);
+  const [lectureType] = useState<number>(2);
   const [timeTable, setTimeTable] = useState<number>(0);
 
   const selectTime = (e: React.ChangeEvent<HTMLSelectElement>): void => {
@@ -49,25 +50,27 @@ export const SpecialLectureEdit = () => {
 
   const lectureEdit = async (lectureId: number) => {
     try {
-      await editLecture(
-        21,
-        title,
-        description,
-        dayOfWeek,
-        timeTable,
-        lectureType,
-        lectureCategoryType,
-        startDate,
-        lectureId
-      );
-      navigator("/lecture");
+      if (startDate != null) {
+        await editLecture(
+          userInfo.userId,
+          title,
+          description,
+          dayOfWeek,
+          timeTable,
+          lectureType,
+          lectureCategoryType,
+          startDate,
+          lectureId
+        );
+        navigator("/lecture");
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full  h-screen overflow-y-auto">
       <p className="text-2xl ml-12 my-5">특강 생성</p>
       <div className="flex flex-col ml-12 my-5 gap-5">
         <p className="text-lg">특강 분류</p>
@@ -136,10 +139,7 @@ export const SpecialLectureEdit = () => {
           </Select>
         </div>
       </div>
-      <Button
-        className="ml-12 my-5 w-2/12 bg-lime-500 text-white"
-        onClick={() => lectureEdit(Number(lectureId))}
-      >
+      <Button className="ml-12 my-5 w-2/12 bg-lime-500 text-white" onClick={() => lectureEdit(Number(lectureId))}>
         수정하기
       </Button>
     </section>

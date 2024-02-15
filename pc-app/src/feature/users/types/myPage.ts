@@ -14,6 +14,8 @@ export interface MyPageUserInfo {
   favoriteClassSecond: string;
   favoriteClassThird: string;
   classRoomTeacher: string; // 줄 예정
+  lectureCnt: number;
+  totalLectureTime: number; 
   likedFiveArticles: Array<{
     title: string;
     articleId: number;

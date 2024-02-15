@@ -34,14 +34,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
-
-const friendList = [
-  {
-    memberId: "ssafy1234",
-    name: "박재선",
-    profileImage: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-  },
-];
+import { ChatRoomMember, requestGetClassroomMembers } from "@/feature/users/api/members";
 
 type CreateChatRoomModalProps = {
   isOpen: boolean;
@@ -53,10 +46,19 @@ type CreateChatRoomModalProps = {
 const CreateChatRoomModal = ({ isOpen, onOpenChange, onSubmit, isLoading }: CreateChatRoomModalProps) => {
   const [selectedKeys, setSelectedKeys] = useState(new Set(["text"]));
   const selectedValue = useMemo(() => Array.from(selectedKeys).join(", "), [selectedKeys]);
-
+  const [friendList, setFriendList] = useState<Array<ChatRoomMember>>([]);
+  const userInfo = useRecoilValue(userState);
   const onSelectItem = (key: string) => {
     setSelectedKeys(new Set([key]));
   };
+
+  useEffect(() => {
+    const getUserList = async () => {
+      const res = await requestGetClassroomMembers();
+      setFriendList(res.data.filter((member) => member.memberId !== userInfo.memberId));
+    };
+    getUserList();
+  }, []);
 
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -75,7 +77,7 @@ const CreateChatRoomModal = ({ isOpen, onOpenChange, onSubmit, isLoading }: Crea
                 >
                   {friendList.map((friend) => (
                     <ListboxItem key={friend.memberId} onPress={() => onSelectItem(friend.memberId)}>
-                      <User name={friend.name} avatarProps={{ src: friend.profileImage }} />
+                      <User name={friend.name} avatarProps={{ src: friend.profileUrl }} />
                     </ListboxItem>
                   ))}
                 </Listbox>

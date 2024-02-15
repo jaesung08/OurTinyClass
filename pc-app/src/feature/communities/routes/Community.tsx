@@ -1,8 +1,4 @@
-import {
-  BoardCategoriesMap,
-  CommunityHeaderContents,
-  SearchArticlesOptions,
-} from "../assets/textContent";
+import { BoardCategoriesMap, CommunityHeaderContents, SearchArticlesOptions } from "../assets/textContent";
 import { Board } from "../types";
 import {
   Button,
