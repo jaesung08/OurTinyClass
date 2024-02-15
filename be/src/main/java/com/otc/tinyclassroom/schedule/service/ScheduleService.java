@@ -5,6 +5,7 @@ import com.otc.tinyclassroom.lecture.entity.Lecture;
 import com.otc.tinyclassroom.lecture.entity.type.LectureApprovalStatusType;
 import com.otc.tinyclassroom.lecture.entity.type.LectureType;
 import com.otc.tinyclassroom.lecture.repository.LectureRepository;
+import com.otc.tinyclassroom.member.entity.ClassRoom;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
@@ -12,9 +13,11 @@ import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
 import com.otc.tinyclassroom.mypage.event.LectureBadgeEvent;
 import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
+import com.otc.tinyclassroom.schedule.dto.ScheduleDetailDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
+import com.otc.tinyclassroom.schedule.dto.response.ScheduleUrlResponseDto;
 import com.otc.tinyclassroom.schedule.entity.MemberSchedule;
 import com.otc.tinyclassroom.schedule.entity.Schedule;
 import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
@@ -22,6 +25,7 @@ import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import com.otc.tinyclassroom.schedule.repository.MemberScheduleRepository;
 import com.otc.tinyclassroom.schedule.repository.ScheduleRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +154,7 @@ public class ScheduleService {
         // 스케줄 삭제를 시도하는 사람이 학생인 경우.
         if (currentMember.getRole() == Role.ROLE_STUDENT) {
             // 스케줄을 추가한 사람이 관리자이거나, 스케줄을 추가한 사람과 삭제하려는 사람이 다른 경우 exception 발생.
-            if (!schedule.deletable() || !Objects.equals(schedule.memberId(),
+            if (!schedule.deletable() || !Objects.equals(schedule.userId(),
                 currentMember.getId())) {
                 throw new ScheduleException(ScheduleErrorCode.NO_AUTH_SCHEDULE_DELETE);
             }
@@ -159,6 +163,64 @@ public class ScheduleService {
         scheduleRepository.deleteScheduleById(id);
         memberScheduleRepository.deleteByMemberIdAndScheduleId(currentUserId, id);
 
+    }
+
+    /**
+     * 현재 수강해야 할 스케줄 조회 메서드.
+     */
+    public ScheduleUrlResponseDto getCurrentScheduleWithUrl() {
+
+        // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
+        Long currentUserId = jwtProvider.getCurrentMemberId();
+        Member member = getMemberById(currentUserId);
+
+        // 그 멤버가 배정된 반에 할당된 선생이 없을 경우 Exception 발생.
+        Member teacher = getClassroomTeacher(member);
+
+        int timeTable = 0;
+        // 10분 전부터 보여주기 수강해야할 스케줄을 보여주기 위해 10분 추가한 뒤 시간을 계산한다.
+        // ex) 08시 53분에서 10분을 더하면 09시 3분 => 즉 08시 53분도 09시로 계산.
+        int currentHour = LocalDateTime.now().getHour();
+        if (currentHour < 9){
+            timeTable = 0;
+        }else if (currentHour > 16){
+            timeTable = 6;
+        }else{
+            int nextHour = LocalDateTime.now().plusMinutes(10).getHour();
+            if (nextHour <= 12){
+                timeTable = nextHour - 9;
+            }else {
+                timeTable = nextHour - 10;
+            }
+        }
+
+        ScheduleDetailDto scheduleDetailDto = scheduleRepository.findSoonScheduleDetailByMemberIdAndScheduleDateAndTimeTable(
+            member.getMemberId(),
+            teacher.getMemberId(),
+            LocalDate.now(),
+            timeTable
+        ).orElse(null);
+
+        ScheduleUrlResponseDto scheduleUrlResponseDto = null;
+
+        // 지금 참여해야 할 강의가 없으면 null 반환.
+        if (Objects.isNull(scheduleDetailDto)) {
+            return scheduleUrlResponseDto;
+        }
+
+        if (scheduleDetailDto.lectureType() == LectureType.SPECIAL_LECTURE) {
+            // 참여해야 할 강의가 특강이라면 lectureUrl 사용.
+            scheduleUrlResponseDto = ScheduleUrlResponseDto.from(scheduleDetailDto);
+        } else {
+            // 현재 학생의 반 찾아오기.
+            List<ClassRoom> classRoomByMemberId = memberClassRoomRepository.findClassRoomByMemberId(member.getId());
+            ClassRoom classRoom = classRoomByMemberId.get(classRoomByMemberId.size() - 1);
+
+            // 참여해야 할 강의가 특강이 아니라면 roomUrl 사용.
+            scheduleUrlResponseDto = ScheduleUrlResponseDto.createByRoomUrl(scheduleDetailDto, classRoom.getRoomUrl());
+        }
+
+        return scheduleUrlResponseDto;
     }
 
     private Lecture getLectureById(Long lectureId) {

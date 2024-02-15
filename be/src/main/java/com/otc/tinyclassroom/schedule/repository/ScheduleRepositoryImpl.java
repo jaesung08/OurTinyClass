@@ -5,6 +5,7 @@ import static com.otc.tinyclassroom.member.entity.QMember.member;
 import static com.otc.tinyclassroom.schedule.entity.QSchedule.schedule;
 
 import com.otc.tinyclassroom.schedule.dto.ScheduleCheckDto;
+import com.otc.tinyclassroom.schedule.dto.ScheduleDetailDto;
 import com.otc.tinyclassroom.schedule.dto.ScheduleListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -70,8 +71,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
 
 
     /**
-     * 스케줄 삭제 메서드.
-     * 소프트 딜리트 적용.
+     * 스케줄 삭제 메서드. 소프트 딜리트 적용.
      *
      * @param scheduleId 지우고자 하는 스케줄의 pk.
      * @return 지운 스케줄 갯수. 정상 삭제 시 1.
@@ -117,10 +117,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     }
 
     /**
-     * pk에 해당하는 멤버가 해당 날짜와 교시에 수강하고 있는 스케줄을 반환하는 메서드.
-     * insert 이전에 해당 날짜와 교시에 수강하는 강의가 있는지 확인하기 위한 용도.
+     * 같은 memberId를 가진 멤버가 해당 날짜와 교시에 수강하고 있는 스케줄을 반환하는 메서드. insert 이전에 해당 날짜와 교시에 수강하는 강의가 있는지 확인하기 위한 용도.
      *
-     * @param memberId     멤버 pk.
+     * @param memberId     멤버 id.
      * @param scheduleDate 스케줄의 날짜.
      * @param timeTable    스케줄의 교시.
      * @return 스케줄 Dto.
@@ -129,26 +128,69 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
     public Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(
         String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
-                jpaQueryFactory
-                        .select(Projections.constructor(ScheduleCheckDto.class,
-                                schedule.id,
-                                member.id,
-                                schedule.scheduleDate,
-                                schedule.dayOfWeek,
-                                schedule.timeTable,
-                                schedule.deletable
-                        ))
-                        .from(schedule)
-                        .join(schedule.member, member)
-                        .where(
-                                studentAndTeacherNameEq(memberId, teacherMemberId),
-                                schedule.scheduleDate.eq(scheduleDate),
-                                schedule.timeTable.eq(timeTable),
-                                schedule.deletedAt.isNull()
-                        )
-                        .fetchFirst()
+            jpaQueryFactory
+                .select(Projections.constructor(ScheduleCheckDto.class,
+                    schedule.id,
+                    member.id,
+                    schedule.scheduleDate,
+                    schedule.dayOfWeek,
+                    schedule.timeTable,
+                    schedule.deletable
+                ))
+                .from(schedule)
+                .join(schedule.member, member)
+                .where(
+                    studentAndTeacherNameEq(memberId, teacherMemberId),
+                    schedule.scheduleDate.eq(scheduleDate),
+                    schedule.timeTable.eq(timeTable),
+                    schedule.deletedAt.isNull()
+                )
+                .fetchFirst()
         );
     }
+
+    /**
+     * 같은 memberId를 가진 멤버가 해당 날짜와 교시에 수강하고 있는 스케줄을 반환하는 메서드.
+     * findScheduleByMemberIdAndScheduleDateAndTimeTable 보다 더 많은 정보 포함.
+     *
+     * @param memberId 사용자 id.
+     * @param teacherMemberId 담임 선생 id.
+     * @param scheduleDate 현재 날짜.
+     * @param timeTable 현재 교시.
+     * @return url이 포함된 스케줄 dto.
+     */
+
+    @Override
+    public Optional<ScheduleDetailDto> findSoonScheduleDetailByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
+        return Optional.ofNullable(
+            jpaQueryFactory
+                .select(Projections.constructor(
+                    ScheduleDetailDto.class,
+                    lecture.id,
+                    lecture.title,
+                    lecture.lectureType,
+                    lecture.lectureCategoryType,
+                    schedule.scheduleDate,
+                    schedule.dayOfWeek,
+                    schedule.timeTable,
+                    lecture.lectureUrl
+                ))
+                .from(schedule)
+                .join(schedule.lecture, lecture)
+                .join(schedule.member, member)
+                .where(
+                    // 스케줄 memberId가 현재 학생의 혹은 그 학생이 담당하는 선생의 memberId 값과 같고
+                    studentAndTeacherNameEq(memberId, teacherMemberId),
+                    schedule.scheduleDate.eq(scheduleDate),
+                    schedule.timeTable.goe(timeTable),
+                    // 소프트 딜리트 되지 않은 경우
+                    schedule.deletedAt.isNull()
+                )
+                .orderBy(schedule.timeTable.asc())
+                .fetchFirst()
+        );
+    }
+
 
     /**
      * 스케줄이 목표 학생 혹은 해당 학생 반의 선생의 스케줄인지 검사하는 동적쿼리문.

@@ -11,10 +11,13 @@ import com.otc.tinyclassroom.lecture.entity.type.LectureCategoryType;
 import com.otc.tinyclassroom.media.service.MediaService;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MemberClassRoom;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentErrorCode;
+import com.otc.tinyclassroom.member.exception.ClassAssignmentException;
 import com.otc.tinyclassroom.member.exception.MemberErrorCode;
 import com.otc.tinyclassroom.member.exception.MemberException;
 import com.otc.tinyclassroom.member.repository.MemberClassRoomRepository;
 import com.otc.tinyclassroom.member.repository.MemberRepository;
+import com.otc.tinyclassroom.member.service.MemberService;
 import com.otc.tinyclassroom.mypage.dto.request.EditMyInfoRequestDto;
 import com.otc.tinyclassroom.mypage.dto.response.AttendanceResponseDto;
 import com.otc.tinyclassroom.mypage.dto.response.ClassRoomMembersResponseDto;
@@ -55,6 +58,7 @@ public class MyPageService {
     private final HeartService heartService;
     private final MediaService mediaService;
     private final BadgeService badgeService;
+    private final MemberService memberService;
     private final ArticleService articleService;
     private final GoalService goalService;
     private final MemberScheduleService memberScheduleService;
@@ -65,18 +69,19 @@ public class MyPageService {
      */
     public MyPageResponseDto getBasicInfos() {
         Long currentMemberId = jwtProvider.getCurrentMemberId();
-        Member member = memberRepository.findById(currentMemberId).orElseThrow(
-            () -> new MyPageException(MyPageErrorCode.NO_USER_FOUND)
-        );
+
         int grade = 0;
         int classNumber = 0;
 
         List<MemberClassRoom> classes = memberClassRoomRepository.findByMemberId(currentMemberId);
-        if (!classes.isEmpty()){
-            MemberClassRoom recentClass = classes.get(classes.size() - 1);
-            grade = recentClass.getClassRoom().getGrade();
-            classNumber = recentClass.getClassRoom().getNumber();
+
+        if (classes.isEmpty()) {
+            throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
         }
+
+        MemberClassRoom recentClass = classes.get(classes.size() - 1);
+        grade = recentClass.getClassRoom().getGrade();
+        classNumber = recentClass.getClassRoom().getNumber();
         AttendanceResponseDto attendanceResponseDto = getAttendanceRate();
 
         Long lectureCnt = memberScheduleService.countByMemberId(currentMemberId);
@@ -94,8 +99,10 @@ public class MyPageService {
             favoriteClassThird = favoriteClass.size() > 2 && favoriteClass.get(2) != null ? favoriteClass.get(2).getKorName() : null;
         }
 
-        // TODO: 담임선생님 가져오기
-        String classRoomTeacher = "김관식";
+        String classRoomTeacher = "";
+        if (classNumber != 0) {
+            memberService.getMyTeacher(recentClass.getClassRoom().getId());
+        }
 
         // 이번주 목표 가져오기
         GoalResponseDto thisWeekGoal = goalService.getThisWeekGoal();
@@ -105,6 +112,10 @@ public class MyPageService {
 
         List<MyPageArticleResponseDto> likedArticlesDto = heartService.searchLikedArticles(0, 5);
         List<MyPageArticleResponseDto> myArticlesDto = articleService.searchMyArticles(0, 5);
+
+        Member member = memberRepository.findById(currentMemberId).orElseThrow(
+            () -> new MyPageException(MyPageErrorCode.NO_USER_FOUND)
+        );
         return MyPageResponseDto.of(member.getName(), grade, classNumber, classRoomTeacher, member.getProfileUrl(), member.getPoint(), thisWeekGoal.content(),
             lectureCnt, totalLectureTime,
             attendanceResponseDto.attendanceRate(), attendanceResponseDto.attend(), attendanceResponseDto.lateOrLeaveFast(), attendanceResponseDto.absent(),
@@ -132,7 +143,7 @@ public class MyPageService {
             () -> new MyPageException(MyPageErrorCode.NO_USER_FOUND)
         );
         StringBuilder sb = new StringBuilder();
-        if (dto.name() != null && !dto.name().isEmpty()){
+        if (dto.name() != null && !dto.name().isEmpty()) {
             member.updateName(dto.name());
             sb.append("이름이 변경되었습니다.").append('\n');
         }

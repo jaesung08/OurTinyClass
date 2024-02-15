@@ -81,8 +81,7 @@ public class Member {
         this.email = email;
         this.birthday = birthday;
         this.point = point;
-        // TODO : 실제 배포시에는 Role.ROLE_USER 로 바꿀것!
-        this.role = Role.ROLE_ADMIN;
+        this.role = Role.ROLE_USER;
         this.profileUrl = profileUrl;
         this.deletedAt = null; 
     }
