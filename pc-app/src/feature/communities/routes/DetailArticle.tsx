@@ -16,13 +16,14 @@ import CommentInput from "../components/CommentInput";
 import { Comment } from "../types";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
+import { deleteBoard } from "../api/communityBoard";
 
 function DetailArticle() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState<Comment[]>([]);
   const [boardDetails, setBoardDetails] = useState<null | BoardDetail>(null);
   const { articleId } = useParams();
-  const user = useRecoilValue(userState)
+  const userInfo = useRecoilValue(userState);
   const navigator = useNavigate();
 
   // 렌더링 시 데이터 불러오는 부분
@@ -57,20 +58,18 @@ function DetailArticle() {
   const commentRemove = (commentId: number | undefined) => {
     try {
       removeComment(commentId);
-      // 여기에 전체 댓글 갱신
     } catch (error) {
       console.error(error);
     }
   };
-
+  const boardDelete = async (articleId: number) => {
+    await deleteBoard(articleId);
+    navigator("/communities");
+  };
   // 댓글 수정 함수
-  const commentEdit = (
-    commentId: number,
-    content: string,
-  ) => {
+  const commentEdit = (commentId: number, content: string) => {
     try {
       editComment(commentId, content);
-
     } catch (error) {
       console.error(error);
     }
@@ -113,19 +112,26 @@ function DetailArticle() {
                         : ""}
                     </span>
                   </div>
-                  {
-                    user.memberId === boardDetails?.name
-                    ?<Button
-                    onClick={goEditArticle}
-                    variant="ghost"
-                    color="success"
-                    className=" font-bold"
-                  >
-                    수정
-                  </Button>
-                  : null
-                  }
-                  
+                  {userInfo.name === boardDetails?.name ? (
+                    <div className="flex gap-10">
+                      <Button
+                        onClick={goEditArticle}
+                        variant="ghost"
+                        color="success"
+                        className=" font-bold"
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        onClick={() => boardDelete(boardDetails.id)}
+                        variant="ghost"
+                        color="danger"
+                        className=" font-bold"
+                      >
+                        삭제
+                      </Button>
+                    </div>
+                  ) : null}
                 </div>
               </Skeleton>
             </div>
