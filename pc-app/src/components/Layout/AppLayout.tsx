@@ -47,7 +47,7 @@ function SideBar() {
   };
 
   const goClass = () => {
-    navigate("/class");
+    navigate("/communities/class");
   };
 
   const onClickLogoutBtn = useCallback(async () => {

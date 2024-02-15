@@ -1,4 +1,5 @@
 import { CODE } from "@/types/Code";
+import { TYPE } from "..";
 
 export const CommunityHeaderContents = [
   {

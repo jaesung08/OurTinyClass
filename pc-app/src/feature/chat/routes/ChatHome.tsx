@@ -189,9 +189,9 @@ const ChatHome = () => {
               </Button>
             </Tooltip>
           </div>
-
-          <ConversationList className="h">
-            {chatRoomList.length ? (
+          {chatRoomList.length ? (
+           <ConversationList className="h">
+            {
               chatRoomList.map((room) => (
                 <Conversation
                   key={room.roomId}
@@ -199,11 +199,11 @@ const ChatHome = () => {
                   active={currentRoom && currentRoom.roomId === room.roomId ? true : false}
                   onClick={() => setCurrentRoomId(room.roomId)}
                 />
-              ))
-            ) : (
-              <p className=" text-center mt-40 font-semibold text-green-500">채팅방을 추가해주세요.</p>
-            )}
+              ))}
           </ConversationList>
+           ) : (
+          <p className=" text-center mt-40 font-semibold text-green-500">채팅방을 추가해주세요.</p>
+            )}
         </Sidebar>
         {currentRoom ? (
           <ChatContainer className=" h-[99vh]">

@@ -6,7 +6,6 @@ export const createBoard = (
   articleType: string,
   classRoomId?: number
 ) => {
-  console.log(articleType, classRoomId);
   if (classRoomId) {
     return commonAxios.post("/community/articles", {
       classRoomId,

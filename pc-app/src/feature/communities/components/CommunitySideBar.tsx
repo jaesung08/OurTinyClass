@@ -6,7 +6,7 @@ import { getPathInfo } from "../utils/getPathInfo";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
 
-function FreeBoardHeader() {
+function CommunitySideBar() {
   const userInfo = useRecoilValue(userState);
   const location = useLocation();
   const [boardCategory, setBoardCategory] = useState(CODE.BOARD_CATEGORY.NOTICE);
@@ -31,6 +31,7 @@ function FreeBoardHeader() {
     } else {
       boardState ? setBoardType(boardState.boardType) : null;
     }
+    
   }, [location]);
 
   const selectionStyle = (_boardType: number, _boardCategory: number): string => {
@@ -78,4 +79,4 @@ function FreeBoardHeader() {
   );
 }
 
-export default FreeBoardHeader;
+export default CommunitySideBar;

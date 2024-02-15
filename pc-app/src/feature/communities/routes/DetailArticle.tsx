@@ -4,8 +4,6 @@ import { getDetail } from "../api/detailBoard";
 import { editComment, removeComment } from "../api/comments";
 import { BoardDetail } from "../types";
 import {
-  BreadcrumbItem,
-  Breadcrumbs,
   Button,
   Skeleton,
 } from "@nextui-org/react";
@@ -83,11 +81,6 @@ function DetailArticle() {
       <div className="w-full xl:w-10/12 p-4 md:p-6 lg:p-8 ">
         <div className="flex flex-col gap-10 prose prose-gray dark:prose-invert">
           <div className="flex flex-col gap-3 space-y-2 not-prose">
-            <Breadcrumbs size="lg">
-              <BreadcrumbItem>학교게시판</BreadcrumbItem>
-              <BreadcrumbItem>자유게시판</BreadcrumbItem>
-              <BreadcrumbItem>게시글 조회</BreadcrumbItem>
-            </Breadcrumbs>
             <Skeleton isLoaded={isLoaded} className="rounded-lg w-full">
               <h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl xl:text-4xl lg:leading-[3.5rem] w-full truncate">
                 {boardDetails ? boardDetails.title : ""}
