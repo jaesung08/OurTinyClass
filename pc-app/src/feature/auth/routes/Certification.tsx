@@ -12,6 +12,7 @@ import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/atoms/user";
+import { logout } from "../api/logout";
 
 interface StepsProps {
   certificationStep: number;
@@ -167,6 +168,16 @@ function Certification() {
     mentorCertificationMutation.mutate(formData);
   };
 
+  const navigator = useNavigate();
+  const onPressLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      localStorage.clear();
+      navigator("/");
+    }
+  };
+
   return (
     <div className=" w-full h-full p-10">
       <Steps certificationStep={certificationStep} />
@@ -181,6 +192,11 @@ function Certification() {
         />
       ) : null}
       {certificationStep === 2 ? <WaitingConfirm /> : null}
+      <div className=" flex justify-center items-center mt-10">
+        <Button className="text-white" onPress={onPressLogout} color="success">
+          다른 계정으로 로그인하기
+        </Button>
+      </div>
     </div>
   );
 }

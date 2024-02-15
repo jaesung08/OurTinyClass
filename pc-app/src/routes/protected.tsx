@@ -17,7 +17,7 @@ import { LecturesRoutes } from "@/feature/lecture";
 const App = () => {
   return (
     <StompSessionProvider
-      url={`ws://${SOCKET_URL}/ws/chat`}
+      url={`wss://${SOCKET_URL}/ws/chat`}
       connectHeaders={{
         Authorization: localStorage.getItem("accessToken") ?? "",
       }}

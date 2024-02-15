@@ -14,6 +14,7 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import ScheduleBoard from "@/feature/schedule/components/ScheduleBoard";
 import { searchBoard } from "@/feature/communities/api/freeBoard";
 import { Board } from "@/feature/communities";
+import { CurrentLecture, requestCurrentSchedule } from "@/feature/schedule/api/getSchedule";
 
 interface AttendanceCardProps {
   todayDate: dayjs.Dayjs;
@@ -116,34 +117,58 @@ interface CurrentLectureCardProps {
   navigator: NavigateFunction;
 }
 function CurrentLectureCard({ navigator }: CurrentLectureCardProps) {
-  const goClassRoom = () => navigator("/video");
+  const goClassRoom = (url: string) => navigator("/video", { state: { url: url } });
+  const [lecture, setLecture] = useState<CurrentLecture | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      const res = await requestCurrentSchedule();
+      setLecture(res.data);
+    };
+    getData();
+  }, []);
+
+  const getLectureType = () => {
+    switch (lecture?.lectureType) {
+      case "SPECIAL_LECTURE":
+        return "특강";
+      case "REGULAR_LECTURE":
+        return "정규 수업";
+      case "FREE_LECTURE":
+        return "자유 수업";
+      default:
+        return "자유 수업";
+    }
+  };
   return (
     <div>
       <Card className="p-4 rounded-lg">
-        <CardHeader>
-          <div className="flex justify-between w-full gap-3">
-            <h6 className="text-lg font-semibold">3학년 2반 교실</h6>
-          </div>
-        </CardHeader>
-        <CardBody>
-          <div className="flex justify-between items-center w-full">
-            <p>참석자 수 : </p>
-            <p>● 34/40</p> {/* TODO 여기에 ●은 아이콘으로 바꾸고, 34와 40은 현재 스케줄의 수업 관련 데이터로 바꿔야 한다.*/}
-          </div>
-          <div className="flex  items-center w-full">
-            <p>
-              수업 종류 : <span> 정규 </span>
-            </p>
+        {lecture !== null ? (
+          <>
+            <CardHeader>
+              <div className="flex justify-between w-full gap-3">
+                <h6 className="text-lg font-semibold">{lecture?.title ?? ""}</h6>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <div className="flex  items-center w-full">
+                <p>
+                  수업 종류 : <span> {getLectureType()} </span>
+                </p>
+              </div>
+            </CardBody>
 
-            {/* TODO 수업 데이터로 전환해야 한다.*/}
-          </div>
-        </CardBody>
-
-        <CardFooter>
-          <Button color="success" onClick={goClassRoom}>
-            참석하기
-          </Button>
-        </CardFooter>
+            <CardFooter>
+              <Button color="success" onClick={() => goClassRoom(lecture.lectureUrl)}>
+                참석하기
+              </Button>
+            </CardFooter>
+          </>
+        ) : (
+          <CardBody>
+            <p>현재 진행중인 수업이 없습니다.</p>
+          </CardBody>
+        )}
       </Card>
     </div>
   );
