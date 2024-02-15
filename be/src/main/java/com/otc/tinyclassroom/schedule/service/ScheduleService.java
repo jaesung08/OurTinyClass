@@ -173,18 +173,16 @@ public class ScheduleService {
         // 현재 사용자가 존재하지 않는 사용자인 경우 exception 발생.
         Long currentUserId = jwtProvider.getCurrentMemberId();
         Member member = getMemberById(currentUserId);
-
         // 그 멤버가 배정된 반에 할당된 선생이 없을 경우 Exception 발생.
         Member teacher = getClassroomTeacher(member);
-
         int timeTable = 0;
         // 10분 전부터 보여주기 수강해야할 스케줄을 보여주기 위해 10분 추가한 뒤 시간을 계산한다.
         // ex) 08시 53분에서 10분을 더하면 09시 3분 => 즉 08시 53분도 09시로 계산.
         int currentHour = LocalDateTime.now().getHour();
         if (currentHour < 9){
             timeTable = 0;
-        }else if (currentHour > 16){
-            timeTable = 6;
+        }else if (currentHour >= 16){
+            timeTable = 5;
         }else{
             int nextHour = LocalDateTime.now().plusMinutes(10).getHour();
             if (nextHour <= 12){
@@ -213,8 +211,11 @@ public class ScheduleService {
             scheduleUrlResponseDto = ScheduleUrlResponseDto.from(scheduleDetailDto);
         } else {
             // 현재 학생의 반 찾아오기.
-            List<ClassRoom> classRoomByMemberId = memberClassRoomRepository.findClassRoomByMemberId(member.getId());
-            ClassRoom classRoom = classRoomByMemberId.get(classRoomByMemberId.size() - 1);
+            List<MemberClassRoom> classRooms =  member.getMemberClassRooms();
+            if (classRooms.isEmpty()){
+                throw new ScheduleException(ScheduleErrorCode.CLASSROOM_NOT_ASSIGNED);
+            }
+            ClassRoom classRoom =  classRooms.get(classRooms.size() - 1).getClassRoom();
 
             // 참여해야 할 강의가 특강이 아니라면 roomUrl 사용.
             scheduleUrlResponseDto = ScheduleUrlResponseDto.createByRoomUrl(scheduleDetailDto, classRoom.getRoomUrl());

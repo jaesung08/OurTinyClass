@@ -49,8 +49,7 @@ public class MemberClassRoomRepositoryCustomImpl implements MemberClassRoomRepos
         return queryFactory
             .select(qMemberClassRoom.classRoom)
             .from(qMemberClassRoom)
-            .where(qMemberClassRoom.member.id.eq(memberId)
-            .and(qMemberClassRoom.member.role.eq(Role.ROLE_STUDENT)))
+            .where(qMemberClassRoom.member.id.eq(memberId))
             .fetch();
 
     }
