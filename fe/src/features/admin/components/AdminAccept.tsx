@@ -19,12 +19,14 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import {
+  requestGetMentorCertDetail,
   requestGetMentorCertList,
   requestGetStudentCertDetail,
   requestGetStudentCertList,
+  requestMentorCertChange,
   requestStudentCertChange,
 } from "../api/users";
-import { StudentCertDetail } from "../types";
+import { MentorCertDetail, StudentCertDetail } from "../types";
 
 type StudentDetailProps = {
   isOpen: boolean;
@@ -87,7 +89,7 @@ const StudentDetailModal = ({
           <div className="h-max-[70vh] overflow-y-auto flex flex-col gap-5">
             <Input label="이름" value={student?.memberName} size="sm" />
             <Input
-              label="생일"
+              label="생년월일"
               value={student?.birthday ?? ""}
               readOnly></Input>
             <Input label="이전 학교 구분" value={schoolTypeMap()} readOnly />
@@ -101,6 +103,68 @@ const StudentDetailModal = ({
             <Image
               alt="자퇴 사유 파일"
               src={student?.quitConfirmationPaths[0] ?? ""}
+            />
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" onPress={() => sendResult(false)}>
+            거절
+          </Button>
+          <Button color="primary" onPress={() => sendResult(true)}>
+            승인
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+const MentorDetailModal = ({
+  isOpen,
+  onOpenChange,
+  onClose,
+  articleId,
+}: StudentDetailProps) => {
+  const [mentor, setMentor] = useState<MentorCertDetail>();
+  useEffect(() => {
+    if (isOpen && articleId) {
+      const getDetail = async () => {
+        const res = await requestGetMentorCertDetail(articleId);
+        setMentor(res.data);
+      };
+      getDetail();
+    }
+  }, [isOpen, articleId]);
+
+  const sendResult = async (isApprove: boolean) => {
+    if (articleId) {
+      try {
+        await requestMentorCertChange(articleId, isApprove);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        onClose();
+      }
+    }
+  };
+
+  return (
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <ModalContent>
+        <ModalHeader className="flex flex-col gap-1">
+          학생 신청 상세 조회
+        </ModalHeader>
+        <ModalBody>
+          <div className="h-max-[70vh] overflow-y-auto flex flex-col gap-5">
+            <Input label="이름" value={mentor?.memberName} size="sm" />
+            <Input
+              label="생년월일"
+              value={mentor?.birthday ?? ""}
+              readOnly></Input>
+            <Textarea label="소속" value={mentor?.belong} readOnly />
+            <Image
+              alt="소속 관련 서류"
+              src={mentor?.belongDocumentPaths[0] ?? ""}
             />
           </div>
         </ModalBody>
@@ -180,6 +244,12 @@ const AdminAccept = () => {
       </Table>
       <StudentDetailModal
         isOpen={isStudent && isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+        articleId={articleId}
+      />
+      <MentorDetailModal
+        isOpen={!isStudent && isOpen}
         onOpenChange={onOpenChange}
         onClose={onClose}
         articleId={articleId}
