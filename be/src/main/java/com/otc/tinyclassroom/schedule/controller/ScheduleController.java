@@ -3,6 +3,7 @@ package com.otc.tinyclassroom.schedule.controller;
 import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
 import com.otc.tinyclassroom.schedule.dto.request.ScheduleInsertRequestDto;
 import com.otc.tinyclassroom.schedule.dto.response.ScheduleListResponseDto;
+import com.otc.tinyclassroom.schedule.dto.response.ScheduleUrlResponseDto;
 import com.otc.tinyclassroom.schedule.service.ScheduleService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,16 @@ public class ScheduleController {
         scheduleService.deleteSchedule(id);
 
         return BaseResponse.success(HttpStatus.OK.value(), "스케줄이 삭제되었습니다.", null);
+    }
+
+    /**
+     * 현재 참여해야 할 강의 정보 반환 메서드.
+     */
+    @GetMapping("/detail/current")
+    public BaseResponse<?> getCurrentSchedule() {
+
+        ScheduleUrlResponseDto currentSchedule = scheduleService.getCurrentScheduleWithUrl();
+
+        return BaseResponse.success(HttpStatus.OK.value(), "현재 강의 정보가 반환되었습니다.", currentSchedule);
     }
 }
