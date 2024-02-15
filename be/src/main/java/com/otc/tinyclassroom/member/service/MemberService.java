@@ -173,6 +173,7 @@ public class MemberService {
     /**
      * 같은 반의 멤버를(선생님 포함) 조회한다.
      */
+    @Transactional
     public List<MemberProfileDto> getMyClassRoomMember(Member member) {
         List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
         if (memberClassRooms.isEmpty()) {
@@ -187,7 +188,7 @@ public class MemberService {
     /**
      * 멤버의 현재 반을 넘겨준다.
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public MemberClassRoomNumberResponseDto getMemberClassRoomNumber(String memberId) {
         Member member = memberRepository.findByMemberId(memberId).orElseThrow(
             () -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER)
