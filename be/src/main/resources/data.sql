@@ -25,6 +25,9 @@ values (11, 'ssafy1234', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsT
 insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
 values (12, 'ssafy12345', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_MENTOR',
         "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
+insert into member (id, member_id, password, name, email, birthday, point, role, profile_url)
+values (13, 'ssafy123', '$2a$10$a6OcTpLzJ4Yq9vSWKVeJSOtVUSASArGKv5RcAtWHDHdIJsTg2cpN.', 'Fyers', 'chh9450@naver.com', '2023-06-04', 95, 'ROLE_ADMIN',
+        "https://otc-image-bucket.s3.ap-northeast-2.amazonaws.com/5c699caa-d131-42bd-beac-fa5322c75f43.jpg");
 
 
 
@@ -91,6 +94,8 @@ insert into classroom (id, year, grade, number)
 values (19, 2024, 4, 2);
 insert into classroom (id, year, grade, number)
 values (20, 2024, 4, 3);
+insert into classroom (id, year, grade, number)
+values (21, 2024, 4, 0);
 
 -- 반 매핑
 INSERT INTO member_class_room (`class_room_id`, `member_id`) VALUES ('18', '2');
