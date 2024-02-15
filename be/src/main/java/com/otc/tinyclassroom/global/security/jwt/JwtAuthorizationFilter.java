@@ -46,7 +46,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         BaseResponse<Void> responseDto = null;
 
         // 로그인, 리프레시 요청이라면 토큰 검사하지 않음
-        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join")) {
+        if (servletPath.equals("/api/members/login") || servletPath.equals("/api/members/token/refresh") || servletPath.equals("/api/members/join") || servletPath.startsWith("/swagger-ui") || servletPath.startsWith("/v3")) {
             chain.doFilter(request, response);
         } else if (servletPath.equals("/ws/chat")) {
             // 채팅 소켓 연결이라면 토큰 검사하지 않음.

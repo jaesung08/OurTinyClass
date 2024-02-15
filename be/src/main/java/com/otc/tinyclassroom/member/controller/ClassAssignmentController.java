@@ -9,6 +9,7 @@ import com.otc.tinyclassroom.member.dto.request.UpdateMemberClassRequestDto;
 import com.otc.tinyclassroom.member.dto.request.UserListRandomAssignmentMemberRequestDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomResponseDto;
 import com.otc.tinyclassroom.member.service.ClassAssignmentService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class ClassAssignmentController {
     /**
      * 반 생성.
      */
+    @Operation(summary = "반 생성", description = "반을 개설합니다.", tags = { "반 편성" })
     @PostMapping("")
     public BaseResponse<ClassRoomDto> createClassRoom(@RequestBody ClassRoomDto classRoomDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
@@ -44,6 +46,7 @@ public class ClassAssignmentController {
     /**
      * 학생들 반 편성.
      */
+    @Operation(summary = "반 편성", description = "학생들을 반에 배치합니다.", tags = { "반 편성" })
     @PatchMapping("/members/place")
     public BaseResponse<List<MemberClassRoomResponseDto>> placeMembers(@RequestBody AssignmentMembersRequestDto request, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
@@ -54,6 +57,7 @@ public class ClassAssignmentController {
     /**
      * 학생(하나) 반 편성.
      */
+    @Operation(summary = "개인 반 변경", description = "한 학생의 반을 특정한 반으로 변경합니다.", tags = { "반 편성" })
     @PatchMapping("/member/updateClass")
     public BaseResponse<MemberClassRoomResponseDto> updateMemberClass(@RequestBody UpdateMemberClassRequestDto dto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         classFormationService.checkTeacherOrAdmin(principalDetails.getMember().getRole());
@@ -64,6 +68,7 @@ public class ClassAssignmentController {
     /**
      * 반 편성된 아이들 조회.
      */
+    @Operation(summary = "반 학생 조회", description = "한 반의 학생을 조회합니다.", tags = { "반 편성" })
     @GetMapping("/{classRoomId}/members")
     public BaseResponse<List<MemberClassRoomResponseDto>> getMembersByClassRoom(@PathVariable Long classRoomId) {
         List<MemberClassRoomResponseDto> members = classFormationService.getMembersByClassRoom(classRoomId);
@@ -73,6 +78,7 @@ public class ClassAssignmentController {
     /**
      * 랜덤으로 반 편성하기.
      */
+    @Operation(summary = "랜덤 반 편성", description = "임의로 반을 편성합니다.", tags = { "반 편성" })
     @PatchMapping("/randomAssignment")
     public BaseResponse<List<MemberClassRoomResponseDto>> randomAssignmentClassRooms(@RequestBody RandomAssignmentMemberRequestDto dto) {
         List<MemberClassRoomResponseDto> updatedMembers = classFormationService.randomAssignmentClassRooms(dto.classRoomId());
@@ -82,6 +88,7 @@ public class ClassAssignmentController {
     /**
      * 해당하는 유저만 랜덤으로 반 편성하기
      */
+    @Operation(summary = "특정 유저만 랜덤 반 편성", description = "반 편성을 원하는 리스트가 주어지면 임의로 반을 편성합니다.", tags = { "반 편성" })
     @PatchMapping("/user-list-random-assignment")
     public BaseResponse<List<MemberClassRoomResponseDto>> userListRandomAssignment(@RequestBody UserListRandomAssignmentMemberRequestDto dto) {
         List<MemberClassRoomResponseDto> updatedMembers = classFormationService.userListRandomAssignment(dto);

@@ -1,4 +1,4 @@
-package com.otc.tinyclassroom.member.controller;
+package com.otc.tinyclassroom.member.dto.response;
 
 public record MemberClassRoomNumberResponseDto(Long classRoomId, int grade, int number, int year) {
 
