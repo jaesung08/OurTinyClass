@@ -264,7 +264,7 @@ public class LectureService {
         long nbf = nbfTime.atZone(ZoneId.systemDefault()).toEpochSecond();
         LocalDateTime expTime = LocalDateTime.of(requestDto.date(), LocalTime.of(17, 0));
         long exp = expTime.atZone(ZoneId.systemDefault()).toEpochSecond();
-        int maxParticipants = 30;
+        int maxParticipants = 10;
         String identifier = String.valueOf(UUID.randomUUID());
         Mono<String> urlMono = webClientService.createClassRoomUrl(RoomCreateRequestDto.of(identifier, nbf, exp, maxParticipants));
         // Mono<String>을 String으로 동기적으로 변환

@@ -100,6 +100,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         refreshTokenRepository.save(toRedis);
         MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
+            loginMember.getId(),
             loginMember.getName(),
             loginMember.getMemberId(),
             loginMember.getRole().getValue(),

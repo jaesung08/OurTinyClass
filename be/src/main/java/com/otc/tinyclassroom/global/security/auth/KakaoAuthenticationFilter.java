@@ -88,6 +88,7 @@ public class KakaoAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         refreshTokenRepository.save(toRedis);
         MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
+            loginMember.getId(),
             loginMember.getName(),
             loginMember.getMemberId(),
             loginMember.getRole().getValue(),
