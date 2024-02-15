@@ -1,35 +1,17 @@
 import { Button, Input } from "@nextui-org/react";
 import { useCallback, useState } from "react";
 import { LoginFormProps } from "../types";
-import KakaoLogin from "react-kakao-login";
-import { KAKAO_CLIENT_ID } from "@/config";
-import KAKAOIMAGE from "@/assets/img/kakoLogin.png"
 
-interface KakaoLoginResponse {
-    token_type: string;
-    access_token: string;
-    expires_in: string;
-    refresh_token: string;
-    refresh_token_expires_in: number;
-    scope: string;
-}
-
-export default function LoginForm({ onSubmit, onKakaoSuccess }: LoginFormProps) {
+export default function LoginForm({ onSubmit }: LoginFormProps) {
   const [inputId, setInputId] = useState("");
   const [inputPassword, setInputPassword] = useState("");
 
-  const onChangeInputId = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputId(e.target.value);
-    },
-    []
-  );
-  const onChangeInputPassword = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputPassword(e.target.value);
-    },
-    []
-  );
+  const onChangeInputId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputId(e.target.value);
+  }, []);
+  const onChangeInputPassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputPassword(e.target.value);
+  }, []);
   const onSubmitForm = useCallback(
     (e: React.SyntheticEvent<HTMLFormElement>) => {
       onSubmit(inputId, inputPassword);
@@ -40,14 +22,14 @@ export default function LoginForm({ onSubmit, onKakaoSuccess }: LoginFormProps) 
     [inputId, inputPassword, onSubmit]
   );
 
-  const kakaoSuccessHandle = async (res: { response: KakaoLoginResponse }) => {
-    const accessToken = res.response.access_token;
-    onKakaoSuccess(accessToken);
-  }
+  // const kakaoSuccessHandle = async (res: { response: KakaoLoginResponse }) => {
+  //   const accessToken = res.response.access_token;
+  //   onKakaoSuccess(accessToken);
+  // };
 
-  const kakaoFailureHandle = (error: unknown) => {
-    console.log(error);
-  }
+  // const kakaoFailureHandle = (error: unknown) => {
+  //   console.log(error);
+  // };
   return (
     <form className="space-y-6" data-testid="LoginForm" onSubmit={onSubmitForm}>
       <div>
@@ -80,18 +62,15 @@ export default function LoginForm({ onSubmit, onKakaoSuccess }: LoginFormProps) 
         />
       </div>
       <div>
-        <Button
-          className="w-full bg-green-500 hover:bg-green-700 text-white"
-          type="submit"
-        >
+        <Button className="w-full bg-green-500 hover:bg-green-700 text-white" type="submit">
           로그인
         </Button>
       </div>
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div className="flex items-center">
-        <KakaoLogin token={KAKAO_CLIENT_ID} onSuccess={kakaoSuccessHandle} onFail={kakaoFailureHandle} />
+          <KakaoLogin token={KAKAO_CLIENT_ID} onSuccess={kakaoSuccessHandle} onFail={kakaoFailureHandle} />
         </div>
-      </div>
+      </div> */}
     </form>
   );
 }

@@ -29,11 +29,11 @@ export const getLecture = async () => {
 export const getAddAbleSpecialLectures = () => {
   return commonAxios.get(`/lectures`, {
     params: {
-      lectureType: 'SPECIAL_LECTURE',
-      approved: 'APPROVED',
+      lectureType: "SPECIAL_LECTURE",
+      approved: "APPROVED",
     },
   });
-}
+};
 
 export const deleteLecture = async (lectureId: number) => {
   return commonAxios.delete(`/lectures/${lectureId}`);
@@ -44,7 +44,7 @@ export const getEditLecture = async (lectureId: number) => {
 };
 
 export const editLecture = async (
-  //userId: string | number,
+  userId: number,
   title: string,
   description: string,
   dayOfWeek: number,
@@ -55,7 +55,7 @@ export const editLecture = async (
   lectureId: number
 ) => {
   return commonAxios.patch(`/lectures/${lectureId}`, {
-    userId: 21,
+    userId,
     title,
     description,
     dayOfWeek,
@@ -66,10 +66,7 @@ export const editLecture = async (
   });
 };
 
-export const searchLecture = async (
-  searchType: string,
-  searchKeyword: string
-) => {
+export const searchLecture = async (searchType: string, searchKeyword: string) => {
   const params = {
     [`${searchType}`]: searchKeyword,
   };

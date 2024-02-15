@@ -107,17 +107,6 @@
     "appId": "com.otc.package",
     "productName": "우리들의 작은 교실",
     "copyright": "Copyright © 2023 OTC",
-    "win": {
-      "target": "nsis",
-      "appUserModelId": "com.otc.package",
-      "extraResources": [
-        {
-          "from": "./src/ToastActivator/",
-          "to": "ToastActivator/",
-          "filter": ["**/*"]
-        }
-      ]
-    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
