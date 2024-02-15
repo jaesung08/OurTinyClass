@@ -1,6 +1,11 @@
 package com.otc.tinyclassroom.member.service;
 
 import com.otc.tinyclassroom.global.security.jwt.JwtProvider;
+import com.otc.tinyclassroom.global.common.model.response.BaseResponse;
+import com.otc.tinyclassroom.global.security.refreshtoken.entity.RefreshToken;
+import com.otc.tinyclassroom.global.security.refreshtoken.repository.RefreshTokenRepository;
+import com.otc.tinyclassroom.member.client.KakaoClient;
+import com.otc.tinyclassroom.member.dto.request.KakaoLoginRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberJoinRequestDto;
 import com.otc.tinyclassroom.member.dto.request.MemberUpdateRequestDto;
 import com.otc.tinyclassroom.member.dto.response.AdminMemberPkIdResponseDto;
@@ -8,6 +13,8 @@ import com.otc.tinyclassroom.member.dto.response.AdminMemberResponseDto;
 import com.otc.tinyclassroom.member.dto.response.MemberClassRoomNumberResponseDto;
 import com.otc.tinyclassroom.member.dto.response.MemberProfileDto;
 import com.otc.tinyclassroom.member.entity.ClassRoom;
+import com.otc.tinyclassroom.member.dto.response.KakaoOAuthResponse;
+import com.otc.tinyclassroom.member.dto.response.MemberLoginResponseDto;
 import com.otc.tinyclassroom.member.entity.Member;
 import com.otc.tinyclassroom.member.entity.MemberClassRoom;
 import com.otc.tinyclassroom.member.entity.Role;
@@ -21,10 +28,13 @@ import com.otc.tinyclassroom.schedule.exception.ScheduleErrorCode;
 import com.otc.tinyclassroom.schedule.exception.ScheduleException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +52,7 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final MemberClassRoomRepository memberClassRoomRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 회원가입을 수행한다.
@@ -76,6 +87,24 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+
+    /**
+     * 카카오 계정으로 로그인한 기록이 있으면 멤버를 가져오고 없는 경우 저장한다.
+     */
+    @Transactional
+    public Member findOrCreateMember(KakaoOAuthResponse response) {
+        String memberId = "kakao-" + response.id();
+        return memberRepository.findByMemberId(memberId)
+            .orElseGet(
+                () -> {
+                    String dummyPassword = "dummy" + UUID.randomUUID();
+                    Member newMember = Member.of(memberId, passwordEncoder.encode(dummyPassword), response.nickname(), null, null, INITIAL_POINT, null);
+                    return memberRepository.save(newMember);
+                }
+            );
+    }
+
 
     private boolean isValidMemberId(String memberId) {
         String memberRegex = "^[a-z0-9_-]{5,20}$";
