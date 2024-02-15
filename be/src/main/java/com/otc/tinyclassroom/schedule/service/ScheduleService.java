@@ -180,16 +180,21 @@ public class ScheduleService {
         int timeTable = 0;
         // 10분 전부터 보여주기 수강해야할 스케줄을 보여주기 위해 10분 추가한 뒤 시간을 계산한다.
         // ex) 08시 53분에서 10분을 더하면 09시 3분 => 즉 08시 53분도 09시로 계산.
-        int currentHour = LocalDateTime.now().plusMinutes(10).getHour();
-        if (currentHour <= 11) {
-            // 1~3 교시 (9 ~ 11시)인 경우
-            timeTable = currentHour - 9;
-        } else {
-            // 4~6 교시 (13 ~ 15시)인 경우
-            timeTable = currentHour - 10;
+        int currentHour = LocalDateTime.now().getHour();
+        if (currentHour < 9){
+            timeTable = 0;
+        }else if (currentHour > 16){
+            timeTable = 6;
+        }else{
+            int nextHour = LocalDateTime.now().plusMinutes(10).getHour();
+            if (nextHour <= 12){
+                timeTable = nextHour - 9;
+            }else {
+                timeTable = nextHour - 10;
+            }
         }
 
-        ScheduleDetailDto scheduleDetailDto = scheduleRepository.findScheduleDetailByMemberIdAndScheduleDateAndTimeTable(
+        ScheduleDetailDto scheduleDetailDto = scheduleRepository.findSoonScheduleDetailByMemberIdAndScheduleDateAndTimeTable(
             member.getMemberId(),
             teacher.getMemberId(),
             LocalDate.now(),

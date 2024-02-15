@@ -159,9 +159,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
      * @param timeTable 현재 교시.
      * @return url이 포함된 스케줄 dto.
      */
+
     @Override
-    public Optional<ScheduleDetailDto> findScheduleDetailByMemberIdAndScheduleDateAndTimeTable(
-        String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
+    public Optional<ScheduleDetailDto> findSoonScheduleDetailByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable) {
         return Optional.ofNullable(
             jpaQueryFactory
                 .select(Projections.constructor(
@@ -182,10 +182,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
                     // 스케줄 memberId가 현재 학생의 혹은 그 학생이 담당하는 선생의 memberId 값과 같고
                     studentAndTeacherNameEq(memberId, teacherMemberId),
                     schedule.scheduleDate.eq(scheduleDate),
-                    schedule.timeTable.eq(timeTable),
+                    schedule.timeTable.goe(timeTable),
                     // 소프트 딜리트 되지 않은 경우
                     schedule.deletedAt.isNull()
                 )
+                .orderBy(schedule.timeTable.asc())
                 .fetchFirst()
         );
     }

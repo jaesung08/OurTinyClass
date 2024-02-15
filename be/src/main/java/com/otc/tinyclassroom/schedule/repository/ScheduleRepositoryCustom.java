@@ -20,5 +20,5 @@ public interface ScheduleRepositoryCustom {
 
     Optional<ScheduleCheckDto> findScheduleByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable);
 
-    Optional<ScheduleDetailDto> findScheduleDetailByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable);
+    Optional<ScheduleDetailDto> findSoonScheduleDetailByMemberIdAndScheduleDateAndTimeTable(String memberId, String teacherMemberId, LocalDate scheduleDate, Integer timeTable);
 }
