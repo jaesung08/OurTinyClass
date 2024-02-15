@@ -175,12 +175,12 @@ public class MemberService {
      */
     @Transactional
     public List<MemberProfileDto> getMyClassRoomMember(Member member) {
-        List<MemberClassRoom> memberClassRooms = member.getMemberClassRooms();
-        if (memberClassRooms.isEmpty()) {
+
+        List<ClassRoom> classRooms = memberClassRoomRepository.findClassRoomByMemberId(member.getId());
+        if (classRooms.isEmpty()) {
             throw new ClassAssignmentException(ClassAssignmentErrorCode.CLASSROOM_NOT_ASSIGNED);
         }
-        MemberClassRoom memberClassRoom = memberClassRooms.get(memberClassRooms.size() - 1);
-        ClassRoom classRoom = memberClassRoom.getClassRoom();
+        ClassRoom classRoom = classRooms.get(classRooms.size() - 1);
         List<Member> members = memberClassRoomRepository.findMemberByClassRoomId(classRoom.getId());
         return members.stream().map(MemberProfileDto::from).collect(Collectors.toCollection(ArrayList::new));
     }
