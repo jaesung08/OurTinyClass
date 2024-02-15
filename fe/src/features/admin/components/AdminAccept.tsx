@@ -33,11 +33,14 @@ type StudentDetailProps = {
   onOpenChange: () => void;
   articleId: number | undefined;
   onClose: () => void;
+  loadData: () => void;
 };
 const StudentDetailModal = ({
   isOpen,
   onOpenChange,
   articleId,
+  onClose,
+  loadData,
 }: StudentDetailProps) => {
   const [student, setStudent] = useState<StudentCertDetail>();
   const [grade, setGrade] = useState<string>("");
@@ -58,7 +61,8 @@ const StudentDetailModal = ({
       } catch (error) {
         console.error(error);
       } finally {
-        window.location.reload();
+        loadData();
+        onClose();
       }
     }
   };
@@ -122,6 +126,7 @@ const MentorDetailModal = ({
   isOpen,
   onOpenChange,
   articleId,
+  onClose,
 }: StudentDetailProps) => {
   const [mentor, setMentor] = useState<MentorCertDetail>();
   useEffect(() => {
@@ -141,7 +146,7 @@ const MentorDetailModal = ({
       } catch (error) {
         console.error(error);
       } finally {
-        window.location.reload();
+        onClose();
       }
     }
   };
@@ -201,12 +206,16 @@ const AdminAccept = () => {
     onOpen();
   };
 
-  useEffect(() => {
+  const loadData = () => {
     if (isStudent) {
       getStudentCertList();
     } else {
       getMentorCertList();
     }
+  };
+
+  useEffect(() => {
+    loadData();
   }, [isStudent]);
 
   return (
@@ -243,12 +252,14 @@ const AdminAccept = () => {
       <StudentDetailModal
         isOpen={isStudent && isOpen}
         onOpenChange={onOpenChange}
+        loadData={loadData}
         onClose={onClose}
         articleId={articleId}
       />
       <MentorDetailModal
         isOpen={!isStudent && isOpen}
         onOpenChange={onOpenChange}
+        loadData={loadData}
         onClose={onClose}
         articleId={articleId}
       />

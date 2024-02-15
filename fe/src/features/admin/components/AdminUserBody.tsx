@@ -136,12 +136,13 @@ const AddClassroomModal = ({
     }
   }, [isOpen]);
 
-  const editUserInfo = async () => {
+  const addClassRoom = async () => {
     try {
       await requestCreateClassroom(+inputYear, +inputGrade, +inputClass);
       onClose();
-    } catch (e) {
-      console.error(e);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      Swal.fire("실패", e.response.data.message, "error");
     }
   };
 
@@ -150,9 +151,7 @@ const AddClassroomModal = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">
-              유저 정보 수정
-            </ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">반 생성</ModalHeader>
             <ModalBody>
               <Input
                 label={"년도"}
@@ -171,7 +170,7 @@ const AddClassroomModal = ({
               <Button color="danger" variant="light" onPress={onClose}>
                 닫기
               </Button>
-              <Button color="primary" onPress={editUserInfo}>
+              <Button color="primary" onPress={addClassRoom}>
                 생성
               </Button>
             </ModalFooter>
@@ -254,6 +253,12 @@ const AdminUserBody = () => {
           </Button>
           <Button onPress={onOpenAddClassroomModal} color="primary">
             반 추가
+          </Button>
+          <Button
+            onPress={() => getUserList()}
+            color="success"
+            className=" text-white">
+            새로고침
           </Button>
         </div>
       </div>
