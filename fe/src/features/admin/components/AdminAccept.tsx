@@ -152,7 +152,7 @@ const MentorDetailModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="4xl">
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
           학생 신청 상세 조회
@@ -233,9 +233,9 @@ const AdminAccept = () => {
         isHeaderSticky>
         <TableHeader>
           {/* <TableColumn key="userId">계정</TableColumn> */}
-          <TableColumn key="articleId">계정</TableColumn>
+          <TableColumn key="articleId">요청 id</TableColumn>
           <TableColumn key="memberName">이름</TableColumn>
-          <TableColumn key="birthday">학년</TableColumn>
+          <TableColumn key="birthday">생년월일</TableColumn>
         </TableHeader>
         <TableBody items={certDataList}>
           {(article) => (
