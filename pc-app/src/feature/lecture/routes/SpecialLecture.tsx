@@ -110,7 +110,7 @@ export function SpecialLecture() {
   return (
     <>
       <section className="w-[100%] h-screen overflow-y-auto">
-        <div className="flex justify-center my-16">
+        <div className="flex justify-center my-5 sticky">
           <SearchBar
             searchType={searchType}
             searchKeyword={searchKeyword}
@@ -120,7 +120,7 @@ export function SpecialLecture() {
           />
         </div>
         <h2 className="text-2xl px-12 py-7">모집중인 특강 목록</h2>
-        <div className=" h-[400px] px-12 py-5 flex flex-wrap gap-10 overflow-y-scroll scrollbar-hide">
+        <div className=" h-full px-12 py-5 flex flex-wrap gap-10 overflow-y-scroll scrollbar-hide">
           {lectureLists.length !== 0 ? (
             lectureLists.map((lectures: Lecture, index: number) => {
               return (
