@@ -145,7 +145,7 @@
 
 ### 🛠 기타 산출물
 
-- **🖇 [포팅 메뉴얼](https://lab.ssafy.com/s10-webmobile1-sub2/S10P12A405/-/blob/master/exec/porting_manual.md)**
+- **🖇 [포팅 메뉴얼](https://lab.ssafy.com/s10-webmobile1-sub2/S10P12A405/-/blob/master/exec/포팅메뉴얼.md)**
 
 - **🖇 [API 문서](https://i10a405.p.ssafy.io/swagger-ui/index.html)**
 
