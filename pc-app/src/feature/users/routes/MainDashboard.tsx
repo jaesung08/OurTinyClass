@@ -39,7 +39,7 @@ function AttendanceCard({ todayDate, checkIn, checkOut, doCheckIn, doCheckOut, s
         <div className="flex h-16 gap-4">
           {checkIn ? (
             <div className="p-2 w-20 flex flex-col items-center bg-zinc-500 justify-evenly">
-              <span className="text-white h-8">{dayjs(checkIn).format("HH:MM")}</span>
+              <span className="text-white h-8">{dayjs(checkIn).format("HH:mm")}</span>
               <span className="text-white text-xs">{status ? attnedanceMap.get(status) : ""}</span>
             </div>
           ) : (
