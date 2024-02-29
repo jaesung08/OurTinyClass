@@ -143,9 +143,18 @@
 <img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/uizard2.png">
 <img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/uizard3.png">
 
+### 🛠 API 문서
+
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass1.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass2.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass3.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass4.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass5.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass6.png">
+<img src="https://static-image-buckets.s3.ap-northeast-2.amazonaws.com/OurTinyClass7.png">
+
 ### 🛠 기타 산출물
 
 - **🖇 [포팅 메뉴얼](https://lab.ssafy.com/s10-webmobile1-sub2/S10P12A405/-/blob/master/exec/포팅메뉴얼.md)**
 
-- **🖇 [API 문서](https://i10a405.p.ssafy.io/swagger-ui/index.html)**
 
